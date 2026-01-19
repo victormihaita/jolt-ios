@@ -1,0 +1,31 @@
+mutation CreateReminder($input: CreateReminderInput!) {
+  createReminder(input: $input) {
+    ...ReminderFragment
+  }
+}
+
+mutation UpdateReminder($id: UUID!, $input: UpdateReminderInput!) {
+  updateReminder(id: $id, input: $input) {
+    ...ReminderFragment
+  }
+}
+
+mutation DeleteReminder($id: UUID!) {
+  deleteReminder(id: $id)
+}
+
+mutation SnoozeReminder($id: UUID!, $minutes: Int!) {
+  snoozeReminder(id: $id, minutes: $minutes) {
+    ...ReminderFragment
+  }
+}
+
+mutation CompleteReminder($id: UUID!) {
+  completeReminder(id: $id) {
+    ...ReminderFragment
+  }
+}
+
+mutation DismissReminder($id: UUID!) {
+  dismissReminder(id: $id)
+}

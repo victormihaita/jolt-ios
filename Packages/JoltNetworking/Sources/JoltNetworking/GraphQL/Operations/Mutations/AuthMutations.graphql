@@ -1,0 +1,48 @@
+mutation AuthenticateWithGoogle($idToken: String!) {
+  authenticateWithGoogle(idToken: $idToken) {
+    accessToken
+    refreshToken
+    expiresIn
+    user {
+      id
+      email
+      displayName
+      avatarUrl
+      timezone
+      isPremium
+      premiumUntil
+    }
+  }
+}
+
+mutation RefreshToken($refreshToken: String!) {
+  refreshToken(refreshToken: $refreshToken) {
+    accessToken
+    refreshToken
+    expiresIn
+    user {
+      id
+      email
+      displayName
+      avatarUrl
+      timezone
+      isPremium
+    }
+  }
+}
+
+mutation Logout {
+  logout
+}
+
+mutation VerifySubscription {
+  verifySubscription {
+    id
+    email
+    displayName
+    avatarUrl
+    timezone
+    isPremium
+    premiumUntil
+  }
+}

@@ -1,0 +1,15 @@
+mutation RegisterDevice($input: RegisterDeviceInput!) {
+  registerDevice(input: $input) {
+    id
+    platform
+    deviceName
+    appVersion
+    osVersion
+    lastSeenAt
+    createdAt
+  }
+}
+
+mutation UnregisterDevice($id: UUID!) {
+  unregisterDevice(id: $id)
+}

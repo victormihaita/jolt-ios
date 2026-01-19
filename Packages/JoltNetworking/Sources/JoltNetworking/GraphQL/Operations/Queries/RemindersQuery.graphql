@@ -1,0 +1,75 @@
+query Reminders($filter: ReminderFilter, $pagination: PaginationInput) {
+  reminders(filter: $filter, pagination: $pagination) {
+    edges {
+      node {
+        ...ReminderFragment
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+query Reminder($id: UUID!) {
+  reminder(id: $id) {
+    ...ReminderFragment
+  }
+}
+
+query Me {
+  me {
+    id
+    email
+    displayName
+    avatarUrl
+    timezone
+    isPremium
+    premiumUntil
+    createdAt
+  }
+}
+
+query Devices {
+  devices {
+    id
+    platform
+    deviceName
+    appVersion
+    osVersion
+    lastSeenAt
+    createdAt
+  }
+}
+
+fragment ReminderFragment on Reminder {
+  id
+  title
+  notes
+  priority
+  dueAt
+  allDay
+  recurrenceRule {
+    frequency
+    interval
+    daysOfWeek
+    dayOfMonth
+    monthOfYear
+    endAfterOccurrences
+    endDate
+  }
+  recurrenceEnd
+  status
+  completedAt
+  snoozedUntil
+  snoozeCount
+  localId
+  version
+  createdAt
+  updatedAt
+}

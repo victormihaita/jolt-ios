@@ -44,7 +44,7 @@ struct ReminderDetailView: View {
                 }
 
                 ToolbarItem(placement: .topBarTrailing) {
-                    if let reminder = reminder {
+                    if reminder != nil {
                         Menu {
                             Button(action: { showEditSheet = true }) {
                                 Label("Edit", systemImage: "pencil")
