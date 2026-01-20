@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Combine
 import JoltNetworking
 import JoltSync
 import JoltModels
@@ -14,21 +15,35 @@ class AuthViewModel: ObservableObject {
 
     private let keychain = JoltKeychain.KeychainService.shared
     private let graphQL = GraphQLClient.shared
+    private var cancellables = Set<AnyCancellable>()
 
     var userEmail: String? {
         currentUser?.email
     }
 
     init() {
+        // Observe SyncEngine's currentUser to stay in sync
+        SyncEngine.shared.$currentUser
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] user in
+                if let user = user {
+                    self?.currentUser = user
+                }
+            }
+            .store(in: &cancellables)
+
         checkAuthentication()
     }
 
     func checkAuthentication() {
         if let _ = keychain.getToken() {
             isAuthenticated = true
-            Task {
-                await fetchCurrentUser()
-            }
+            // Clear any stale cache data before connecting
+            // This ensures we don't serve cached introspection data to queries
+            graphQL.clearCache()
+            print("🧹 Cleared Apollo cache on app launch")
+            // Connect SyncEngine immediately so it starts fetching user data
+            SyncEngine.shared.connect()
         }
     }
 
@@ -64,6 +79,9 @@ class AuthViewModel: ObservableObject {
 
             // Set RevenueCat user ID to sync subscription status
             await RevenueCatService.shared.setUserID(authData.user.id)
+
+            // Connect SyncEngine to start watching data
+            SyncEngine.shared.connect()
 
             isAuthenticated = true
             isLoading = false

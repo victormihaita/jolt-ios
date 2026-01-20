@@ -11,7 +11,7 @@ typealias JReminderStatus = JoltModels.ReminderStatus
 // MARK: - Home View (Single-Screen Architecture per UX Design)
 
 struct HomeView: View {
-    @StateObject private var syncEngine = SyncEngine.shared
+    @ObservedObject private var syncEngine = SyncEngine.shared
     @StateObject private var viewModel = ReminderListViewModel()
 
     @State private var showCreateSheet = false
@@ -23,7 +23,10 @@ struct HomeView: View {
 
     /// Filtered active reminders from the sync engine (GraphQL cache is source of truth)
     private var reminders: [JReminder] {
-        syncEngine.reminders.filter { $0.status == .active || $0.status == .snoozed }
+        let all = syncEngine.reminders
+        let filtered = all.filter { $0.status == .active || $0.status == .snoozed }
+        print("📋 HomeView.reminders: total=\(all.count), filtered=\(filtered.count)")
+        return filtered
     }
 
     var body: some View {
@@ -95,8 +98,12 @@ struct HomeView: View {
                 syncEngine.refetch()
             }
             .onAppear {
+                print("📋 HomeView.onAppear - reminders count: \(syncEngine.reminders.count)")
                 // Connect SyncEngine when view appears (starts watchers)
                 syncEngine.connect()
+            }
+            .onChange(of: syncEngine.reminders.count) { oldCount, newCount in
+                print("📋 HomeView.onChange - reminders count changed: \(oldCount) -> \(newCount)")
             }
         }
     }

@@ -52,10 +52,18 @@ public final class GraphQLClient {
         // Create SQLite persistent cache
         store = Self.createApolloStore()
 
+        // Create URLSession with no caching to avoid stale responses
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
+        sessionConfig.urlCache = nil
+        let urlSessionClient = URLSessionClient(sessionConfiguration: sessionConfig)
+
+        print("🌐 GraphQL endpoint: \(JoltConstants.API.graphQLURL)")
+
         // HTTP transport for queries and mutations
         let httpTransport = RequestChainNetworkTransport(
             interceptorProvider: NetworkInterceptorProvider(
-                client: URLSessionClient(),
+                client: urlSessionClient,
                 store: store
             ),
             endpointURL: URL(string: JoltConstants.API.graphQLURL)!
@@ -255,6 +263,7 @@ public final class GraphQLClient {
 
         // Post refetch notification for data-modifying mutations
         if Self.shouldTriggerRefetch(for: Mutation.operationName) {
+            print("📣 GraphQLClient: Posting refetch notification for \(Mutation.operationName)")
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: Self.refetchNotification, object: nil)
             }
@@ -336,12 +345,69 @@ private class NetworkInterceptorProvider: InterceptorProvider {
             MaxRetryInterceptor(),
             CacheReadInterceptor(store: store),
             AuthInterceptor(),
+            RequestLoggingInterceptor(),  // Log request BEFORE network fetch
             NetworkFetchInterceptor(client: client),
+            ResponseLoggingInterceptor(),  // Log raw response for debugging
             ResponseCodeInterceptor(),
             JSONResponseParsingInterceptor(),
             TokenRefreshInterceptor(),  // Handles token refresh on auth errors
             CacheWriteInterceptor(store: store),
         ]
+    }
+}
+
+// MARK: - Request Logging Interceptor
+
+private class RequestLoggingInterceptor: ApolloInterceptor {
+    public var id: String = "RequestLoggingInterceptor"
+
+    func interceptAsync<Operation: GraphQLOperation>(
+        chain: any RequestChain,
+        request: HTTPRequest<Operation>,
+        response: HTTPResponse<Operation>?,
+        completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
+    ) {
+        // Log the outgoing request BEFORE network fetch
+        print("📤 OUTGOING REQUEST for \(Operation.operationName):")
+        print("📤 URL: \(request.graphQLEndpoint)")
+        print("📤 Operation: \(request.operation)")
+        print("📤 Headers: \(request.additionalHeaders)")
+
+        chain.proceedAsync(
+            request: request,
+            response: response,
+            interceptor: self,
+            completion: completion
+        )
+    }
+}
+
+// MARK: - Response Logging Interceptor
+
+private class ResponseLoggingInterceptor: ApolloInterceptor {
+    public var id: String = "ResponseLoggingInterceptor"
+
+    func interceptAsync<Operation: GraphQLOperation>(
+        chain: any RequestChain,
+        request: HTTPRequest<Operation>,
+        response: HTTPResponse<Operation>?,
+        completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
+    ) {
+        if let httpResponse = response {
+            let rawData = httpResponse.rawData
+            let responseString = String(data: rawData, encoding: .utf8) ?? "<binary data>"
+            print("📥 RAW RESPONSE for \(Operation.operationName):")
+            print(responseString)
+        } else {
+            print("📥 NO RESPONSE yet for \(Operation.operationName)")
+        }
+
+        chain.proceedAsync(
+            request: request,
+            response: response,
+            interceptor: self,
+            completion: completion
+        )
     }
 }
 

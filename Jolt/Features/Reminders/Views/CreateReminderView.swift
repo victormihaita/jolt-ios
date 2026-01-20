@@ -219,7 +219,9 @@ struct CreateReminderView: View {
                 )
 
                 let mutation = JoltAPI.CreateReminderMutation(input: input)
-                _ = try await graphQL.perform(mutation: mutation)
+                print("✨ CreateReminderView: Performing mutation...")
+                let result = try await graphQL.perform(mutation: mutation)
+                print("✨ CreateReminderView: Mutation completed, reminder id: \(result.createReminder.id)")
 
                 await MainActor.run {
                     Haptics.success()

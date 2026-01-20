@@ -40,18 +40,30 @@ public final class SyncEngine: ObservableObject {
     // MARK: - Setup
 
     private func setupRefetchListener() {
+        print("🔔 SyncEngine: Setting up refetch listener")
         refetchCancellable = NotificationCenter.default
             .publisher(for: GraphQLClient.refetchNotification)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
+                print("🔔 SyncEngine: Received refetch notification")
                 self?.refetch()
             }
     }
 
     // MARK: - Connection Management
 
+    private var isConnected = false
+
     public func connect() {
+        // Guard against duplicate connections
+        guard !isConnected else {
+            JoltLogger.debug("SyncEngine already connected, skipping", category: .sync)
+            return
+        }
+
         JoltLogger.info("SyncEngine connecting...", category: .sync)
+
+        isConnected = true
 
         // Connect WebSocket
         GraphQLClient.shared.connect()
@@ -67,6 +79,8 @@ public final class SyncEngine: ObservableObject {
 
     public func disconnect() {
         JoltLogger.info("SyncEngine disconnecting...", category: .sync)
+
+        isConnected = false
 
         // Cancel watchers
         remindersWatcher?.cancel()
@@ -92,6 +106,10 @@ public final class SyncEngine: ObservableObject {
 
     private func setupRemindersWatcher() {
         JoltLogger.debug("Setting up reminders watcher", category: .sync)
+        print("👀 Setting up reminders watcher")
+
+        // Cancel existing watcher if any
+        remindersWatcher?.cancel()
 
         let query = JoltAPI.RemindersQuery(
             filter: .null,
@@ -103,8 +121,10 @@ public final class SyncEngine: ObservableObject {
 
             switch result {
             case .success(let data):
+                print("👀 Watcher received data, edges: \(data.reminders.edges.count)")
                 let reminders = self.convertReminders(from: data)
                 DispatchQueue.main.async {
+                    print("👀 Updating reminders array with \(reminders.count) items")
                     self.reminders = reminders
                     self.onRemindersChanged?(reminders)
                     self.lastSyncAt = Date()
@@ -112,6 +132,7 @@ public final class SyncEngine: ObservableObject {
                 JoltLogger.info("Reminders watcher received \(reminders.count) reminders", category: .sync)
 
             case .failure(let error):
+                print("👀 Watcher error: \(error)")
                 JoltLogger.error("Reminders watcher error: \(error)", category: .sync)
                 DispatchQueue.main.async {
                     self.syncError = error
@@ -210,11 +231,37 @@ public final class SyncEngine: ObservableObject {
 
     // MARK: - Manual Refetch
 
-    /// Manually refetch all data
+    /// Manually refetch all data - forces a network request
     public func refetch() {
         JoltLogger.debug("Refetching all data", category: .sync)
-        remindersWatcher?.refetch()
-        userWatcher?.refetch()
+        print("🔄 SyncEngine.refetch() called")
+
+        // Use fetch with fetchIgnoringCacheData to force network request
+        // This ensures we get fresh data and the watcher gets updated
+        Task {
+            do {
+                let query = JoltAPI.RemindersQuery(
+                    filter: .null,
+                    pagination: .some(JoltAPI.PaginationInput(first: .some(100)))
+                )
+                print("🔄 Fetching reminders from server...")
+                let data = try await GraphQLClient.shared.fetch(query: query, storeInCache: true)
+                print("🔄 Got response, edges count: \(data.reminders.edges.count)")
+                let reminders = self.convertReminders(from: data)
+                print("🔄 Converted \(reminders.count) reminders")
+
+                await MainActor.run {
+                    print("🔄 Updating published reminders array")
+                    self.reminders = reminders
+                    self.onRemindersChanged?(reminders)
+                    self.lastSyncAt = Date()
+                }
+                JoltLogger.info("Refetch completed with \(reminders.count) reminders", category: .sync)
+            } catch {
+                print("🔄 Refetch error: \(error)")
+                JoltLogger.error("Refetch error: \(error)", category: .sync)
+            }
+        }
     }
 
     /// Perform a full sync (alias for refetch for API compatibility)

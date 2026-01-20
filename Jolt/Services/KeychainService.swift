@@ -5,7 +5,7 @@ import Security
 class KeychainService {
     static let shared = KeychainService()
 
-    private let service = "com.jolt.reminders"
+    private let service = "com.wiheads.victor.jolt.reminders"
 
     private enum Keys {
         static let accessToken = "access_token"
