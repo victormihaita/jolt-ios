@@ -57,6 +57,7 @@ targets:
         product: GoogleSignIn
       - package: GoogleSignIn
         product: GoogleSignInSwift
+      - target: JoltWidget
     settings:
       base:
         INFOPLIST_FILE: Jolt/Info.plist
@@ -95,16 +96,21 @@ targets:
   JoltWidget:
     type: app-extension
     platform: iOS
+    product: com.apple.product-type.app-extension
     sources:
       - path: Jolt/Widget
     dependencies:
       - package: JoltCore
       - package: JoltModels
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
     settings:
       base:
         INFOPLIST_FILE: Jolt/Widget/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.jolt.reminders.widget
         CODE_SIGN_STYLE: Automatic
+        SKIP_INSTALL: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
     info:
       path: Jolt/Widget/Info.plist
       properties:

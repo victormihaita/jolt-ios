@@ -11,6 +11,7 @@
 		0D3343D1CF510BF3394DA2AD /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FB7867EFDCE4CFE5DB6688 /* WelcomeView.swift */; };
 		1387CD456B40FBDA125C87F4 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410B3E0A9F15E4D81B46B966 /* KeychainService.swift */; };
 		203915F76791B56CB8C7E7E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0232C48F60D200C091743DA2 /* SettingsView.swift */; };
+		250E3D21BD687AAE8CAFDAB4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 498C8298F4CB595F2A59F638 /* SwiftUI.framework */; };
 		25CA23F5915238ABE5AA198A /* JoltProducts.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 9EA8A7446EA045F84EF6A97E /* JoltProducts.storekit */; };
 		29F10728139A0F3DF985519E /* JoltNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = D79C1E788654AD882C531537 /* JoltNotifications */; };
 		2DAA9ED3F240F044B3E29860 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DF8E2BCBC304287FC5FF0D /* Theme.swift */; };
@@ -19,6 +20,7 @@
 		49FE1CFF21190BAEDA787B99 /* JoltModels in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6FA5D5442912EC967F019D /* JoltModels */; };
 		5076518045C97E9B3CF90B72 /* JoltCore in Frameworks */ = {isa = PBXBuildFile; productRef = FCC2ACDF982AA2056AFDE690 /* JoltCore */; };
 		5DAC1881367E2AEAD37BE800 /* JoltSubscriptions in Frameworks */ = {isa = PBXBuildFile; productRef = 78ABEC7C418E754145D4AA8C /* JoltSubscriptions */; };
+		64A0AB7C9801DFBE57F8E98D /* JoltWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EA3D8A75A49C37F2AA407E9C /* JoltWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6A31026EF509F541F807CC0A /* JoltApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25683463C7FEFDE94B25D3C /* JoltApp.swift */; };
 		7891E11E8D0C8C66731ABFAF /* CreateReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C03049EC5DF08523798871 /* CreateReminderView.swift */; };
 		7DA27388FD60516A2393B256 /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095002F6BC912205E81AD63F /* ReminderDetailView.swift */; };
@@ -35,12 +37,37 @@
 		CBBBEC3A5040EBD8FBFC4090 /* RevenueCatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9221CB5F6A097A7C409E252 /* RevenueCatService.swift */; };
 		D390663D0D474B0FDFEACCED /* JoltCore in Frameworks */ = {isa = PBXBuildFile; productRef = 00E8F3CDBAE33FB465994995 /* JoltCore */; };
 		E0A98ED3FA7CC6951F2BC558 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3275FD195ED13455F197DA /* PaywallView.swift */; };
+		E6D81F4DFA97F7DC4A5F176C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67ED857ECF90DEC8E315732A /* WidgetKit.framework */; };
 		F047C64217C2278D6E6978F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26F4B1EE99C839C2B822466D /* AppDelegate.swift */; };
 		F0A83151DF6F1DD50339C73E /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D698C96C27ED0A0728C1AD /* ReminderListView.swift */; };
 		F80FE419739B425043C62E06 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9802344525C73A2C71F64 /* SubscriptionViewModel.swift */; };
 		F8AE46F3A4E40ED74B43424D /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E98BD590159E0CF6DDC3CE8 /* AuthViewModel.swift */; };
 		FF4B43C5EA2EAC36C4E179CA /* DeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89030C4B84E7083C01176AC /* DeviceService.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		429466D347CE864DFA4A0CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A97450DD3C42AB63E8A3A869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1D64DD1AD74F73D6F5E09562;
+			remoteInfo = JoltWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4638E2B28B7D367868642207 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				64A0AB7C9801DFBE57F8E98D /* JoltWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		005F907E84DDB3B357B7C0D9 /* Jolt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jolt.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,9 +84,11 @@
 		42151F8CD847FF4F3B766584 /* JoltSubscriptions */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltSubscriptions; path = Packages/JoltSubscriptions; sourceTree = SOURCE_ROOT; };
 		48DC5E8D9D5E469BB1CEF6EC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		4928198F0CD2C14FF53B3DBA /* ReminderListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListViewModel.swift; sourceTree = "<group>"; };
+		498C8298F4CB595F2A59F638 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		56E9C2B3E22795FFAD33AE0F /* JoltModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltModels; path = Packages/JoltModels; sourceTree = SOURCE_ROOT; };
 		624FCCCB602B7B10125F1E03 /* JoltKeychain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltKeychain; path = Packages/JoltKeychain; sourceTree = SOURCE_ROOT; };
 		6590884A927F53AC6EBFCC03 /* JoltSync */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltSync; path = Packages/JoltSync; sourceTree = SOURCE_ROOT; };
+		67ED857ECF90DEC8E315732A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		862EC1C817749DC887A12A31 /* JoltNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltNotifications; path = Packages/JoltNotifications; sourceTree = SOURCE_ROOT; };
 		92434FCEF84070CAAD69EEB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9EA8A7446EA045F84EF6A97E /* JoltProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = JoltProducts.storekit; sourceTree = "<group>"; };
@@ -103,6 +132,8 @@
 			files = (
 				D390663D0D474B0FDFEACCED /* JoltCore in Frameworks */,
 				49FE1CFF21190BAEDA787B99 /* JoltModels in Frameworks */,
+				E6D81F4DFA97F7DC4A5F176C /* WidgetKit.framework in Frameworks */,
+				250E3D21BD687AAE8CAFDAB4 /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,8 +337,18 @@
 				444787E488BDD14B9897BB93 /* Jolt */,
 				005174E2EF87A45936784C52 /* Packages */,
 				54D07C1725C894ED3AA03889 /* Widget */,
+				AC9B5618F32E0B528E553FEF /* Frameworks */,
 				7FBBC6795DF56FE5B0A5DB8F /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		AC9B5618F32E0B528E553FEF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				498C8298F4CB595F2A59F638 /* SwiftUI.framework */,
+				67ED857ECF90DEC8E315732A /* WidgetKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		DA099B7A639DDEDE9B9FD3F4 /* Sync */ = {
@@ -372,10 +413,12 @@
 				FDE9660CC5DA3C21201639C0 /* Sources */,
 				18A7A45C1ECF629492358D7A /* Resources */,
 				53B41F0376AC7B6A5E0BC7EF /* Frameworks */,
+				4638E2B28B7D367868642207 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4A380C8A4B892DDFEFD47711 /* PBXTargetDependency */,
 			);
 			name = Jolt;
 			packageProductDependencies = (
@@ -401,7 +444,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					1D64DD1AD74F73D6F5E09562 = {
 						ProvisioningStyle = Automatic;
@@ -489,13 +532,20 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4A380C8A4B892DDFEFD47711 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1D64DD1AD74F73D6F5E09562 /* JoltWidget */;
+			targetProxy = 429466D347CE864DFA4A0CEB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		06EA08E480EAB09C05459D1F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Jolt/Jolt.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TWMA228SBR;
@@ -516,7 +566,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Jolt/Jolt.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TWMA228SBR;
@@ -536,7 +585,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -572,7 +620,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -587,7 +634,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
@@ -609,6 +655,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wiheads.victor.jolt.widget;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -617,7 +664,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -653,7 +699,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -675,7 +720,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
@@ -697,6 +741,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wiheads.victor.jolt.widget;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
