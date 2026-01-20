@@ -9,7 +9,7 @@ struct ListDetailView: View {
     @ObservedObject private var syncEngine = SyncEngine.shared
 
     @State private var selectedReminder: Reminder?
-    @State private var showCreateSheet = false
+    @State private var showNaturalLanguageInput = false
     @State private var searchText = ""
     @State private var sortOption: SortOption = .dueDate
     @State private var filterOption: FilterOption = .active
@@ -70,7 +70,7 @@ struct ListDetailView: View {
                         Spacer()
                         Button(action: {
                             Haptics.medium()
-                            showCreateSheet = true
+                            showNaturalLanguageInput = true
                         }) {
                             Image(systemName: "plus")
                                 .font(.title2.weight(.semibold))
@@ -127,8 +127,10 @@ struct ListDetailView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $showCreateSheet) {
-                CreateReminderView(preselectedListId: list.id)
+            .fullScreenCover(isPresented: $showNaturalLanguageInput) {
+                NaturalLanguageInputView(listId: list.id) { reminder in
+                    selectedReminder = reminder
+                }
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
                 ReminderDetailView(reminder: reminder)

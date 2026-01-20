@@ -5,10 +5,11 @@ import JoltNetworking
 import JoltSync
 
 @MainActor
-class HomeViewModel: ObservableObject {
+class NaturalLanguageInputViewModel: ObservableObject {
     // MARK: - Published Properties
 
-    @Published var quickCaptureText = ""
+    @Published var inputText = ""
+    @Published var parsedReminder: ParsedReminder?
     @Published var isLoading = false
     @Published var errorMessage: String?
 
@@ -18,123 +19,61 @@ class HomeViewModel: ObservableObject {
     private let graphQL = GraphQLClient.shared
     private var cancellables = Set<AnyCancellable>()
 
+    /// The list ID to use for creating reminders
+    let listId: UUID
+
     // MARK: - Computed Properties
 
-    var todayCount: Int {
-        syncEngine.reminders.filter { reminder in
-            reminder.status == .active && Calendar.current.isDateInToday(reminder.effectiveDueDate)
-        }.count
-    }
-
-    var allCount: Int {
-        syncEngine.reminders.filter { $0.status == .active || $0.status == .snoozed }.count
-    }
-
-    var scheduledCount: Int {
-        syncEngine.reminders.filter { reminder in
-            (reminder.status == .active || reminder.status == .snoozed) && reminder.dueAt > Date()
-        }.count
-    }
-
-    var completedCount: Int {
-        syncEngine.reminders.filter { $0.status == .completed }.count
-    }
-
-    var overdueCount: Int {
-        syncEngine.reminders.filter { $0.isOverdue }.count
+    var canSubmit: Bool {
+        guard let parsed = parsedReminder else { return false }
+        return !parsed.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isLoading
     }
 
     // MARK: - Initialization
 
-    init() {
-        setupBindings()
+    init(listId: UUID) {
+        self.listId = listId
+        setupTextObserver()
     }
 
-    private func setupBindings() {
-        // Observe SyncEngine changes and trigger view updates
-        syncEngine.objectWillChange
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
+    private func setupTextObserver() {
+        $inputText
+            .debounce(for: .milliseconds(50), scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                self?.parseInput(text)
             }
             .store(in: &cancellables)
     }
 
-    // MARK: - List Management
+    // MARK: - Parsing
 
-    func createList(name: String, colorHex: String, iconName: String) async {
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            _ = try await syncEngine.createList(
-                name: name,
-                colorHex: colorHex,
-                iconName: iconName
-            )
-            print("📋 List created successfully")
-        } catch {
-            print("📋 Failed to create list: \(error)")
-            errorMessage = "Failed to create list: \(error.localizedDescription)"
+    private func parseInput(_ text: String) {
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            parsedReminder = nil
+        } else {
+            parsedReminder = NaturalLanguageParser.parse(text)
         }
-
-        isLoading = false
     }
 
-    func deleteList(_ list: ReminderList) async {
-        guard !list.isDefault else {
-            errorMessage = "Cannot delete the default list"
-            return
-        }
+    // MARK: - Reminder Creation
 
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            try await syncEngine.deleteList(id: list.id)
-            print("📋 List deleted successfully")
-        } catch {
-            print("📋 Failed to delete list: \(error)")
-            errorMessage = "Failed to delete list: \(error.localizedDescription)"
-        }
-
-        isLoading = false
-    }
-
-    func reorderLists(_ reorderedLists: [ReminderList]) async {
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            _ = try await syncEngine.reorderLists(ids: reorderedLists.map { $0.id })
-            print("📋 Lists reordered successfully")
-        } catch {
-            print("📋 Failed to reorder lists: \(error)")
-            errorMessage = "Failed to reorder lists: \(error.localizedDescription)"
-        }
-
-        isLoading = false
-    }
-
-    // MARK: - Quick Capture
-
-    func createReminderFromQuickCapture() async -> JoltModels.Reminder? {
-        guard !quickCaptureText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+    /// Creates a reminder from the current parsed input
+    /// - Returns: The created Reminder if successful, nil otherwise
+    func createReminder() async -> JoltModels.Reminder? {
+        guard let parsed = parsedReminder,
+              !parsed.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return nil
         }
 
-        let parsed = NaturalLanguageParser.parse(quickCaptureText)
-        let defaultList = syncEngine.reminderLists.first { $0.isDefault } ?? ReminderList.createDefault()
-
         isLoading = true
         errorMessage = nil
 
         do {
-            // Determine due date
+            // Determine due date - if no date parsed, use end of today with allDay = true
             let (dueAt, allDay) = determineDueDate(from: parsed)
 
             let input = JoltAPI.CreateReminderInput(
-                listId: .some(defaultList.id.uuidString.lowercased()),
+                listId: .some(listId.uuidString.lowercased()),
                 title: parsed.title,
                 notes: .null,
                 priority: .some(.init(graphQLPriority(from: parsed.priority))),
@@ -146,10 +85,11 @@ class HomeViewModel: ObservableObject {
             )
 
             let mutation = JoltAPI.CreateReminderMutation(input: input)
-            print("✨ QuickCapture: Creating reminder '\(parsed.title)'...")
+            print("✨ NaturalLanguageInput: Creating reminder '\(parsed.title)' in list \(listId)...")
             let result = try await graphQL.perform(mutation: mutation)
-            print("✨ QuickCapture: Reminder created with id: \(result.createReminder.id)")
+            print("✨ NaturalLanguageInput: Reminder created with id: \(result.createReminder.id)")
 
+            // Create a local Reminder object to return
             let reminder = JoltModels.Reminder(
                 id: UUID(uuidString: result.createReminder.id) ?? UUID(),
                 title: parsed.title,
@@ -167,16 +107,15 @@ class HomeViewModel: ObservableObject {
                 version: 1,
                 createdAt: Date(),
                 updatedAt: Date(),
-                listId: defaultList.id,
+                listId: listId,
                 tags: parsed.tags
             )
 
             isLoading = false
-            quickCaptureText = ""
             return reminder
 
         } catch {
-            print("❌ QuickCapture: Failed to create reminder: \(error)")
+            print("❌ NaturalLanguageInput: Failed to create reminder: \(error)")
             isLoading = false
             errorMessage = "Failed to create reminder: \(error.localizedDescription)"
             return nil
@@ -187,11 +126,17 @@ class HomeViewModel: ObservableObject {
 
     private func determineDueDate(from parsed: ParsedReminder) -> (Date, Bool) {
         if let dueDate = parsed.dueDate {
+            // User specified a date/time
+            // Check if the time component is midnight (likely just a date, no time specified)
             let calendar = Calendar.current
             let components = calendar.dateComponents([.hour, .minute], from: dueDate)
             let isMidnight = components.hour == 0 && components.minute == 0
+
+            // If it's exactly midnight, treat as all-day (unless it was explicitly "at 12am")
+            // For simplicity, assume no time = all day
             return (dueDate, isMidnight)
         } else {
+            // No date specified - use end of today with allDay = true
             let calendar = Calendar.current
             let endOfDay = calendar.startOfDay(for: Date()).addingTimeInterval(24 * 60 * 60 - 1)
             return (endOfDay, true)

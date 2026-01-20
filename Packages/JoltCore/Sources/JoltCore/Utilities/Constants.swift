@@ -2,15 +2,15 @@ import Foundation
 
 public enum JoltConstants {
     public enum API {
-        #if DEBUG
-        public static let baseURL = "http://localhost:8080/api/v1"
-        public static let graphQLURL = "http://localhost:8080/graphql"
-        public static let webSocketURL = "ws://localhost:8080/graphql"
-        #else
+//        #if DEBUG
+//        public static let baseURL = "http://localhost:8080/api/v1"
+//        public static let graphQLURL = "http://localhost:8080/graphql"
+//        public static let webSocketURL = "ws://localhost:8080/graphql"
+//        #else
         public static let baseURL = "https://jolt-api-502163195111.europe-west1.run.app/api/v1"
         public static let graphQLURL = "https://jolt-api-502163195111.europe-west1.run.app/graphql"
         public static let webSocketURL = "wss://jolt-api-502163195111.europe-west1.run.app/graphql"
-        #endif
+//        #endif
     }
 
     public enum Keychain {

@@ -19,7 +19,9 @@
 		2DAA9ED3F240F044B3E29860 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DF8E2BCBC304287FC5FF0D /* Theme.swift */; };
 		3235AC036EA1B430D8192C00 /* ReminderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F71E0757279FF9FE536BFC /* ReminderDetailViewModel.swift */; };
 		3BC14814CBE291A42466CA7A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AFB48EE9F75E0E08EF9E0A40 /* GoogleSignIn */; };
+		4214DE6FFCC63D79065A6618 /* NaturalLanguageInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D13C454A511D53E04273C7F /* NaturalLanguageInputViewModel.swift */; };
 		44857DA5D4EB8E022AAEC1FB /* NotificationSoundSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43111F05CC88BA7E9F7CAAA6 /* NotificationSoundSettings.swift */; };
+		44AF46D10225728852C176CE /* NaturalLanguageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B1C350C637D4971D63DD59 /* NaturalLanguageInputView.swift */; };
 		49FE1CFF21190BAEDA787B99 /* JoltModels in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6FA5D5442912EC967F019D /* JoltModels */; };
 		4E1C377B7F0C65A30E91BE90 /* NewHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A245B15E49C1807B35E8CE92 /* NewHomeView.swift */; };
 		4EA919C5B9259C9F59D7DAA8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B82EFF004BB8A819C6E84F4 /* SettingsViewModel.swift */; };
@@ -106,6 +108,7 @@
 		6590884A927F53AC6EBFCC03 /* JoltSync */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltSync; path = Packages/JoltSync; sourceTree = SOURCE_ROOT; };
 		67ED857ECF90DEC8E315732A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		6B82EFF004BB8A819C6E84F4 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		7D13C454A511D53E04273C7F /* NaturalLanguageInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageInputViewModel.swift; sourceTree = "<group>"; };
 		7FC331FB1943D4566949AFD3 /* DevicesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesListView.swift; sourceTree = "<group>"; };
 		862EC1C817749DC887A12A31 /* JoltNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltNotifications; path = Packages/JoltNotifications; sourceTree = SOURCE_ROOT; };
 		8A65FB57A65C24912AF1B460 /* SmartFiltersGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFiltersGrid.swift; sourceTree = "<group>"; };
@@ -115,6 +118,7 @@
 		9EA8A7446EA045F84EF6A97E /* JoltProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = JoltProducts.storekit; sourceTree = "<group>"; };
 		A0F71E0757279FF9FE536BFC /* ReminderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailViewModel.swift; sourceTree = "<group>"; };
 		A245B15E49C1807B35E8CE92 /* NewHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHomeView.swift; sourceTree = "<group>"; };
+		A2B1C350C637D4971D63DD59 /* NaturalLanguageInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageInputView.swift; sourceTree = "<group>"; };
 		A3CBC4FA4EBD37D5BFB8CDAC /* JoltWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JoltWidget.entitlements; sourceTree = "<group>"; };
 		B9221CB5F6A097A7C409E252 /* RevenueCatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatService.swift; sourceTree = "<group>"; };
 		B9FB7867EFDCE4CFE5DB6688 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
@@ -204,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				F2341493F1BBE98D5547D13B /* HomeViewModel.swift */,
+				7D13C454A511D53E04273C7F /* NaturalLanguageInputViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -221,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				7E7148CD598A81FEF5E15F7C /* Components */,
+				A2B1C350C637D4971D63DD59 /* NaturalLanguageInputView.swift */,
 				A245B15E49C1807B35E8CE92 /* NewHomeView.swift */,
 			);
 			path = Views;
@@ -635,6 +641,8 @@
 				1387CD456B40FBDA125C87F4 /* KeychainService.swift in Sources */,
 				D6F05C675FB6CEDACC511414 /* ListDetailView.swift in Sources */,
 				193F0D4CBAFF08EF6D10A904 /* ListsSection.swift in Sources */,
+				44AF46D10225728852C176CE /* NaturalLanguageInputView.swift in Sources */,
+				4214DE6FFCC63D79065A6618 /* NaturalLanguageInputViewModel.swift in Sources */,
 				63BBBAA0CDF288356E7849B2 /* NaturalLanguageParser.swift in Sources */,
 				4E1C377B7F0C65A30E91BE90 /* NewHomeView.swift in Sources */,
 				C512074781C7E298BDD45307 /* NotificationService.swift in Sources */,

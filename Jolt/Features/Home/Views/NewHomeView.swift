@@ -6,14 +6,22 @@ struct NewHomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @ObservedObject private var syncEngine = SyncEngine.shared
 
-    @State private var showCreateSheet = false
+    @State private var showNaturalLanguageInput = false
     @State private var showSettingsSheet = false
     @State private var showCreateListSheet = false
     @State private var selectedFilter: SmartFilterType?
     @State private var selectedList: ReminderList?
+    @State private var selectedReminder: JoltModels.Reminder?
     @State private var searchText = ""
 
     @Namespace private var namespace
+
+    /// Default list ID for creating reminders from home
+    private var defaultListId: UUID {
+        syncEngine.reminderLists.first(where: { $0.isDefault })?.id
+            ?? syncEngine.reminderLists.first?.id
+            ?? UUID()
+    }
 
     var body: some View {
         NavigationStack {
@@ -22,7 +30,9 @@ struct NewHomeView: View {
                     // Quick Capture Bar
                     QuickCaptureBar(text: $viewModel.quickCaptureText) { parsed in
                         Task {
-                            await viewModel.createReminderFromQuickCapture()
+                            if let reminder = await viewModel.createReminderFromQuickCapture() {
+                                selectedReminder = reminder
+                            }
                         }
                     }
                     .padding(.horizontal, Theme.Spacing.md)
@@ -80,7 +90,7 @@ struct NewHomeView: View {
                 // Floating Action Button
                 Button(action: {
                     Haptics.medium()
-                    showCreateSheet = true
+                    showNaturalLanguageInput = true
                 }) {
                     Image(systemName: "plus")
                         .font(.title2.weight(.semibold))
@@ -96,9 +106,14 @@ struct NewHomeView: View {
                 .padding(.trailing, Theme.Spacing.lg)
                 .padding(.bottom, Theme.Spacing.lg)
             }
-            .fullScreenCover(isPresented: $showCreateSheet) {
-                CreateReminderView()
-                    .navigationTransition(.zoom(sourceID: "createReminder", in: namespace))
+            .fullScreenCover(isPresented: $showNaturalLanguageInput) {
+                NaturalLanguageInputView(listId: defaultListId) { reminder in
+                    selectedReminder = reminder
+                }
+                .navigationTransition(.zoom(sourceID: "createReminder", in: namespace))
+            }
+            .fullScreenCover(item: $selectedReminder) { reminder in
+                ReminderDetailView(reminder: reminder)
             }
             .fullScreenCover(isPresented: $showSettingsSheet) {
                 SettingsView()
