@@ -564,8 +564,9 @@ struct EditReminderView: View {
         localId: nil,
         version: 1,
         createdAt: Date(),
-        updatedAt: Date()
+        updatedAt: Date(),
+        listId: UUID()
     )
-    return ReminderDetailView(reminder: previewReminder)
+    ReminderDetailView(reminder: previewReminder)
         .environmentObject(SubscriptionViewModel())
 }

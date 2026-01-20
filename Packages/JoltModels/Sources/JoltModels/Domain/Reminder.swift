@@ -17,6 +17,8 @@ public struct Reminder: Identifiable, Hashable, Sendable {
     public var version: Int
     public let createdAt: Date
     public var updatedAt: Date
+    public var listId: UUID
+    public var tags: [String]
 
     public init(
         id: UUID = UUID(),
@@ -34,7 +36,9 @@ public struct Reminder: Identifiable, Hashable, Sendable {
         localId: String? = nil,
         version: Int = 1,
         createdAt: Date = Date(),
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        listId: UUID,
+        tags: [String] = []
     ) {
         self.id = id
         self.title = title
@@ -52,6 +56,8 @@ public struct Reminder: Identifiable, Hashable, Sendable {
         self.version = version
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.listId = listId
+        self.tags = tags
     }
 
     public var isOverdue: Bool {

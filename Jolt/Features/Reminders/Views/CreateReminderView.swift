@@ -8,6 +8,7 @@ struct CreateReminderView: View {
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
 
     var editingReminder: JoltModels.Reminder?
+    var preselectedListId: UUID?
 
     @State private var title = ""
     @State private var notes = ""
@@ -17,13 +18,25 @@ struct CreateReminderView: View {
     @State private var priority: JoltModels.Priority = .normal
     @State private var recurrenceEnabled = false
     @State private var recurrenceRule: JoltModels.RecurrenceRule?
+    @State private var selectedListId: UUID?
     @State private var showRecurrencePicker = false
+    @State private var showListPicker = false
     @State private var showPremiumPaywall = false
     @State private var isLoading = false
     @State private var errorMessage: String?
 
+    // Available lists from SyncEngine
+    private var availableLists: [ReminderList] {
+        let lists = SyncEngine.shared.reminderLists
+        return lists.isEmpty ? [ReminderList.createDefault()] : lists
+    }
+
     private let graphQL = GraphQLClient.shared
     private var isEditing: Bool { editingReminder != nil }
+
+    private var selectedList: ReminderList? {
+        availableLists.first { $0.id == selectedListId }
+    }
 
     var body: some View {
         NavigationStack {
@@ -105,6 +118,29 @@ struct CreateReminderView: View {
                     .pickerStyle(.menu)
                 }
 
+                // List section
+                Section("List") {
+                    Button {
+                        showListPicker = true
+                    } label: {
+                        HStack {
+                            if let list = selectedList {
+                                Image(systemName: list.iconName.isEmpty ? "list.bullet" : list.iconName)
+                                    .foregroundStyle(list.color)
+                                Text(list.name)
+                                    .foregroundStyle(.primary)
+                            } else {
+                                Text("Select List")
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
                 if let errorMessage {
                     Section {
                         Text(errorMessage)
@@ -143,10 +179,24 @@ struct CreateReminderView: View {
                 RecurrencePickerView(rule: $recurrenceRule)
             }
             .sheet(isPresented: $showPremiumPaywall) {
-                PaywallView()
+                PremiumView()
+            }
+            .sheet(isPresented: $showListPicker) {
+                ListPickerSheet(
+                    lists: availableLists,
+                    selectedListId: $selectedListId
+                )
+                .presentationDetents([.medium])
             }
             .onAppear {
                 loadExistingReminder()
+                // Set preselected list if provided
+                if let preselectedListId {
+                    selectedListId = preselectedListId
+                } else if selectedListId == nil {
+                    // Default to first list
+                    selectedListId = availableLists.first?.id
+                }
             }
             .onChange(of: recurrenceEnabled) { _, newValue in
                 if newValue && recurrenceRule == nil {
@@ -167,6 +217,7 @@ struct CreateReminderView: View {
         priority = reminder.priority
         recurrenceEnabled = reminder.recurrenceRule != nil
         recurrenceRule = reminder.recurrenceRule
+        selectedListId = reminder.listId
     }
 
     private func colorForPriority(_ priority: JoltModels.Priority) -> Color {
@@ -207,7 +258,11 @@ struct CreateReminderView: View {
 
         Task {
             do {
+                // Use selected list ID or default list ID
+                let listIdToUse = selectedListId ?? availableLists.first(where: { $0.isDefault })?.id ?? availableLists.first?.id
+
                 let input = JoltAPI.CreateReminderInput(
+                    listId: listIdToUse.map { .some($0.uuidString.lowercased()) } ?? .null,
                     title: title,
                     notes: notes.isEmpty ? .null : .some(notes),
                     priority: .some(.init(graphQLPriority(from: priority))),
@@ -219,7 +274,7 @@ struct CreateReminderView: View {
                 )
 
                 let mutation = JoltAPI.CreateReminderMutation(input: input)
-                print("✨ CreateReminderView: Performing mutation...")
+                print("✨ CreateReminderView: Performing mutation with listId: \(listIdToUse?.uuidString ?? "nil")...")
                 let result = try await graphQL.perform(mutation: mutation)
                 print("✨ CreateReminderView: Mutation completed, reminder id: \(result.createReminder.id)")
 
@@ -261,6 +316,7 @@ struct CreateReminderView: View {
         Task {
             do {
                 let input = JoltAPI.UpdateReminderInput(
+                    listId: selectedListId.map { .some($0.uuidString.lowercased()) } ?? .null,
                     title: .some(title),
                     notes: notes.isEmpty ? .null : .some(notes),
                     priority: .some(.init(graphQLPriority(from: priority))),
@@ -272,7 +328,7 @@ struct CreateReminderView: View {
                 )
 
                 let mutation = JoltAPI.UpdateReminderMutation(
-                    id: reminder.id.uuidString,
+                    id: reminder.id.uuidString.lowercased(),
                     input: input
                 )
                 _ = try await graphQL.perform(mutation: mutation)
@@ -434,6 +490,56 @@ struct RecurrencePickerView: View {
             interval: interval,
             daysOfWeek: frequency == .weekly && !selectedDays.isEmpty ? Array(selectedDays).sorted() : nil
         )
+    }
+}
+
+// MARK: - List Picker Sheet
+
+struct ListPickerSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let lists: [ReminderList]
+    @Binding var selectedListId: UUID?
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(lists) { list in
+                    Button {
+                        Haptics.selection()
+                        selectedListId = list.id
+                        dismiss()
+                    } label: {
+                        HStack(spacing: Theme.Spacing.md) {
+                            Image(systemName: list.iconName.isEmpty ? "list.bullet" : list.iconName)
+                                .font(.title3)
+                                .foregroundStyle(list.color)
+                                .frame(width: 28, height: 28)
+                                .background(list.color.opacity(0.15))
+                                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+
+                            Text(list.name)
+                                .foregroundStyle(.primary)
+
+                            Spacer()
+
+                            if selectedListId == list.id {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Select List")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -1,0 +1,10 @@
+subscription ReminderListChanged {
+  reminderListChanged {
+    action
+    reminderListId
+    reminderList {
+      ...ReminderListFragment
+    }
+    timestamp
+  }
+}

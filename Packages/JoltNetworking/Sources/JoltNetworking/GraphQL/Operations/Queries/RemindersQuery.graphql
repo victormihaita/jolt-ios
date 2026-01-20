@@ -49,6 +49,7 @@ query Devices {
 
 fragment ReminderFragment on Reminder {
   id
+  listId
   title
   notes
   priority
@@ -68,6 +69,7 @@ fragment ReminderFragment on Reminder {
   completedAt
   snoozedUntil
   snoozeCount
+  tags
   localId
   version
   createdAt

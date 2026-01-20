@@ -12,17 +12,26 @@ public extension JoltAPI {
     }
 
     public init(
+      listId: GraphQLNullable<UUID> = nil,
       status: GraphQLNullable<GraphQLEnum<ReminderStatus>> = nil,
       fromDate: GraphQLNullable<DateTime> = nil,
       toDate: GraphQLNullable<DateTime> = nil,
-      priority: GraphQLNullable<GraphQLEnum<Priority>> = nil
+      priority: GraphQLNullable<GraphQLEnum<Priority>> = nil,
+      tags: GraphQLNullable<[String]> = nil
     ) {
       __data = InputDict([
+        "listId": listId,
         "status": status,
         "fromDate": fromDate,
         "toDate": toDate,
-        "priority": priority
+        "priority": priority,
+        "tags": tags
       ])
+    }
+
+    public var listId: GraphQLNullable<UUID> {
+      get { __data["listId"] }
+      set { __data["listId"] = newValue }
     }
 
     public var status: GraphQLNullable<GraphQLEnum<ReminderStatus>> {
@@ -43,6 +52,11 @@ public extension JoltAPI {
     public var priority: GraphQLNullable<GraphQLEnum<Priority>> {
       get { __data["priority"] }
       set { __data["priority"] = newValue }
+    }
+
+    public var tags: GraphQLNullable<[String]> {
+      get { __data["tags"] }
+      set { __data["tags"] = newValue }
     }
   }
 

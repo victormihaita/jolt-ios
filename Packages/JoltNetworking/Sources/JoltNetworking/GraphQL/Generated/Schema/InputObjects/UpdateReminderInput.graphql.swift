@@ -12,6 +12,7 @@ public extension JoltAPI {
     }
 
     public init(
+      listId: GraphQLNullable<UUID> = nil,
       title: GraphQLNullable<String> = nil,
       notes: GraphQLNullable<String> = nil,
       priority: GraphQLNullable<GraphQLEnum<Priority>> = nil,
@@ -19,9 +20,11 @@ public extension JoltAPI {
       allDay: GraphQLNullable<Bool> = nil,
       recurrenceRule: GraphQLNullable<RecurrenceRuleInput> = nil,
       recurrenceEnd: GraphQLNullable<DateTime> = nil,
-      status: GraphQLNullable<GraphQLEnum<ReminderStatus>> = nil
+      status: GraphQLNullable<GraphQLEnum<ReminderStatus>> = nil,
+      tags: GraphQLNullable<[String]> = nil
     ) {
       __data = InputDict([
+        "listId": listId,
         "title": title,
         "notes": notes,
         "priority": priority,
@@ -29,8 +32,14 @@ public extension JoltAPI {
         "allDay": allDay,
         "recurrenceRule": recurrenceRule,
         "recurrenceEnd": recurrenceEnd,
-        "status": status
+        "status": status,
+        "tags": tags
       ])
+    }
+
+    public var listId: GraphQLNullable<UUID> {
+      get { __data["listId"] }
+      set { __data["listId"] = newValue }
     }
 
     public var title: GraphQLNullable<String> {
@@ -71,6 +80,11 @@ public extension JoltAPI {
     public var status: GraphQLNullable<GraphQLEnum<ReminderStatus>> {
       get { __data["status"] }
       set { __data["status"] = newValue }
+    }
+
+    public var tags: GraphQLNullable<[String]> {
+      get { __data["tags"] }
+      set { __data["tags"] = newValue }
     }
   }
 

@@ -1,0 +1,23 @@
+query ReminderLists {
+  reminderLists {
+    ...ReminderListFragment
+  }
+}
+
+query ReminderList($id: UUID!) {
+  reminderList(id: $id) {
+    ...ReminderListFragment
+  }
+}
+
+fragment ReminderListFragment on ReminderList {
+  id
+  name
+  colorHex
+  iconName
+  sortOrder
+  isDefault
+  reminderCount
+  createdAt
+  updatedAt
+}

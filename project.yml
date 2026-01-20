@@ -109,6 +109,7 @@ targets:
         INFOPLIST_FILE: Jolt/Widget/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.jolt.reminders.widget
         CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: Jolt/Widget/JoltWidget.entitlements
         SKIP_INSTALL: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
     info:

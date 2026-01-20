@@ -19,10 +19,15 @@ public final class SyncEngine: ObservableObject {
     @Published public private(set) var reminders: [Reminder] = []
     @Published public private(set) var currentUser: User?
 
+    /// Published reminder lists from the GraphQL cache - source of truth
+    @Published public private(set) var reminderLists: [ReminderList] = []
+
     // Watchers
     private var remindersWatcher: GraphQLWatcher?
     private var userWatcher: GraphQLWatcher?
+    private var listsWatcher: GraphQLWatcher?
     private var subscriptionCancellable: Apollo.Cancellable?
+    private var listSubscriptionCancellable: Apollo.Cancellable?
 
     // Refetch listener
     private var refetchCancellable: AnyCancellable?
@@ -32,6 +37,9 @@ public final class SyncEngine: ObservableObject {
     public var onReminderCreated: ((Reminder) -> Void)?
     public var onReminderUpdated: ((Reminder) -> Void)?
     public var onReminderDeleted: ((UUID) -> Void)?
+
+    /// Callback for when lists change
+    public var onListsChanged: (([ReminderList]) -> Void)?
 
     private init() {
         setupRefetchListener()
@@ -85,11 +93,14 @@ public final class SyncEngine: ObservableObject {
         // Cancel watchers
         remindersWatcher?.cancel()
         userWatcher?.cancel()
+        listsWatcher?.cancel()
         remindersWatcher = nil
         userWatcher = nil
+        listsWatcher = nil
 
-        // Cancel subscription
+        // Cancel subscriptions
         subscriptionCancellable = nil
+        listSubscriptionCancellable = nil
 
         // Disconnect WebSocket
         GraphQLClient.shared.disconnect()
@@ -102,6 +113,7 @@ public final class SyncEngine: ObservableObject {
     private func setupWatchers() {
         setupRemindersWatcher()
         setupUserWatcher()
+        setupListsWatcher()
     }
 
     private func setupRemindersWatcher() {
@@ -128,6 +140,7 @@ public final class SyncEngine: ObservableObject {
                     self.reminders = reminders
                     self.onRemindersChanged?(reminders)
                     self.lastSyncAt = Date()
+                    self.updateWidgetData()
                 }
                 JoltLogger.info("Reminders watcher received \(reminders.count) reminders", category: .sync)
 
@@ -159,6 +172,36 @@ public final class SyncEngine: ObservableObject {
 
             case .failure(let error):
                 JoltLogger.error("User watcher error: \(error)", category: .sync)
+            }
+        }
+    }
+
+    private func setupListsWatcher() {
+        JoltLogger.debug("Setting up lists watcher", category: .sync)
+        print("📋 Setting up lists watcher")
+
+        // Cancel existing watcher if any
+        listsWatcher?.cancel()
+
+        let query = JoltAPI.ReminderListsQuery()
+
+        listsWatcher = GraphQLClient.shared.watch(query: query) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let data):
+                print("📋 Lists watcher received data, lists: \(data.reminderLists.count)")
+                let lists = self.convertReminderLists(from: data)
+                DispatchQueue.main.async {
+                    print("📋 Updating reminderLists array with \(lists.count) items")
+                    self.reminderLists = lists
+                    self.onListsChanged?(lists)
+                }
+                JoltLogger.info("Lists watcher received \(lists.count) lists", category: .sync)
+
+            case .failure(let error):
+                print("📋 Lists watcher error: \(error)")
+                JoltLogger.error("Lists watcher error: \(error)", category: .sync)
             }
         }
     }
@@ -199,6 +242,8 @@ public final class SyncEngine: ObservableObject {
             }
             // Refetch to update the watcher's cache
             remindersWatcher?.refetch()
+            // Also refetch lists to update reminder counts
+            listsWatcher?.refetch()
 
         case .some(.updated):
             guard let reminderData = event.reminder else {
@@ -211,6 +256,8 @@ public final class SyncEngine: ObservableObject {
             }
             // Refetch to update the watcher's cache
             remindersWatcher?.refetch()
+            // Also refetch lists to update reminder counts (in case list changed)
+            listsWatcher?.refetch()
 
         case .some(.deleted):
             guard let uuid = UUID(uuidString: reminderId) else {
@@ -223,6 +270,8 @@ public final class SyncEngine: ObservableObject {
             // Evict from cache and refetch
             GraphQLClient.shared.evictCachedObject(for: reminderId)
             remindersWatcher?.refetch()
+            // Also refetch lists to update reminder counts
+            listsWatcher?.refetch()
 
         case .none:
             JoltLogger.warning("Unknown change action received", category: .sync)
@@ -255,6 +304,7 @@ public final class SyncEngine: ObservableObject {
                     self.reminders = reminders
                     self.onRemindersChanged?(reminders)
                     self.lastSyncAt = Date()
+                    self.updateWidgetData()
                 }
                 JoltLogger.info("Refetch completed with \(reminders.count) reminders", category: .sync)
             } catch {
@@ -276,6 +326,22 @@ public final class SyncEngine: ObservableObject {
 
     // MARK: - Data Conversion
 
+    private func convertReminderLists(from data: JoltAPI.ReminderListsQuery.Data) -> [ReminderList] {
+        data.reminderLists.map { listData -> ReminderList in
+            ReminderList(
+                id: UUID(uuidString: listData.id) ?? UUID(),
+                name: listData.name,
+                colorHex: listData.colorHex,
+                iconName: listData.iconName,
+                sortOrder: listData.sortOrder,
+                isDefault: listData.isDefault,
+                reminderCount: listData.reminderCount,
+                createdAt: listData.createdAt.toDate() ?? Date(),
+                updatedAt: listData.updatedAt.toDate() ?? Date()
+            )
+        }
+    }
+
     private func convertReminders(from data: JoltAPI.RemindersQuery.Data) -> [Reminder] {
         data.reminders.edges.map { edge -> Reminder in
             convertQueryReminder(edge.node)
@@ -289,6 +355,15 @@ public final class SyncEngine: ObservableObject {
         let status = convertStatus(data.status)
         let recurrenceRule = data.recurrenceRule.map { convertRecurrenceRule($0) }
 
+        // Parse listId from backend or use default if not set
+        let listId: UUID
+        if let listIdString = data.listId, let parsedListId = UUID(uuidString: listIdString) {
+            listId = parsedListId
+        } else {
+            // Fallback to default list (first list or hardcoded)
+            listId = reminderLists.first(where: { $0.isDefault })?.id ?? Self.defaultListId
+        }
+
         return Reminder(
             id: id,
             title: data.title,
@@ -305,9 +380,14 @@ public final class SyncEngine: ObservableObject {
             localId: data.localId,
             version: data.version,
             createdAt: data.createdAt.toDate() ?? Date(),
-            updatedAt: data.updatedAt.toDate() ?? Date()
+            updatedAt: data.updatedAt.toDate() ?? Date(),
+            listId: listId,
+            tags: data.tags
         )
     }
+
+    // Default list ID for reminders (used as fallback)
+    private static let defaultListId = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
 
     private func convertSubscriptionReminder(_ data: JoltAPI.ReminderChangedSubscription.Data.ReminderChanged.Reminder) -> Reminder {
         let id = UUID(uuidString: data.id) ?? UUID()
@@ -316,6 +396,14 @@ public final class SyncEngine: ObservableObject {
         let status = convertStatus(data.status)
         let recurrenceRule = data.recurrenceRule.map { convertSubscriptionRecurrenceRule($0) }
 
+        // Parse listId from backend or use default if not set
+        let listId: UUID
+        if let listIdString = data.listId, let parsedListId = UUID(uuidString: listIdString) {
+            listId = parsedListId
+        } else {
+            listId = reminderLists.first(where: { $0.isDefault })?.id ?? Self.defaultListId
+        }
+
         return Reminder(
             id: id,
             title: data.title,
@@ -332,7 +420,9 @@ public final class SyncEngine: ObservableObject {
             localId: data.localId,
             version: data.version,
             createdAt: data.createdAt.toDate() ?? Date(),
-            updatedAt: data.updatedAt.toDate() ?? Date()
+            updatedAt: data.updatedAt.toDate() ?? Date(),
+            listId: listId,
+            tags: data.tags
         )
     }
 
@@ -406,6 +496,121 @@ public final class SyncEngine: ObservableObject {
         }
     }
 
+    // MARK: - List Mutations
+
+    /// Creates a new reminder list
+    public func createList(name: String, colorHex: String?, iconName: String?) async throws -> ReminderList {
+        let input = JoltAPI.CreateReminderListInput(
+            name: name,
+            colorHex: colorHex.map { .some($0) } ?? .null,
+            iconName: iconName.map { .some($0) } ?? .null
+        )
+
+        let mutation = JoltAPI.CreateReminderListMutation(input: input)
+        let data = try await GraphQLClient.shared.perform(mutation: mutation)
+
+        let listData = data.createReminderList
+        let list = ReminderList(
+            id: UUID(uuidString: listData.id) ?? UUID(),
+            name: listData.name,
+            colorHex: listData.colorHex,
+            iconName: listData.iconName,
+            sortOrder: listData.sortOrder,
+            isDefault: listData.isDefault,
+            reminderCount: listData.reminderCount,
+            createdAt: listData.createdAt.toDate() ?? Date(),
+            updatedAt: listData.updatedAt.toDate() ?? Date()
+        )
+
+        // Fetch fresh data and update the published property directly
+        let query = JoltAPI.ReminderListsQuery()
+        let listsData = try await GraphQLClient.shared.fetch(query: query)
+        let lists = convertReminderLists(from: listsData)
+
+        await MainActor.run {
+            self.reminderLists = lists
+            self.onListsChanged?(lists)
+        }
+
+        return list
+    }
+
+    /// Deletes a reminder list (moves reminders to default list)
+    public func deleteList(id: UUID) async throws {
+        print("📋 SyncEngine.deleteList: Deleting list with id: \(id.uuidString.lowercased())")
+        let mutation = JoltAPI.DeleteReminderListMutation(id: id.uuidString.lowercased())
+        let result = try await GraphQLClient.shared.perform(mutation: mutation)
+        print("📋 SyncEngine.deleteList: Mutation result - deleteReminderList: \(result.deleteReminderList)")
+
+        // Fetch fresh data and update the published property directly
+        print("📋 SyncEngine.deleteList: Fetching fresh lists...")
+        let query = JoltAPI.ReminderListsQuery()
+        let data = try await GraphQLClient.shared.fetch(query: query)
+        let lists = convertReminderLists(from: data)
+
+        await MainActor.run {
+            print("📋 SyncEngine.deleteList: Updating reminderLists with \(lists.count) items")
+            self.reminderLists = lists
+            self.onListsChanged?(lists)
+        }
+    }
+
+    /// Updates a reminder list
+    public func updateList(id: UUID, name: String?, colorHex: String?, iconName: String?) async throws -> ReminderList {
+        let input = JoltAPI.UpdateReminderListInput(
+            name: name.map { .some($0) } ?? .null,
+            colorHex: colorHex.map { .some($0) } ?? .null,
+            iconName: iconName.map { .some($0) } ?? .null,
+            sortOrder: .null
+        )
+
+        let mutation = JoltAPI.UpdateReminderListMutation(id: id.uuidString.lowercased(), input: input)
+        let data = try await GraphQLClient.shared.perform(mutation: mutation)
+
+        let listData = data.updateReminderList
+        let list = ReminderList(
+            id: UUID(uuidString: listData.id) ?? UUID(),
+            name: listData.name,
+            colorHex: listData.colorHex,
+            iconName: listData.iconName,
+            sortOrder: listData.sortOrder,
+            isDefault: listData.isDefault,
+            reminderCount: listData.reminderCount,
+            createdAt: listData.createdAt.toDate() ?? Date(),
+            updatedAt: listData.updatedAt.toDate() ?? Date()
+        )
+
+        // Refetch lists to update the watcher
+        listsWatcher?.refetch()
+
+        return list
+    }
+
+    /// Reorders reminder lists
+    public func reorderLists(ids: [UUID]) async throws -> [ReminderList] {
+        let mutation = JoltAPI.ReorderReminderListsMutation(ids: ids.map { $0.uuidString.lowercased() })
+        let data = try await GraphQLClient.shared.perform(mutation: mutation)
+
+        let lists = data.reorderReminderLists.map { listData -> ReminderList in
+            ReminderList(
+                id: UUID(uuidString: listData.id) ?? UUID(),
+                name: listData.name,
+                colorHex: listData.colorHex,
+                iconName: listData.iconName,
+                sortOrder: listData.sortOrder,
+                isDefault: listData.isDefault,
+                reminderCount: listData.reminderCount,
+                createdAt: listData.createdAt.toDate() ?? Date(),
+                updatedAt: listData.updatedAt.toDate() ?? Date()
+            )
+        }
+
+        // Refetch lists to update the watcher
+        listsWatcher?.refetch()
+
+        return lists
+    }
+
     // MARK: - Cache Management
 
     /// Clear the GraphQL cache (useful for logout)
@@ -413,8 +618,20 @@ public final class SyncEngine: ObservableObject {
         GraphQLClient.shared.clearCache()
         DispatchQueue.main.async {
             self.reminders = []
+            self.reminderLists = []
             self.currentUser = nil
+            WidgetDataService.shared.clearWidgetData()
         }
+    }
+
+    // MARK: - Widget Data
+
+    /// Updates widget with current reminders data
+    private func updateWidgetData() {
+        print("🔄 SyncEngine.updateWidgetData called - reminders count: \(reminders.count)")
+        let widgetReminders = reminders.toWidgetReminders(limit: 50)
+        print("🔄 SyncEngine.updateWidgetData - widget reminders count: \(widgetReminders.count)")
+        WidgetDataService.shared.updateWidget(with: widgetReminders)
     }
 }
 

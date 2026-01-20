@@ -1,0 +1,27 @@
+mutation CreateReminderList($input: CreateReminderListInput!) {
+  createReminderList(input: $input) {
+    ...ReminderListFragment
+  }
+}
+
+mutation UpdateReminderList($id: UUID!, $input: UpdateReminderListInput!) {
+  updateReminderList(id: $id, input: $input) {
+    ...ReminderListFragment
+  }
+}
+
+mutation DeleteReminderList($id: UUID!) {
+  deleteReminderList(id: $id)
+}
+
+mutation ReorderReminderLists($ids: [UUID!]!) {
+  reorderReminderLists(ids: $ids) {
+    ...ReminderListFragment
+  }
+}
+
+mutation MoveReminderToList($reminderId: UUID!, $listId: UUID!) {
+  moveReminderToList(reminderId: $reminderId, listId: $listId) {
+    ...ReminderFragment
+  }
+}

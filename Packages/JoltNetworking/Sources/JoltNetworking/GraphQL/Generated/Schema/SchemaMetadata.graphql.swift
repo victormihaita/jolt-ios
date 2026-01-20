@@ -39,6 +39,8 @@ public extension JoltAPI {
       case "ReminderChangeEvent": return JoltAPI.Objects.ReminderChangeEvent
       case "ReminderConnection": return JoltAPI.Objects.ReminderConnection
       case "ReminderEdge": return JoltAPI.Objects.ReminderEdge
+      case "ReminderList": return JoltAPI.Objects.ReminderList
+      case "ReminderListChangeEvent": return JoltAPI.Objects.ReminderListChangeEvent
       case "Subscription": return JoltAPI.Objects.Subscription
       case "User": return JoltAPI.Objects.User
       default: return nil

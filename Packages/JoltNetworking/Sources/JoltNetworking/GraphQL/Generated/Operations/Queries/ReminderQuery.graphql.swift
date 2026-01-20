@@ -52,6 +52,7 @@ public extension JoltAPI {
         ] }
 
         public var id: JoltAPI.UUID { __data["id"] }
+        public var listId: JoltAPI.UUID? { __data["listId"] }
         public var title: String { __data["title"] }
         public var notes: String? { __data["notes"] }
         public var priority: GraphQLEnum<JoltAPI.Priority> { __data["priority"] }
@@ -63,6 +64,7 @@ public extension JoltAPI {
         public var completedAt: JoltAPI.DateTime? { __data["completedAt"] }
         public var snoozedUntil: JoltAPI.DateTime? { __data["snoozedUntil"] }
         public var snoozeCount: Int { __data["snoozeCount"] }
+        public var tags: [String] { __data["tags"] }
         public var localId: String? { __data["localId"] }
         public var version: Int { __data["version"] }
         public var createdAt: JoltAPI.DateTime { __data["createdAt"] }

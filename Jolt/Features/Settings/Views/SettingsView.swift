@@ -1,9 +1,12 @@
 import SwiftUI
+import RevenueCat
 
 struct SettingsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var settingsViewModel = SettingsViewModel()
+    @ObservedObject private var soundSettings = NotificationSoundSettings.shared
     @State private var showPremiumSheet = false
     @State private var showSoundPicker = false
     @State private var showSignOutConfirmation = false
@@ -100,52 +103,73 @@ struct SettingsView: View {
                 // Preferences Section
                 Section {
                     Button(action: { showSoundPicker = true }) {
-                        HStack {
-                            Label("Notification Sound", systemImage: "bell.badge")
-                            Spacer()
-                            Text("Gentle Chime")
-                                .foregroundStyle(.secondary)
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        SettingsRow(
+                            icon: "bell.badge",
+                            iconColor: .red,
+                            title: "Notification Sound",
+                            value: soundSettings.selectedSoundDisplayName,
+                            showChevron: true
+                        )
                     }
                     .foregroundColor(.primary)
 
                     NavigationLink {
                         AppearanceSettingsView()
                     } label: {
-                        Label("Appearance", systemImage: "paintbrush")
+                        SettingsRow(
+                            icon: "paintbrush",
+                            iconColor: .purple,
+                            title: "Appearance"
+                        )
                     }
 
-                    HStack {
-                        Label("Time Zone", systemImage: "globe")
-                        Spacer()
-                        Text("Auto")
-                            .foregroundStyle(.secondary)
-                    }
+                    SettingsRow(
+                        icon: "globe",
+                        iconColor: .blue,
+                        title: "Time Zone",
+                        value: timezoneDisplayText
+                    )
                 } header: {
                     Text("Preferences")
                 }
 
                 // Sync Section
                 Section {
-                    HStack {
-                        Label("Sync Status", systemImage: "icloud")
-                        Spacer()
-                        HStack(spacing: Theme.Spacing.xs) {
-                            Text("Up to date")
-                                .foregroundStyle(.secondary)
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
+                    Button(action: { settingsViewModel.triggerSync() }) {
+                        HStack {
+                            SettingsIconView(icon: "icloud", color: .blue)
+                            Text("Sync Status")
+                            Spacer()
+                            HStack(spacing: Theme.Spacing.xs) {
+                                if settingsViewModel.isSyncing {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Text(settingsViewModel.syncStatusText)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Image(systemName: settingsViewModel.syncStatusIcon)
+                                    .foregroundStyle(settingsViewModel.syncStatusColor)
+                            }
                         }
                     }
+                    .foregroundColor(.primary)
 
-                    HStack {
-                        Label("Devices", systemImage: "iphone")
-                        Spacer()
-                        Text("1 device")
-                            .foregroundStyle(.secondary)
+                    NavigationLink {
+                        DevicesListView()
+                    } label: {
+                        HStack {
+                            SettingsIconView(icon: "iphone", color: .gray)
+                            Text("Devices")
+                            Spacer()
+                            if settingsViewModel.isLoadingDevices {
+                                ProgressView()
+                                    .scaleEffect(0.7)
+                            } else {
+                                Text(settingsViewModel.devicesDisplayText)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                 } header: {
                     Text("Sync")
@@ -156,40 +180,52 @@ struct SettingsView: View {
                     NavigationLink {
                         AboutView()
                     } label: {
-                        Label("About Jolt", systemImage: "info.circle")
+                        SettingsRow(
+                            icon: "info.circle",
+                            iconColor: .gray,
+                            title: "About Jolt"
+                        )
                     }
 
                     Link(destination: URL(string: "https://jolt.app/help")!) {
-                        HStack {
-                            Label("Help & Support", systemImage: "questionmark.circle")
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        SettingsRow(
+                            icon: "questionmark.circle",
+                            iconColor: .green,
+                            title: "Help & Support",
+                            isExternalLink: true
+                        )
                     }
                     .foregroundColor(.primary)
 
                     Link(destination: URL(string: "https://jolt.app/privacy")!) {
-                        HStack {
-                            Label("Privacy Policy", systemImage: "hand.raised")
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        SettingsRow(
+                            icon: "hand.raised",
+                            iconColor: .blue,
+                            title: "Privacy Policy",
+                            isExternalLink: true
+                        )
                     }
                     .foregroundColor(.primary)
                 }
 
                 // Sign Out Section
                 Section {
-                    Button(role: .destructive, action: { showSignOutConfirmation = true }) {
+                    Button(action: { showSignOutConfirmation = true }) {
                         HStack {
-                            Spacer()
-                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                            SettingsIconView(icon: "rectangle.portrait.and.arrow.right", color: .red)
+                            Text("Sign Out")
+                                .foregroundStyle(.red)
                             Spacer()
                         }
+                    }
+                    .confirmationDialog("Sign Out", isPresented: $showSignOutConfirmation, titleVisibility: .visible) {
+                        Button("Sign Out", role: .destructive) {
+                            authViewModel.signOut()
+                            dismiss()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("Are you sure you want to sign out?")
                     }
                 }
             }
@@ -208,14 +244,70 @@ struct SettingsView: View {
             .sheet(isPresented: $showSoundPicker) {
                 NotificationSoundPickerView()
             }
-            .confirmationDialog("Sign Out", isPresented: $showSignOutConfirmation) {
-                Button("Sign Out", role: .destructive) {
-                    authViewModel.signOut()
-                    dismiss()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Are you sure you want to sign out?")
+            .task {
+                await settingsViewModel.fetchDevices()
+            }
+        }
+    }
+
+    // MARK: - Computed Properties
+
+    private var timezoneDisplayText: String {
+        guard let userTimezone = authViewModel.currentUser?.timezone else {
+            return "Auto"
+        }
+        if userTimezone == TimeZone.current.identifier {
+            return "Auto"
+        }
+        if let tz = TimeZone(identifier: userTimezone) {
+            return tz.abbreviation() ?? userTimezone
+        }
+        return userTimezone
+    }
+}
+
+// MARK: - Settings Row Components
+
+struct SettingsIconView: View {
+    let icon: String
+    let color: Color
+
+    var body: some View {
+        Image(systemName: icon)
+            .font(.body)
+            .foregroundStyle(.white)
+            .frame(width: 28, height: 28)
+            .background(color)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+}
+
+struct SettingsRow: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    var value: String? = nil
+    var showChevron: Bool = false
+    var isExternalLink: Bool = false
+
+    var body: some View {
+        HStack {
+            SettingsIconView(icon: icon, color: iconColor)
+            Text(title)
+            Spacer()
+            if let value {
+                Text(value)
+                    .foregroundStyle(.secondary)
+            }
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if isExternalLink {
+                Image(systemName: "arrow.up.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -285,53 +377,46 @@ struct AboutView: View {
 struct NotificationSoundPickerView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
-    @State private var selectedSound = "gentle_chime"
-
-    let freeSounds = [
-        ("gentle_chime", "Gentle Chime"),
-        ("bell_ding", "Bell Ding"),
-        ("soft_alert", "Soft Alert")
-    ]
-
-    let premiumSounds = [
-        ("crystal", "Crystal"),
-        ("zen_bowl", "Zen Bowl"),
-        ("nature_bird", "Nature Bird"),
-        ("piano_note", "Piano Note")
-    ]
+    @ObservedObject private var soundSettings = NotificationSoundSettings.shared
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(freeSounds, id: \.0) { sound in
+                    ForEach(NotificationSoundSettings.freeSounds, id: \.0) { sound in
                         SoundRow(
                             id: sound.0,
                             name: sound.1,
-                            isSelected: selectedSound == sound.0,
-                            isLocked: false
-                        ) {
-                            selectedSound = sound.0
-                            playSound(sound.0)
-                        }
+                            isSelected: soundSettings.selectedSound == sound.0,
+                            isLocked: false,
+                            onSelect: {
+                                _ = soundSettings.selectSound(sound.0, isPremium: subscriptionViewModel.isPremium)
+                            },
+                            onPreview: {
+                                soundSettings.playPreview(sound.0)
+                            }
+                        )
                     }
                 } header: {
                     Text("Free Sounds")
                 }
 
                 Section {
-                    ForEach(premiumSounds, id: \.0) { sound in
+                    ForEach(NotificationSoundSettings.premiumSounds, id: \.0) { sound in
                         SoundRow(
                             id: sound.0,
                             name: sound.1,
-                            isSelected: selectedSound == sound.0,
-                            isLocked: !subscriptionViewModel.isPremium
-                        ) {
-                            if subscriptionViewModel.isPremium {
-                                selectedSound = sound.0
-                                playSound(sound.0)
+                            isSelected: soundSettings.selectedSound == sound.0,
+                            isLocked: !subscriptionViewModel.isPremium,
+                            onSelect: {
+                                if soundSettings.selectSound(sound.0, isPremium: subscriptionViewModel.isPremium) {
+                                    soundSettings.playPreview(sound.0)
+                                }
+                            },
+                            onPreview: {
+                                soundSettings.playPreview(sound.0)
                             }
-                        }
+                        )
                     }
                 } header: {
                     HStack {
@@ -354,11 +439,6 @@ struct NotificationSoundPickerView: View {
             }
         }
     }
-
-    private func playSound(_ soundId: String) {
-        // TODO: Play sound preview
-        Haptics.light()
-    }
 }
 
 struct SoundRow: View {
@@ -366,10 +446,11 @@ struct SoundRow: View {
     let name: String
     let isSelected: Bool
     let isLocked: Bool
-    let action: () -> Void
+    let onSelect: () -> Void
+    let onPreview: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: onSelect) {
             HStack {
                 Text(name)
                     .foregroundColor(isLocked ? .secondary : .primary)
@@ -385,14 +466,12 @@ struct SoundRow: View {
                         .foregroundStyle(Color.accentColor)
                 }
 
-                Button(action: {
-                    // Play preview
-                    Haptics.light()
-                }) {
+                Button(action: onPreview) {
                     Image(systemName: "speaker.wave.2.fill")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                .buttonStyle(.plain)
             }
         }
         .disabled(isLocked)
@@ -404,7 +483,11 @@ struct SoundRow: View {
 struct PremiumView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
+    @ObservedObject private var revenueCat = RevenueCatService.shared
     @State private var selectedPlan = 1 // 0: Monthly, 1: Yearly, 2: Lifetime
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+    @State private var showSuccessAlert = false
 
     var body: some View {
         NavigationStack {
@@ -453,55 +536,110 @@ struct PremiumView: View {
                     Divider()
                         .padding(.horizontal, Theme.Spacing.lg)
 
-                    // Plans
+                    // Plans - Use actual prices from RevenueCat when available
                     VStack(spacing: Theme.Spacing.md) {
-                        PlanButton(
-                            title: "$19.99/year",
-                            subtitle: "Save 44%",
-                            badge: "BEST VALUE",
-                            isSelected: selectedPlan == 1
-                        ) {
-                            selectedPlan = 1
+                        if let annual = revenueCat.annualPackage {
+                            PlanButton(
+                                title: "\(annual.priceString)/year",
+                                subtitle: annual.savingsPercentage.map { "Save \($0)%" },
+                                badge: "BEST VALUE",
+                                isSelected: selectedPlan == 1
+                            ) {
+                                selectedPlan = 1
+                            }
+                        } else {
+                            PlanButton(
+                                title: "$19.99/year",
+                                subtitle: "Save 44%",
+                                badge: "BEST VALUE",
+                                isSelected: selectedPlan == 1
+                            ) {
+                                selectedPlan = 1
+                            }
                         }
 
-                        PlanButton(
-                            title: "$2.99/month",
-                            subtitle: nil,
-                            badge: nil,
-                            isSelected: selectedPlan == 0
-                        ) {
-                            selectedPlan = 0
+                        if let monthly = revenueCat.monthlyPackage {
+                            PlanButton(
+                                title: "\(monthly.priceString)/month",
+                                subtitle: nil,
+                                badge: nil,
+                                isSelected: selectedPlan == 0
+                            ) {
+                                selectedPlan = 0
+                            }
+                        } else {
+                            PlanButton(
+                                title: "$2.99/month",
+                                subtitle: nil,
+                                badge: nil,
+                                isSelected: selectedPlan == 0
+                            ) {
+                                selectedPlan = 0
+                            }
                         }
 
-                        PlanButton(
-                            title: "$49.99 lifetime",
-                            subtitle: "Pay once, use forever",
-                            badge: nil,
-                            isSelected: selectedPlan == 2
-                        ) {
-                            selectedPlan = 2
+                        if let lifetime = revenueCat.lifetimePackage {
+                            PlanButton(
+                                title: "\(lifetime.priceString) lifetime",
+                                subtitle: "Pay once, use forever",
+                                badge: nil,
+                                isSelected: selectedPlan == 2
+                            ) {
+                                selectedPlan = 2
+                            }
+                        } else {
+                            PlanButton(
+                                title: "$49.99 lifetime",
+                                subtitle: "Pay once, use forever",
+                                badge: nil,
+                                isSelected: selectedPlan == 2
+                            ) {
+                                selectedPlan = 2
+                            }
                         }
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
 
-                    // Subscribe Button
-                    Button(action: subscribe) {
-                        Text("Continue")
-                            .font(Theme.Typography.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, Theme.Spacing.md)
-                            .background(Color.accentColor)
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                    // Error message
+                    if let error = errorMessage {
+                        Text(error)
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.red)
+                            .padding(.horizontal, Theme.Spacing.lg)
                     }
+
+                    // Subscribe Button with loading state
+                    Button(action: subscribe) {
+                        HStack {
+                            if isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            } else {
+                                Text("Continue")
+                            }
+                        }
+                        .font(Theme.Typography.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, Theme.Spacing.md)
+                        .background(isLoading ? Color.gray : Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+                    }
+                    .disabled(isLoading || selectedPackage == nil)
                     .padding(.horizontal, Theme.Spacing.lg)
 
                     // Restore Purchases
                     Button(action: restorePurchases) {
-                        Text("Restore Purchases")
-                            .font(Theme.Typography.subheadline)
-                            .foregroundStyle(.secondary)
+                        if revenueCat.isLoading {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Text("Restore Purchases")
+                                .font(Theme.Typography.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                    .disabled(revenueCat.isLoading || isLoading)
 
                     Spacer(minLength: Theme.Spacing.xl)
                 }
@@ -516,17 +654,64 @@ struct PremiumView: View {
                     }
                 }
             }
+            .task {
+                await revenueCat.fetchOfferings()
+            }
+            .alert("Welcome to Premium!", isPresented: $showSuccessAlert) {
+                Button("OK") { dismiss() }
+            } message: {
+                Text("Thank you for upgrading. Enjoy all premium features!")
+            }
+        }
+    }
+
+    private var selectedPackage: Package? {
+        switch selectedPlan {
+        case 0: return revenueCat.monthlyPackage
+        case 1: return revenueCat.annualPackage
+        case 2: return revenueCat.lifetimePackage
+        default: return nil
         }
     }
 
     private func subscribe() {
+        guard let package = selectedPackage else { return }
+
         Haptics.medium()
-        // TODO: Implement RevenueCat subscription
+        isLoading = true
+        errorMessage = nil
+
+        Task {
+            let success = await revenueCat.purchase(package)
+            isLoading = false
+
+            if success {
+                Haptics.success()
+                showSuccessAlert = true
+            } else if let error = revenueCat.errorMessage {
+                errorMessage = error
+                Haptics.error()
+            }
+        }
     }
 
     private func restorePurchases() {
         Haptics.light()
-        // TODO: Implement restore purchases
+        errorMessage = nil
+
+        Task {
+            let restored = await revenueCat.restorePurchases()
+
+            if restored {
+                Haptics.success()
+                showSuccessAlert = true
+            } else if revenueCat.errorMessage == nil {
+                errorMessage = "No previous purchases found"
+            } else {
+                errorMessage = revenueCat.errorMessage
+                Haptics.error()
+            }
+        }
     }
 }
 

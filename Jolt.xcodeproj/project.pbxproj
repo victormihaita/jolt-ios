@@ -10,16 +10,23 @@
 		03AAEE5ADA6CBC5D70C5917C /* JoltKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = D536C1D917B67A5D2C2E1023 /* JoltKeychain */; };
 		0D3343D1CF510BF3394DA2AD /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FB7867EFDCE4CFE5DB6688 /* WelcomeView.swift */; };
 		1387CD456B40FBDA125C87F4 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410B3E0A9F15E4D81B46B966 /* KeychainService.swift */; };
+		193F0D4CBAFF08EF6D10A904 /* ListsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA98B31048AAA29DBD1AD6B /* ListsSection.swift */; };
 		203915F76791B56CB8C7E7E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0232C48F60D200C091743DA2 /* SettingsView.swift */; };
+		241E56F7AA8AC99079503F15 /* DevicesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC331FB1943D4566949AFD3 /* DevicesListView.swift */; };
 		250E3D21BD687AAE8CAFDAB4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 498C8298F4CB595F2A59F638 /* SwiftUI.framework */; };
 		25CA23F5915238ABE5AA198A /* JoltProducts.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 9EA8A7446EA045F84EF6A97E /* JoltProducts.storekit */; };
 		29F10728139A0F3DF985519E /* JoltNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = D79C1E788654AD882C531537 /* JoltNotifications */; };
 		2DAA9ED3F240F044B3E29860 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DF8E2BCBC304287FC5FF0D /* Theme.swift */; };
 		3235AC036EA1B430D8192C00 /* ReminderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F71E0757279FF9FE536BFC /* ReminderDetailViewModel.swift */; };
 		3BC14814CBE291A42466CA7A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AFB48EE9F75E0E08EF9E0A40 /* GoogleSignIn */; };
+		44857DA5D4EB8E022AAEC1FB /* NotificationSoundSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43111F05CC88BA7E9F7CAAA6 /* NotificationSoundSettings.swift */; };
 		49FE1CFF21190BAEDA787B99 /* JoltModels in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6FA5D5442912EC967F019D /* JoltModels */; };
+		4E1C377B7F0C65A30E91BE90 /* NewHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A245B15E49C1807B35E8CE92 /* NewHomeView.swift */; };
+		4EA919C5B9259C9F59D7DAA8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B82EFF004BB8A819C6E84F4 /* SettingsViewModel.swift */; };
 		5076518045C97E9B3CF90B72 /* JoltCore in Frameworks */ = {isa = PBXBuildFile; productRef = FCC2ACDF982AA2056AFDE690 /* JoltCore */; };
 		5DAC1881367E2AEAD37BE800 /* JoltSubscriptions in Frameworks */ = {isa = PBXBuildFile; productRef = 78ABEC7C418E754145D4AA8C /* JoltSubscriptions */; };
+		63BBBAA0CDF288356E7849B2 /* NaturalLanguageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990DC91103B4B1721A4FDB3E /* NaturalLanguageParser.swift */; };
+		63CB99E8BE0DE52FF5EA8514 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2341493F1BBE98D5547D13B /* HomeViewModel.swift */; };
 		64A0AB7C9801DFBE57F8E98D /* JoltWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EA3D8A75A49C37F2AA407E9C /* JoltWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6A31026EF509F541F807CC0A /* JoltApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25683463C7FEFDE94B25D3C /* JoltApp.swift */; };
 		7891E11E8D0C8C66731ABFAF /* CreateReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C03049EC5DF08523798871 /* CreateReminderView.swift */; };
@@ -29,17 +36,23 @@
 		8AFB2F0D3011C144FE3B3AA9 /* JoltNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = 99FD2448246E5AC7B56DCC28 /* JoltNetworking */; };
 		8BB734AB3CF2A4A134C571DF /* JoltDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D3BD731C6B3798B4D1E0F2B7 /* JoltDesignSystem */; };
 		9226C41F96F81BB1E3D34977 /* JoltWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4BA10004F38A91D6BE9596 /* JoltWidget.swift */; };
+		987BF0A8D39B6B8140D31393 /* SmartFilterCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A4AE8B526D1702B57DFD4E /* SmartFilterCard.swift */; };
 		A223E3A62826A8D316F11551 /* GoogleAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD15243222D793CD943082A /* GoogleAuthService.swift */; };
 		A3D1A49AD75CCD192B5F9BC7 /* JoltModels in Frameworks */ = {isa = PBXBuildFile; productRef = 251B2EACE3A89C9DD96DE845 /* JoltModels */; };
 		B548D9C0671ACC75D9777C63 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 78300FC5479C5C5B21B16B78 /* GoogleSignInSwift */; };
 		B8F732286122F643549CBC4A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5D7C413BFE81CA4B6D4C852 /* Assets.xcassets */; };
+		BDFA1C67AC5D04A722AC2CD5 /* CreateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FBAA9BAE2A2B4A35C9EE54 /* CreateListView.swift */; };
 		C512074781C7E298BDD45307 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48DC5E8D9D5E469BB1CEF6EC /* NotificationService.swift */; };
 		CBBBEC3A5040EBD8FBFC4090 /* RevenueCatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9221CB5F6A097A7C409E252 /* RevenueCatService.swift */; };
+		CDBBC7CC325968AAD46681B3 /* SmartFiltersGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A65FB57A65C24912AF1B460 /* SmartFiltersGrid.swift */; };
 		D390663D0D474B0FDFEACCED /* JoltCore in Frameworks */ = {isa = PBXBuildFile; productRef = 00E8F3CDBAE33FB465994995 /* JoltCore */; };
+		D6F05C675FB6CEDACC511414 /* ListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA6BE9BA32C9252DD0BF9FE /* ListDetailView.swift */; };
 		E0A98ED3FA7CC6951F2BC558 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3275FD195ED13455F197DA /* PaywallView.swift */; };
 		E6D81F4DFA97F7DC4A5F176C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67ED857ECF90DEC8E315732A /* WidgetKit.framework */; };
+		EA0BD2AA7594DD60C88EEE36 /* FilteredRemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD404D5E727A4271358CDD44 /* FilteredRemindersView.swift */; };
 		F047C64217C2278D6E6978F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26F4B1EE99C839C2B822466D /* AppDelegate.swift */; };
 		F0A83151DF6F1DD50339C73E /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D698C96C27ED0A0728C1AD /* ReminderListView.swift */; };
+		F2A136708CD4CEC39EDDADB1 /* QuickCaptureBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B084C3F29BE9860B357D68 /* QuickCaptureBar.swift */; };
 		F80FE419739B425043C62E06 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9802344525C73A2C71F64 /* SubscriptionViewModel.swift */; };
 		F8AE46F3A4E40ED74B43424D /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E98BD590159E0CF6DDC3CE8 /* AuthViewModel.swift */; };
 		FF4B43C5EA2EAC36C4E179CA /* DeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89030C4B84E7083C01176AC /* DeviceService.swift */; };
@@ -80,22 +93,34 @@
 		36DF8E2BCBC304287FC5FF0D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		3A3275FD195ED13455F197DA /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		3A834A8997999578AFA0EC62 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3AA6BE9BA32C9252DD0BF9FE /* ListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailView.swift; sourceTree = "<group>"; };
 		410B3E0A9F15E4D81B46B966 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		42151F8CD847FF4F3B766584 /* JoltSubscriptions */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltSubscriptions; path = Packages/JoltSubscriptions; sourceTree = SOURCE_ROOT; };
+		43111F05CC88BA7E9F7CAAA6 /* NotificationSoundSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSoundSettings.swift; sourceTree = "<group>"; };
 		48DC5E8D9D5E469BB1CEF6EC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		4928198F0CD2C14FF53B3DBA /* ReminderListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListViewModel.swift; sourceTree = "<group>"; };
 		498C8298F4CB595F2A59F638 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		56E9C2B3E22795FFAD33AE0F /* JoltModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltModels; path = Packages/JoltModels; sourceTree = SOURCE_ROOT; };
+		57B084C3F29BE9860B357D68 /* QuickCaptureBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureBar.swift; sourceTree = "<group>"; };
 		624FCCCB602B7B10125F1E03 /* JoltKeychain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltKeychain; path = Packages/JoltKeychain; sourceTree = SOURCE_ROOT; };
 		6590884A927F53AC6EBFCC03 /* JoltSync */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltSync; path = Packages/JoltSync; sourceTree = SOURCE_ROOT; };
 		67ED857ECF90DEC8E315732A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		6B82EFF004BB8A819C6E84F4 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		7FC331FB1943D4566949AFD3 /* DevicesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesListView.swift; sourceTree = "<group>"; };
 		862EC1C817749DC887A12A31 /* JoltNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltNotifications; path = Packages/JoltNotifications; sourceTree = SOURCE_ROOT; };
+		8A65FB57A65C24912AF1B460 /* SmartFiltersGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFiltersGrid.swift; sourceTree = "<group>"; };
 		92434FCEF84070CAAD69EEB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		95FBAA9BAE2A2B4A35C9EE54 /* CreateListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListView.swift; sourceTree = "<group>"; };
+		990DC91103B4B1721A4FDB3E /* NaturalLanguageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageParser.swift; sourceTree = "<group>"; };
 		9EA8A7446EA045F84EF6A97E /* JoltProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = JoltProducts.storekit; sourceTree = "<group>"; };
 		A0F71E0757279FF9FE536BFC /* ReminderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailViewModel.swift; sourceTree = "<group>"; };
+		A245B15E49C1807B35E8CE92 /* NewHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHomeView.swift; sourceTree = "<group>"; };
+		A3CBC4FA4EBD37D5BFB8CDAC /* JoltWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JoltWidget.entitlements; sourceTree = "<group>"; };
 		B9221CB5F6A097A7C409E252 /* RevenueCatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatService.swift; sourceTree = "<group>"; };
 		B9FB7867EFDCE4CFE5DB6688 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		C2A4AE8B526D1702B57DFD4E /* SmartFilterCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFilterCard.swift; sourceTree = "<group>"; };
 		C5D7C413BFE81CA4B6D4C852 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CFA98B31048AAA29DBD1AD6B /* ListsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsSection.swift; sourceTree = "<group>"; };
 		D3E4D8C4B46FF55B781C6E0E /* JoltNetworking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltNetworking; path = Packages/JoltNetworking; sourceTree = SOURCE_ROOT; };
 		D89030C4B84E7083C01176AC /* DeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceService.swift; sourceTree = "<group>"; };
 		DA4BA10004F38A91D6BE9596 /* JoltWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoltWidget.swift; sourceTree = "<group>"; };
@@ -103,9 +128,11 @@
 		E25683463C7FEFDE94B25D3C /* JoltApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoltApp.swift; sourceTree = "<group>"; };
 		E9D698C96C27ED0A0728C1AD /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
 		EA3D8A75A49C37F2AA407E9C /* JoltWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JoltWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2341493F1BBE98D5547D13B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		F6C03049EC5DF08523798871 /* CreateReminderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateReminderView.swift; sourceTree = "<group>"; };
 		FBC77F534F191D65E49806A5 /* JoltDesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JoltDesignSystem; path = Packages/JoltDesignSystem; sourceTree = SOURCE_ROOT; };
 		FBD15243222D793CD943082A /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthService.swift; sourceTree = "<group>"; };
+		FD404D5E727A4271358CDD44 /* FilteredRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredRemindersView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +200,14 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
+		07195253DDBF8D8D582BAB97 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				F2341493F1BBE98D5547D13B /* HomeViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		112793ACC0A818B83D99DE1C /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -180,6 +215,24 @@
 				4928198F0CD2C14FF53B3DBA /* ReminderListViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		14774DE0EED1219465C48BFF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7E7148CD598A81FEF5E15F7C /* Components */,
+				A245B15E49C1807B35E8CE92 /* NewHomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1939694C00B44AE069532F9A /* Lists */ = {
+			isa = PBXGroup;
+			children = (
+				E22BFF31621FCD95C7BDD007 /* ViewModels */,
+				FC818E45D1B802E37ADF77F2 /* Views */,
+			);
+			path = Lists;
 			sourceTree = "<group>";
 		};
 		1E6F5E55E1CCB53EE1C8D15B /* Resources */ = {
@@ -194,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				F6C03049EC5DF08523798871 /* CreateReminderView.swift */,
+				FD404D5E727A4271358CDD44 /* FilteredRemindersView.swift */,
 				095002F6BC912205E81AD63F /* ReminderDetailView.swift */,
 				E9D698C96C27ED0A0728C1AD /* ReminderListView.swift */,
 			);
@@ -239,10 +293,28 @@
 			path = Jolt;
 			sourceTree = "<group>";
 		};
+		44BE0D61946AD66653AD5210 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				43111F05CC88BA7E9F7CAAA6 /* NotificationSoundSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4BC51FA68B30920B682154C6 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				07195253DDBF8D8D582BAB97 /* ViewModels */,
+				14774DE0EED1219465C48BFF /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		54D07C1725C894ED3AA03889 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
 				3A834A8997999578AFA0EC62 /* Info.plist */,
+				A3CBC4FA4EBD37D5BFB8CDAC /* JoltWidget.entitlements */,
 				DA4BA10004F38A91D6BE9596 /* JoltWidget.swift */,
 			);
 			name = Widget;
@@ -255,6 +327,7 @@
 				D89030C4B84E7083C01176AC /* DeviceService.swift */,
 				FBD15243222D793CD943082A /* GoogleAuthService.swift */,
 				410B3E0A9F15E4D81B46B966 /* KeychainService.swift */,
+				990DC91103B4B1721A4FDB3E /* NaturalLanguageParser.swift */,
 				48DC5E8D9D5E469BB1CEF6EC /* NotificationService.swift */,
 				B9221CB5F6A097A7C409E252 /* RevenueCatService.swift */,
 			);
@@ -286,6 +359,17 @@
 			path = Premium;
 			sourceTree = "<group>";
 		};
+		7E7148CD598A81FEF5E15F7C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				CFA98B31048AAA29DBD1AD6B /* ListsSection.swift */,
+				57B084C3F29BE9860B357D68 /* QuickCaptureBar.swift */,
+				C2A4AE8B526D1702B57DFD4E /* SmartFilterCard.swift */,
+				8A65FB57A65C24912AF1B460 /* SmartFiltersGrid.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		7FBBC6795DF56FE5B0A5DB8F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -307,6 +391,8 @@
 		86CDB0DB44EA32C2E0F98E04 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				44BE0D61946AD66653AD5210 /* Models */,
+				E6EA850FC0BAAF40F6E43078 /* ViewModels */,
 				A41507D8B05DE24DBB398366 /* Views */,
 			);
 			path = Settings;
@@ -316,6 +402,8 @@
 			isa = PBXGroup;
 			children = (
 				01966A3BC37BC3E7E968C572 /* Authentication */,
+				4BC51FA68B30920B682154C6 /* Home */,
+				1939694C00B44AE069532F9A /* Lists */,
 				7AD9FBF94221DF0CEAFDE037 /* Premium */,
 				85B433D0E6F327DB0B333A97 /* Reminders */,
 				86CDB0DB44EA32C2E0F98E04 /* Settings */,
@@ -326,6 +414,7 @@
 		A41507D8B05DE24DBB398366 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7FC331FB1943D4566949AFD3 /* DevicesListView.swift */,
 				0232C48F60D200C091743DA2 /* SettingsView.swift */,
 			);
 			path = Views;
@@ -358,6 +447,13 @@
 			path = Sync;
 			sourceTree = "<group>";
 		};
+		E22BFF31621FCD95C7BDD007 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		E3AB5339023CE4E9F410FB84 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,6 +461,14 @@
 				DA099B7A639DDEDE9B9FD3F4 /* Sync */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		E6EA850FC0BAAF40F6E43078 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6B82EFF004BB8A819C6E84F4 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		E9DFC223D6793D7D30EE4074 /* ViewModels */ = {
@@ -381,6 +485,15 @@
 				36DF8E2BCBC304287FC5FF0D /* Theme.swift */,
 			);
 			path = Design;
+			sourceTree = "<group>";
+		};
+		FC818E45D1B802E37ADF77F2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				95FBAA9BAE2A2B4A35C9EE54 /* CreateListView.swift */,
+				3AA6BE9BA32C9252DD0BF9FE /* ListDetailView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -511,19 +624,32 @@
 			files = (
 				F047C64217C2278D6E6978F7 /* AppDelegate.swift in Sources */,
 				F8AE46F3A4E40ED74B43424D /* AuthViewModel.swift in Sources */,
+				BDFA1C67AC5D04A722AC2CD5 /* CreateListView.swift in Sources */,
 				7891E11E8D0C8C66731ABFAF /* CreateReminderView.swift in Sources */,
 				FF4B43C5EA2EAC36C4E179CA /* DeviceService.swift in Sources */,
+				241E56F7AA8AC99079503F15 /* DevicesListView.swift in Sources */,
+				EA0BD2AA7594DD60C88EEE36 /* FilteredRemindersView.swift in Sources */,
 				A223E3A62826A8D316F11551 /* GoogleAuthService.swift in Sources */,
+				63CB99E8BE0DE52FF5EA8514 /* HomeViewModel.swift in Sources */,
 				6A31026EF509F541F807CC0A /* JoltApp.swift in Sources */,
 				1387CD456B40FBDA125C87F4 /* KeychainService.swift in Sources */,
+				D6F05C675FB6CEDACC511414 /* ListDetailView.swift in Sources */,
+				193F0D4CBAFF08EF6D10A904 /* ListsSection.swift in Sources */,
+				63BBBAA0CDF288356E7849B2 /* NaturalLanguageParser.swift in Sources */,
+				4E1C377B7F0C65A30E91BE90 /* NewHomeView.swift in Sources */,
 				C512074781C7E298BDD45307 /* NotificationService.swift in Sources */,
+				44857DA5D4EB8E022AAEC1FB /* NotificationSoundSettings.swift in Sources */,
 				E0A98ED3FA7CC6951F2BC558 /* PaywallView.swift in Sources */,
+				F2A136708CD4CEC39EDDADB1 /* QuickCaptureBar.swift in Sources */,
 				7DA27388FD60516A2393B256 /* ReminderDetailView.swift in Sources */,
 				3235AC036EA1B430D8192C00 /* ReminderDetailViewModel.swift in Sources */,
 				F0A83151DF6F1DD50339C73E /* ReminderListView.swift in Sources */,
 				85577FC328E0DCFC25B5FA14 /* ReminderListViewModel.swift in Sources */,
 				CBBBEC3A5040EBD8FBFC4090 /* RevenueCatService.swift in Sources */,
 				203915F76791B56CB8C7E7E1 /* SettingsView.swift in Sources */,
+				4EA919C5B9259C9F59D7DAA8 /* SettingsViewModel.swift in Sources */,
+				987BF0A8D39B6B8140D31393 /* SmartFilterCard.swift in Sources */,
+				CDBBC7CC325968AAD46681B3 /* SmartFiltersGrid.swift in Sources */,
 				F80FE419739B425043C62E06 /* SubscriptionViewModel.swift in Sources */,
 				2DAA9ED3F240F044B3E29860 /* Theme.swift in Sources */,
 				0D3343D1CF510BF3394DA2AD /* WelcomeView.swift in Sources */,
@@ -546,11 +672,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Jolt/Jolt.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TWMA228SBR;
 				INFOPLIST_FILE = Jolt/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -566,11 +693,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Jolt/Jolt.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TWMA228SBR;
 				INFOPLIST_FILE = Jolt/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -644,10 +772,11 @@
 		AE636BE608033F559C30CFB5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Jolt/Widget/JoltWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TWMA228SBR;
 				INFOPLIST_FILE = Jolt/Widget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -730,10 +859,11 @@
 		E1BF8186050AF559EA72FD65 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Jolt/Widget/JoltWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TWMA228SBR;
 				INFOPLIST_FILE = Jolt/Widget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

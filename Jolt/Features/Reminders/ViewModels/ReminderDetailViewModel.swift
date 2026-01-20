@@ -125,9 +125,13 @@ class ReminderDetailViewModel: ObservableObject {
             localId: data.localId,
             version: data.version,
             createdAt: data.createdAt.toDate() ?? Date(),
-            updatedAt: data.updatedAt.toDate() ?? Date()
+            updatedAt: data.updatedAt.toDate() ?? Date(),
+            listId: Self.defaultListId // TODO: Get from backend when list support is added
         )
     }
+
+    // Default list ID (matches SyncEngine)
+    private static let defaultListId = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
 
     private func convertPriority(_ priority: GraphQLEnum<JoltAPI.Priority>) -> JoltModels.Priority {
         switch priority.value {

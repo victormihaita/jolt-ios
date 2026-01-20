@@ -21,7 +21,7 @@ public enum JoltConstants {
     }
 
     public enum AppGroup {
-        public static let identifier = "group.app.jolt.reminders"
+        public static let identifier = "group.com.wiheads.victor.jolt"
     }
 
     public enum Notifications {
