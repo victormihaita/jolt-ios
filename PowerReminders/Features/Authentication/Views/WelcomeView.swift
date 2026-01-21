@@ -79,36 +79,42 @@ struct WelcomeView: View {
                 VStack(spacing: Theme.Spacing.md) {
                     Button(action: signInWithGoogle) {
                         HStack(spacing: Theme.Spacing.sm) {
-                            Image(systemName: "g.circle.fill")
-                                .font(.title2)
+                            if authViewModel.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "g.circle.fill")
+                                    .font(.title2)
+                            }
                             Text("Continue with Google")
                                 .font(Theme.Typography.headline)
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, Theme.Spacing.md)
-                        .background(Color.blue)
+                        .frame(height: 52)
+                        .background(authViewModel.isLoading ? Color.blue.opacity(0.7) : Color.blue)
                         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
                     }
                     .disabled(authViewModel.isLoading)
                     .opacity(isAnimating ? 1.0 : 0.0)
 
-                    if authViewModel.isLoading {
-                        ProgressView()
-                            .progressViewStyle(.circular)
+                    // Fixed height container for error message to prevent layout jumps
+                    Group {
+                        if let error = authViewModel.errorMessage {
+                            Text(error)
+                                .font(Theme.Typography.caption)
+                                .foregroundColor(Theme.Colors.error)
+                                .multilineTextAlignment(.center)
+                        }
                     }
+                    .frame(minHeight: 20)
 
-                    if let error = authViewModel.errorMessage {
-                        Text(error)
-                            .font(Theme.Typography.caption)
-                            .foregroundColor(Theme.Colors.error)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    Text("By continuing, you agree to our Terms of Service and Privacy Policy")
+                    Text("By continuing, you agree to our\nTerms of Service and Privacy Policy")
                         .font(Theme.Typography.caption)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                         .opacity(isAnimating ? 1.0 : 0.0)
                 }
                 .padding(.horizontal, Theme.Spacing.lg)

@@ -3,6 +3,7 @@ import PRModels
 import PRSync
 
 struct NewHomeView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = HomeViewModel()
     @ObservedObject private var syncEngine = SyncEngine.shared
 
@@ -39,6 +40,14 @@ struct NewHomeView: View {
         !searchText.isEmpty
     }
 
+    /// User's first name for greeting
+    private var userFirstName: String {
+        guard let displayName = authViewModel.currentUser?.displayName else {
+            return "there"
+        }
+        return displayName.components(separatedBy: " ").first ?? displayName
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -50,7 +59,8 @@ struct NewHomeView: View {
                     homeContentView
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("Hi, \(userFirstName)")
             .searchable(text: $searchText, prompt: "Search all reminders")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -289,4 +299,5 @@ extension SmartFilterType: Identifiable {
 
 #Preview {
     NewHomeView()
+        .environmentObject(AuthViewModel())
 }
