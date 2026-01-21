@@ -1,6 +1,6 @@
-name: Jolt
+name: PowerReminders
 options:
-  bundleIdPrefix: com.jolt
+  bundleIdPrefix: com.vm.power
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "16.0"
@@ -16,67 +16,66 @@ settings:
     DEVELOPMENT_TEAM: ""
 
 packages:
-  JoltCore:
-    path: Packages/JoltCore
-  JoltKeychain:
-    path: Packages/JoltKeychain
-  JoltModels:
-    path: Packages/JoltModels
-  JoltDesignSystem:
-    path: Packages/JoltDesignSystem
-  JoltNetworking:
-    path: Packages/JoltNetworking
-  JoltSync:
-    path: Packages/JoltSync
-  JoltNotifications:
-    path: Packages/JoltNotifications
-  JoltSubscriptions:
-    path: Packages/JoltSubscriptions
+  PRCore:
+    path: Packages/PRCore
+  PRKeychain:
+    path: Packages/PRKeychain
+  PRModels:
+    path: Packages/PRModels
+  PRDesignSystem:
+    path: Packages/PRDesignSystem
+  PRNetworking:
+    path: Packages/PRNetworking
+  PRSync:
+    path: Packages/PRSync
+  PRNotifications:
+    path: Packages/PRNotifications
+  PRSubscriptions:
+    path: Packages/PRSubscriptions
   GoogleSignIn:
     url: https://github.com/google/GoogleSignIn-iOS
     from: "7.0.0"
 
 targets:
-  Jolt:
+  PowerReminders:
     type: application
     platform: iOS
     sources:
-      - path: Jolt
+      - path: PowerReminders
         excludes:
           - "Widget/**"
     dependencies:
-      - package: JoltCore
-      - package: JoltKeychain
-      - package: JoltModels
-      - package: JoltDesignSystem
-      - package: JoltNetworking
-      - package: JoltSync
-      - package: JoltNotifications
-      - package: JoltSubscriptions
+      - package: PRCore
+      - package: PRKeychain
+      - package: PRModels
+      - package: PRDesignSystem
+      - package: PRNetworking
+      - package: PRSync
+      - package: PRNotifications
+      - package: PRSubscriptions
       - package: GoogleSignIn
         product: GoogleSignIn
       - package: GoogleSignIn
         product: GoogleSignInSwift
-      - target: JoltWidget
+      - target: PowerRemindersWidget
     settings:
       base:
-        INFOPLIST_FILE: Jolt/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.jolt.reminders
+        INFOPLIST_FILE: PowerReminders/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.vm.power.reminders
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     info:
-      path: Jolt/Info.plist
+      path: PowerReminders/Info.plist
       properties:
-        CFBundleDisplayName: Jolt
+        CFBundleDisplayName: Power Reminders
         CFBundleName: $(PRODUCT_NAME)
         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
         CFBundleExecutable: $(EXECUTABLE_NAME)
-        UILaunchScreen:
-          UIColorName: AccentColor
+        UILaunchStoryboardName: LaunchScreen
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
@@ -93,29 +92,29 @@ targets:
             CFBundleURLSchemes:
               - com.googleusercontent.apps.874217308291-580dfr043s14an56ts5rpu19pl409frf
 
-  JoltWidget:
+  PowerRemindersWidget:
     type: app-extension
     platform: iOS
     product: com.apple.product-type.app-extension
     sources:
-      - path: Jolt/Widget
+      - path: PowerReminders/Widget
     dependencies:
-      - package: JoltCore
-      - package: JoltModels
+      - package: PRCore
+      - package: PRModels
       - sdk: WidgetKit.framework
       - sdk: SwiftUI.framework
     settings:
       base:
-        INFOPLIST_FILE: Jolt/Widget/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.jolt.reminders.widget
+        INFOPLIST_FILE: PowerReminders/Widget/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.vm.power.reminders.widget
         CODE_SIGN_STYLE: Automatic
-        CODE_SIGN_ENTITLEMENTS: Jolt/Widget/JoltWidget.entitlements
+        CODE_SIGN_ENTITLEMENTS: PowerReminders/Widget/PowerRemindersWidget.entitlements
         SKIP_INSTALL: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
     info:
-      path: Jolt/Widget/Info.plist
+      path: PowerReminders/Widget/Info.plist
       properties:
-        CFBundleDisplayName: Jolt Widget
+        CFBundleDisplayName: Power Reminders Widget
         CFBundleName: $(PRODUCT_NAME)
         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
@@ -125,17 +124,17 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
 schemes:
-  Jolt:
+  PowerReminders:
     build:
       targets:
-        Jolt: all
-        JoltWidget: all
+        PowerReminders: all
+        PowerRemindersWidget: all
     run:
       config: Debug
-      storeKitConfiguration: Jolt/Configuration/JoltProducts.storekit
+      storeKitConfiguration: PowerReminders/Configuration/PRProducts.storekit
     test:
       config: Debug
-      storeKitConfiguration: Jolt/Configuration/JoltProducts.storekit
+      storeKitConfiguration: PowerReminders/Configuration/PRProducts.storekit
     profile:
       config: Release
     analyze:

@@ -1,0 +1,1048 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */; };
+		1168AF46FAAED3D9736888BC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3C02E69BB0B658D8F04731 /* NotificationService.swift */; };
+		1912ABEC033BFE0B8ED20E7A /* GoogleAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */; };
+		1C974AA84D28612FB12A1400 /* NaturalLanguageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7152C33DD586CC727F55F8 /* NaturalLanguageInputView.swift */; };
+		1F169AFE6A45CA1C1CF46C68 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F918149692F135910BD94AB /* AuthViewModel.swift */; };
+		24A512E9476BC5BF7876E039 /* QuickCaptureBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */; };
+		28A491F3F078E519C34900F7 /* CreateReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C0B18E79221FFC3C84E8C /* CreateReminderView.swift */; };
+		2F7150A775C1A696AAA251B8 /* PRProducts.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */; };
+		32C6C226ECCA2D7F6D139700 /* PRModels in Frameworks */ = {isa = PBXBuildFile; productRef = 8651F02EFD81B8DB58B4C8C1 /* PRModels */; };
+		331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */; };
+		34E656F61F8F20E7BBF3740F /* CreateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D9558E98C74EF9C0F6BFC7 /* CreateListView.swift */; };
+		37F18C1C3F219638A41476FC /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */; };
+		38B2B130EA89559020D66A85 /* ReminderDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9D61BEDFC61CED21A0E367 /* ReminderDetailViewModel.swift */; };
+		3CCABA0A4277B42E38E23215 /* PRWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D72B166E978E380B9365F3 /* PRWidget.swift */; };
+		535E60E504C0CE66C4E0784F /* PowerRemindersWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		540AD41D196F4AED38FC35CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC38D0E43EE21C58BEBA0 /* AppDelegate.swift */; };
+		5452CAE33F322034212FA7EA /* PRNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = 48A10F4BF1D0C5D337CC4BD5 /* PRNotifications */; };
+		55EE2DFA635E5DDFD2C5254A /* PRDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9AB612F1D99BBDF8234BB1CD /* PRDesignSystem */; };
+		56CA364C9B8ACEC3291D0F70 /* SmartFilterCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8C45B8934068CC2E246263 /* SmartFilterCard.swift */; };
+		57C0D0AA065D3AB88B2436B7 /* PRApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6301962F1A266B16BF273D9 /* PRApp.swift */; };
+		5BE5234A97124A2064E3FEB9 /* PRSubscriptions in Frameworks */ = {isa = PBXBuildFile; productRef = CB12FA8852FE6140F7B811FD /* PRSubscriptions */; };
+		5C6AB58EECFD2F588823877C /* PRCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3D4482ACD0BB84845CDCAEF1 /* PRCore */; };
+		61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FC6F4DE59E9442402A128E /* ListDetailView.swift */; };
+		6450B4040E99F4DE83448729 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CFF14A7552EAEE0020DC55 /* PaywallView.swift */; };
+		64FAC1E9CBA28001727D83EA /* NewHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B98C8088C6EE9075095F0EA /* NewHomeView.swift */; };
+		734A91CF24163DF80602691B /* ReminderListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E690D00B94870C180F005439 /* ReminderListViewModel.swift */; };
+		735B598E19F1A40DFCBEDEAB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D12A887A14AA5274CEC08A5 /* LaunchScreen.storyboard */; };
+		73A5725294FA22F5AA4FC275 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C27E773456BA6EEB61AA2F /* SettingsView.swift */; };
+		778D36E08CED8FDAC106DE34 /* RevenueCatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */; };
+		7ABDCBBCA5ABF84D59BBD904 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A91AF486732A1131B753BFD7 /* WidgetKit.framework */; };
+		7FA1FBA63EB3D97B45AC05CB /* NaturalLanguageInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6388118AE4069CBF03F0069 /* NaturalLanguageInputViewModel.swift */; };
+		83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B53F9E7984A441EB3F45A63 /* ListsSection.swift */; };
+		8600436F78E0ABD07195636A /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106E676F3DF7CC86AA3ECFCF /* SplashView.swift */; };
+		89507EB65597205462A98F17 /* PRCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD8A0B386B2FE5FA0297EC2B /* PRCore */; };
+		925900AE804AABDAC5622F03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */; };
+		A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */; };
+		A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58AC312793DB5E028CC8AED8 /* SmartFiltersGrid.swift */; };
+		B2283CA11FE13AC40FE2013C /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */; };
+		B7B02FD01CC3D5D75A4473F5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 758BF0B629E2D874148A8CE2 /* SwiftUI.framework */; };
+		B7FA309D02BB6311CD91A9C9 /* DevicesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCBAEAB04A3AE0B1EB21AC8 /* DevicesListView.swift */; };
+		BA70F5B457E0684AB13B3494 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1440C76CB571C37566369A26 /* KeychainService.swift */; };
+		BACBBF947A7DA1121ED27428 /* DeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40040A29924D279DDFB2C95 /* DeviceService.swift */; };
+		C279166103F4925306097D79 /* PRSync in Frameworks */ = {isa = PBXBuildFile; productRef = 573316C1E95064017A538EDA /* PRSync */; };
+		CADC5A683E02B6D92267325D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7271C32CF7900ADB8FB63A6 /* Theme.swift */; };
+		CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F889CCC53B4374754F327825 /* SubscriptionViewModel.swift */; };
+		D1C6142AD9D6E1E80A824A5A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8AC33D38566C966D8028B4F8 /* GoogleSignInSwift */; };
+		DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */; };
+		E0FF58DDEE9CB746360D6DC6 /* PRKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 29BC7BEF6903889AAE4CFA22 /* PRKeychain */; };
+		E3303256969D4785F44901EF /* FilteredRemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */; };
+		E3CBB6C58ECD41209614EB96 /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46234AE44C534E0C9DFD2216 /* ReminderDetailView.swift */; };
+		E7F5CDAA9F279FA88C47C403 /* PRNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = BE9D602AAE895DC6D03598BC /* PRNetworking */; };
+		E86CBDBE89246FC5F5BC64D9 /* PRModels in Frameworks */ = {isa = PBXBuildFile; productRef = 77A8FEAD05F42522E6F5B1A4 /* PRModels */; };
+		F0F8AC39C25900598206EB28 /* NotificationSoundSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA5EC6B0521645D6F4C6F25 /* NotificationSoundSettings.swift */; };
+		F964977D0448F336633F778F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = DBABC590EB03FDEA3F1726FE /* GoogleSignIn */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		62877EF3A408823A690F17E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 243B1A65EC6C86D40C6AF521 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 328D1AB774BAD479E0D7F7AD;
+			remoteInfo = PowerRemindersWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		943F1D8739FA9C0099F63FF7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				535E60E504C0CE66C4E0784F /* PowerRemindersWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
+		1001073F48C5B6D683AB7C86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1058DCFF0D357278C1DC3BBE /* PRModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRModels; path = Packages/PRModels; sourceTree = SOURCE_ROOT; };
+		106E676F3DF7CC86AA3ECFCF /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
+		138120992C6175B1602DD66B /* PRNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNotifications; path = Packages/PRNotifications; sourceTree = SOURCE_ROOT; };
+		1440C76CB571C37566369A26 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		16FC6F4DE59E9442402A128E /* ListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailView.swift; sourceTree = "<group>"; };
+		22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthService.swift; sourceTree = "<group>"; };
+		2A7152C33DD586CC727F55F8 /* NaturalLanguageInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageInputView.swift; sourceTree = "<group>"; };
+		2B8C45B8934068CC2E246263 /* SmartFilterCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFilterCard.swift; sourceTree = "<group>"; };
+		3499537F45904F873FF633FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3CCBAEAB04A3AE0B1EB21AC8 /* DevicesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesListView.swift; sourceTree = "<group>"; };
+		3E2AC38D0E43EE21C58BEBA0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		43D9558E98C74EF9C0F6BFC7 /* CreateListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListView.swift; sourceTree = "<group>"; };
+		447C0B18E79221FFC3C84E8C /* CreateReminderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateReminderView.swift; sourceTree = "<group>"; };
+		46234AE44C534E0C9DFD2216 /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
+		48CFF14A7552EAEE0020DC55 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatService.swift; sourceTree = "<group>"; };
+		57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		58AC312793DB5E028CC8AED8 /* SmartFiltersGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFiltersGrid.swift; sourceTree = "<group>"; };
+		5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureBar.swift; sourceTree = "<group>"; };
+		6532F69821AB59352C602FBD /* PowerReminders.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerReminders.entitlements; sourceTree = "<group>"; };
+		716084534FDA220381B66564 /* PRNetworking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNetworking; path = Packages/PRNetworking; sourceTree = SOURCE_ROOT; };
+		754DB5E356C4003ED3E3B7BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		758BF0B629E2D874148A8CE2 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		79B57FAE4DB489E13C356299 /* PRSubscriptions */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRSubscriptions; path = Packages/PRSubscriptions; sourceTree = SOURCE_ROOT; };
+		7B98C8088C6EE9075095F0EA /* NewHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHomeView.swift; sourceTree = "<group>"; };
+		7F918149692F135910BD94AB /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredRemindersView.swift; sourceTree = "<group>"; };
+		8B53F9E7984A441EB3F45A63 /* ListsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsSection.swift; sourceTree = "<group>"; };
+		9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = PRProducts.storekit; sourceTree = "<group>"; };
+		9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerRemindersWidget.entitlements; sourceTree = "<group>"; };
+		A4A543048D81C6ADCCA5D83C /* PRSync */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRSync; path = Packages/PRSync; sourceTree = SOURCE_ROOT; };
+		A8D72B166E978E380B9365F3 /* PRWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRWidget.swift; sourceTree = "<group>"; };
+		A91AF486732A1131B753BFD7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		B5DCAFBCC8694CA31E711197 /* PRKeychain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRKeychain; path = Packages/PRKeychain; sourceTree = SOURCE_ROOT; };
+		C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PowerRemindersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAFCCBF597C6BC9379C6F92A /* PRCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRCore; path = Packages/PRCore; sourceTree = SOURCE_ROOT; };
+		CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageParser.swift; sourceTree = "<group>"; };
+		CFA5EC6B0521645D6F4C6F25 /* NotificationSoundSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSoundSettings.swift; sourceTree = "<group>"; };
+		D8C27E773456BA6EEB61AA2F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		DEE63FD3B850950717E9A4B4 /* PowerReminders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PowerReminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6388118AE4069CBF03F0069 /* NaturalLanguageInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageInputViewModel.swift; sourceTree = "<group>"; };
+		E690D00B94870C180F005439 /* ReminderListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListViewModel.swift; sourceTree = "<group>"; };
+		E6AB7478FF01015189F21CCE /* PRDesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRDesignSystem; path = Packages/PRDesignSystem; sourceTree = SOURCE_ROOT; };
+		E7271C32CF7900ADB8FB63A6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F40040A29924D279DDFB2C95 /* DeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceService.swift; sourceTree = "<group>"; };
+		F6301962F1A266B16BF273D9 /* PRApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRApp.swift; sourceTree = "<group>"; };
+		F889CCC53B4374754F327825 /* SubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionViewModel.swift; sourceTree = "<group>"; };
+		FA9D61BEDFC61CED21A0E367 /* ReminderDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailViewModel.swift; sourceTree = "<group>"; };
+		FF3C02E69BB0B658D8F04731 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7548B4F84F4D803046BC3C90 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				89507EB65597205462A98F17 /* PRCore in Frameworks */,
+				32C6C226ECCA2D7F6D139700 /* PRModels in Frameworks */,
+				7ABDCBBCA5ABF84D59BBD904 /* WidgetKit.framework in Frameworks */,
+				B7B02FD01CC3D5D75A4473F5 /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F1E8CE4B40AAEAE09728CE7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C6AB58EECFD2F588823877C /* PRCore in Frameworks */,
+				E0FF58DDEE9CB746360D6DC6 /* PRKeychain in Frameworks */,
+				E86CBDBE89246FC5F5BC64D9 /* PRModels in Frameworks */,
+				55EE2DFA635E5DDFD2C5254A /* PRDesignSystem in Frameworks */,
+				E7F5CDAA9F279FA88C47C403 /* PRNetworking in Frameworks */,
+				C279166103F4925306097D79 /* PRSync in Frameworks */,
+				5452CAE33F322034212FA7EA /* PRNotifications in Frameworks */,
+				5BE5234A97124A2064E3FEB9 /* PRSubscriptions in Frameworks */,
+				F964977D0448F336633F778F /* GoogleSignIn in Frameworks */,
+				D1C6142AD9D6E1E80A824A5A /* GoogleSignInSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		048F205440A24E283640995E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				8B53F9E7984A441EB3F45A63 /* ListsSection.swift */,
+				5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */,
+				2B8C45B8934068CC2E246263 /* SmartFilterCard.swift */,
+				58AC312793DB5E028CC8AED8 /* SmartFiltersGrid.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		087B4E29E3806A0E1124AC3A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7F918149692F135910BD94AB /* AuthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0926ECA78DBB81F531D4E6D5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				F889CCC53B4374754F327825 /* SubscriptionViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0FAB848A4D97D358EC109879 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				14E47D6C63444DFE2E01270E /* Models */,
+				98AFA57A64412753AB14D0F8 /* ViewModels */,
+				2D328536FCC2A5C67A39CCA1 /* Views */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		1450E9AF724E5ABABC806FB4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				48CFF14A7552EAEE0020DC55 /* PaywallView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		14E47D6C63444DFE2E01270E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CFA5EC6B0521645D6F4C6F25 /* NotificationSoundSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1E36B3035973F0C5EBFA0C04 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		26D4AED2C1DB67690B9D2210 /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				106E676F3DF7CC86AA3ECFCF /* SplashView.swift */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		2D328536FCC2A5C67A39CCA1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3CCBAEAB04A3AE0B1EB21AC8 /* DevicesListView.swift */,
+				D8C27E773456BA6EEB61AA2F /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2E9F42D7C73CEB13440FA38D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				447C0B18E79221FFC3C84E8C /* CreateReminderView.swift */,
+				862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */,
+				46234AE44C534E0C9DFD2216 /* ReminderDetailView.swift */,
+				0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		350E80C021957317C06B6C4B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				048F205440A24E283640995E /* Components */,
+				2A7152C33DD586CC727F55F8 /* NaturalLanguageInputView.swift */,
+				7B98C8088C6EE9075095F0EA /* NewHomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		3C379F5F13B62B2A12DC6679 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				8AECE4E43732DDE3D534A1C5 /* ViewModels */,
+				350E80C021957317C06B6C4B /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		4FF6CE4A4B3E08D2E259B359 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */,
+				2D12A887A14AA5274CEC08A5 /* LaunchScreen.storyboard */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		603EC203B23C326C21331A7A /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				E7E46814C6D90DC2C115E6F9 /* Authentication */,
+				3C379F5F13B62B2A12DC6679 /* Home */,
+				B13D9312B967D16A4F042907 /* Lists */,
+				BA7E23B684BF8CA9148603AC /* Premium */,
+				AA18B0ADC3FCA5AF531EB54B /* Reminders */,
+				0FAB848A4D97D358EC109879 /* Settings */,
+				26D4AED2C1DB67690B9D2210 /* Splash */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		6D636BD026C26F321C595A99 /* PowerReminders */ = {
+			isa = PBXGroup;
+			children = (
+				F8D8276FE39A222C3AE496D8 /* App */,
+				EEC5D81AD910BA6A4E77C58E /* Configuration */,
+				79891C317BBF7F763728FE21 /* Data */,
+				F2A0612F5857B79F37848455 /* Design */,
+				603EC203B23C326C21331A7A /* Features */,
+				4FF6CE4A4B3E08D2E259B359 /* Resources */,
+				F1A653364DE5FA7268A3F56D /* Services */,
+				754DB5E356C4003ED3E3B7BD /* Info.plist */,
+				6532F69821AB59352C602FBD /* PowerReminders.entitlements */,
+			);
+			path = PowerReminders;
+			sourceTree = "<group>";
+		};
+		79891C317BBF7F763728FE21 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				ED958B73BC3CEFE33442C6F4 /* Network */,
+				D4D12FCE45FE08C833FC9F8E /* Sync */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		877504802D9C86A9B3C31D61 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				FA9D61BEDFC61CED21A0E367 /* ReminderDetailViewModel.swift */,
+				E690D00B94870C180F005439 /* ReminderListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8AECE4E43732DDE3D534A1C5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */,
+				E6388118AE4069CBF03F0069 /* NaturalLanguageInputViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		98AFA57A64412753AB14D0F8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA18B0ADC3FCA5AF531EB54B /* Reminders */ = {
+			isa = PBXGroup;
+			children = (
+				877504802D9C86A9B3C31D61 /* ViewModels */,
+				2E9F42D7C73CEB13440FA38D /* Views */,
+			);
+			path = Reminders;
+			sourceTree = "<group>";
+		};
+		B13D9312B967D16A4F042907 /* Lists */ = {
+			isa = PBXGroup;
+			children = (
+				1E36B3035973F0C5EBFA0C04 /* ViewModels */,
+				BA4E6A76F97AFBDE4D2101BF /* Views */,
+			);
+			path = Lists;
+			sourceTree = "<group>";
+		};
+		BA4E6A76F97AFBDE4D2101BF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				43D9558E98C74EF9C0F6BFC7 /* CreateListView.swift */,
+				16FC6F4DE59E9442402A128E /* ListDetailView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BA7E23B684BF8CA9148603AC /* Premium */ = {
+			isa = PBXGroup;
+			children = (
+				0926ECA78DBB81F531D4E6D5 /* ViewModels */,
+				1450E9AF724E5ABABC806FB4 /* Views */,
+			);
+			path = Premium;
+			sourceTree = "<group>";
+		};
+		C06A0614DE56A825A9CDE709 = {
+			isa = PBXGroup;
+			children = (
+				F339E4407E54FECBD34F4FF0 /* Packages */,
+				6D636BD026C26F321C595A99 /* PowerReminders */,
+				FA3693238F73F1C8EF8C2CC2 /* Widget */,
+				CFC99FEAA606023D253604F0 /* Frameworks */,
+				FC82EDAD9ACF908CF3362AE2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFC99FEAA606023D253604F0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				758BF0B629E2D874148A8CE2 /* SwiftUI.framework */,
+				A91AF486732A1131B753BFD7 /* WidgetKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D4D12FCE45FE08C833FC9F8E /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		E7E46814C6D90DC2C115E6F9 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				087B4E29E3806A0E1124AC3A /* ViewModels */,
+				EB31263EB1C0D891A4870CA0 /* Views */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		EB31263EB1C0D891A4870CA0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		ED958B73BC3CEFE33442C6F4 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		EEC5D81AD910BA6A4E77C58E /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		F1A653364DE5FA7268A3F56D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */,
+				F40040A29924D279DDFB2C95 /* DeviceService.swift */,
+				22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */,
+				1440C76CB571C37566369A26 /* KeychainService.swift */,
+				CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */,
+				FF3C02E69BB0B658D8F04731 /* NotificationService.swift */,
+				523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		F2A0612F5857B79F37848455 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				E7271C32CF7900ADB8FB63A6 /* Theme.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		F339E4407E54FECBD34F4FF0 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				CAFCCBF597C6BC9379C6F92A /* PRCore */,
+				E6AB7478FF01015189F21CCE /* PRDesignSystem */,
+				B5DCAFBCC8694CA31E711197 /* PRKeychain */,
+				1058DCFF0D357278C1DC3BBE /* PRModels */,
+				716084534FDA220381B66564 /* PRNetworking */,
+				138120992C6175B1602DD66B /* PRNotifications */,
+				79B57FAE4DB489E13C356299 /* PRSubscriptions */,
+				A4A543048D81C6ADCCA5D83C /* PRSync */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		F8D8276FE39A222C3AE496D8 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3E2AC38D0E43EE21C58BEBA0 /* AppDelegate.swift */,
+				F6301962F1A266B16BF273D9 /* PRApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		FA3693238F73F1C8EF8C2CC2 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				1001073F48C5B6D683AB7C86 /* Info.plist */,
+				9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */,
+				A8D72B166E978E380B9365F3 /* PRWidget.swift */,
+			);
+			name = Widget;
+			path = PowerReminders/Widget;
+			sourceTree = "<group>";
+		};
+		FC82EDAD9ACF908CF3362AE2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DEE63FD3B850950717E9A4B4 /* PowerReminders.app */,
+				C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		328D1AB774BAD479E0D7F7AD /* PowerRemindersWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7B4B059AEBBCCAFB6A30D23B /* Build configuration list for PBXNativeTarget "PowerRemindersWidget" */;
+			buildPhases = (
+				FFFF079478834B9913CC128C /* Sources */,
+				7548B4F84F4D803046BC3C90 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PowerRemindersWidget;
+			packageProductDependencies = (
+				BD8A0B386B2FE5FA0297EC2B /* PRCore */,
+				8651F02EFD81B8DB58B4C8C1 /* PRModels */,
+			);
+			productName = PowerRemindersWidget;
+			productReference = C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B713E113AA604BD01A3E6913 /* PowerReminders */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EF99E85D296177E4A61B4AFC /* Build configuration list for PBXNativeTarget "PowerReminders" */;
+			buildPhases = (
+				7F951662F08FEF9B06487F9D /* Sources */,
+				5E2D6540E04749CE28F7B259 /* Resources */,
+				8F1E8CE4B40AAEAE09728CE7 /* Frameworks */,
+				943F1D8739FA9C0099F63FF7 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0375331891D1368DDE01C855 /* PBXTargetDependency */,
+			);
+			name = PowerReminders;
+			packageProductDependencies = (
+				3D4482ACD0BB84845CDCAEF1 /* PRCore */,
+				29BC7BEF6903889AAE4CFA22 /* PRKeychain */,
+				77A8FEAD05F42522E6F5B1A4 /* PRModels */,
+				9AB612F1D99BBDF8234BB1CD /* PRDesignSystem */,
+				BE9D602AAE895DC6D03598BC /* PRNetworking */,
+				573316C1E95064017A538EDA /* PRSync */,
+				48A10F4BF1D0C5D337CC4BD5 /* PRNotifications */,
+				CB12FA8852FE6140F7B811FD /* PRSubscriptions */,
+				DBABC590EB03FDEA3F1726FE /* GoogleSignIn */,
+				8AC33D38566C966D8028B4F8 /* GoogleSignInSwift */,
+			);
+			productName = PowerReminders;
+			productReference = DEE63FD3B850950717E9A4B4 /* PowerReminders.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		243B1A65EC6C86D40C6AF521 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					328D1AB774BAD479E0D7F7AD = {
+						ProvisioningStyle = Automatic;
+					};
+					B713E113AA604BD01A3E6913 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 38A66D5C84906E241133A787 /* Build configuration list for PBXProject "PowerReminders" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C06A0614DE56A825A9CDE709;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B6168C6E04514B589714A0FA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				5FB17ADB3FE77173D2F68361 /* XCLocalSwiftPackageReference "Packages/PRCore" */,
+				277AE8AA577131A280CBB14A /* XCLocalSwiftPackageReference "Packages/PRDesignSystem" */,
+				EEFDFA80B961037185F101DF /* XCLocalSwiftPackageReference "Packages/PRKeychain" */,
+				E784BB74E9633C447411B125 /* XCLocalSwiftPackageReference "Packages/PRModels" */,
+				11B593FC89EDC4571A612E64 /* XCLocalSwiftPackageReference "Packages/PRNetworking" */,
+				CE7BB7DC59E5DDC3D0A05B99 /* XCLocalSwiftPackageReference "Packages/PRNotifications" */,
+				29527FC4EEA46122949EDF6E /* XCLocalSwiftPackageReference "Packages/PRSubscriptions" */,
+				C4ABA8A0BFE479757A3B0477 /* XCLocalSwiftPackageReference "Packages/PRSync" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B713E113AA604BD01A3E6913 /* PowerReminders */,
+				328D1AB774BAD479E0D7F7AD /* PowerRemindersWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5E2D6540E04749CE28F7B259 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				925900AE804AABDAC5622F03 /* Assets.xcassets in Resources */,
+				735B598E19F1A40DFCBEDEAB /* LaunchScreen.storyboard in Resources */,
+				2F7150A775C1A696AAA251B8 /* PRProducts.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7F951662F08FEF9B06487F9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */,
+				540AD41D196F4AED38FC35CB /* AppDelegate.swift in Sources */,
+				1F169AFE6A45CA1C1CF46C68 /* AuthViewModel.swift in Sources */,
+				34E656F61F8F20E7BBF3740F /* CreateListView.swift in Sources */,
+				28A491F3F078E519C34900F7 /* CreateReminderView.swift in Sources */,
+				BACBBF947A7DA1121ED27428 /* DeviceService.swift in Sources */,
+				B7FA309D02BB6311CD91A9C9 /* DevicesListView.swift in Sources */,
+				E3303256969D4785F44901EF /* FilteredRemindersView.swift in Sources */,
+				1912ABEC033BFE0B8ED20E7A /* GoogleAuthService.swift in Sources */,
+				A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */,
+				BA70F5B457E0684AB13B3494 /* KeychainService.swift in Sources */,
+				61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */,
+				83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */,
+				1C974AA84D28612FB12A1400 /* NaturalLanguageInputView.swift in Sources */,
+				7FA1FBA63EB3D97B45AC05CB /* NaturalLanguageInputViewModel.swift in Sources */,
+				10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */,
+				64FAC1E9CBA28001727D83EA /* NewHomeView.swift in Sources */,
+				1168AF46FAAED3D9736888BC /* NotificationService.swift in Sources */,
+				F0F8AC39C25900598206EB28 /* NotificationSoundSettings.swift in Sources */,
+				57C0D0AA065D3AB88B2436B7 /* PRApp.swift in Sources */,
+				6450B4040E99F4DE83448729 /* PaywallView.swift in Sources */,
+				24A512E9476BC5BF7876E039 /* QuickCaptureBar.swift in Sources */,
+				E3CBB6C58ECD41209614EB96 /* ReminderDetailView.swift in Sources */,
+				38B2B130EA89559020D66A85 /* ReminderDetailViewModel.swift in Sources */,
+				B2283CA11FE13AC40FE2013C /* ReminderListView.swift in Sources */,
+				734A91CF24163DF80602691B /* ReminderListViewModel.swift in Sources */,
+				778D36E08CED8FDAC106DE34 /* RevenueCatService.swift in Sources */,
+				73A5725294FA22F5AA4FC275 /* SettingsView.swift in Sources */,
+				37F18C1C3F219638A41476FC /* SettingsViewModel.swift in Sources */,
+				56CA364C9B8ACEC3291D0F70 /* SmartFilterCard.swift in Sources */,
+				A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */,
+				8600436F78E0ABD07195636A /* SplashView.swift in Sources */,
+				CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */,
+				CADC5A683E02B6D92267325D /* Theme.swift in Sources */,
+				331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FFFF079478834B9913CC128C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CCABA0A4277B42E38E23215 /* PRWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0375331891D1368DDE01C855 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 328D1AB774BAD479E0D7F7AD /* PowerRemindersWidget */;
+			targetProxy = 62877EF3A408823A690F17E3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		2D12A887A14AA5274CEC08A5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3499537F45904F873FF633FD /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3CA69BD7C34A53D53CD967A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5D59E69C66FEF506180DF97D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JL84E9GK95;
+				INFOPLIST_FILE = PowerReminders/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B37868F54490F27B0F33D7C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JL84E9GK95;
+				INFOPLIST_FILE = PowerReminders/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B6E58D3471EEC2801B0FEB45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PowerReminders/Widget/PowerRemindersWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JL84E9GK95;
+				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DD6F2B8EE27D9531CF700F88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F17FA83BEDC590A1D1DE21D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PowerReminders/Widget/PowerRemindersWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JL84E9GK95;
+				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		38A66D5C84906E241133A787 /* Build configuration list for PBXProject "PowerReminders" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD6F2B8EE27D9531CF700F88 /* Debug */,
+				3CA69BD7C34A53D53CD967A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7B4B059AEBBCCAFB6A30D23B /* Build configuration list for PBXNativeTarget "PowerRemindersWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F17FA83BEDC590A1D1DE21D7 /* Debug */,
+				B6E58D3471EEC2801B0FEB45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EF99E85D296177E4A61B4AFC /* Build configuration list for PBXNativeTarget "PowerReminders" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B37868F54490F27B0F33D7C9 /* Debug */,
+				5D59E69C66FEF506180DF97D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		11B593FC89EDC4571A612E64 /* XCLocalSwiftPackageReference "Packages/PRNetworking" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRNetworking;
+		};
+		277AE8AA577131A280CBB14A /* XCLocalSwiftPackageReference "Packages/PRDesignSystem" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRDesignSystem;
+		};
+		29527FC4EEA46122949EDF6E /* XCLocalSwiftPackageReference "Packages/PRSubscriptions" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRSubscriptions;
+		};
+		5FB17ADB3FE77173D2F68361 /* XCLocalSwiftPackageReference "Packages/PRCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRCore;
+		};
+		C4ABA8A0BFE479757A3B0477 /* XCLocalSwiftPackageReference "Packages/PRSync" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRSync;
+		};
+		CE7BB7DC59E5DDC3D0A05B99 /* XCLocalSwiftPackageReference "Packages/PRNotifications" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRNotifications;
+		};
+		E784BB74E9633C447411B125 /* XCLocalSwiftPackageReference "Packages/PRModels" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRModels;
+		};
+		EEFDFA80B961037185F101DF /* XCLocalSwiftPackageReference "Packages/PRKeychain" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PRKeychain;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B6168C6E04514B589714A0FA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		29BC7BEF6903889AAE4CFA22 /* PRKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRKeychain;
+		};
+		3D4482ACD0BB84845CDCAEF1 /* PRCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRCore;
+		};
+		48A10F4BF1D0C5D337CC4BD5 /* PRNotifications */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRNotifications;
+		};
+		573316C1E95064017A538EDA /* PRSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRSync;
+		};
+		77A8FEAD05F42522E6F5B1A4 /* PRModels */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRModels;
+		};
+		8651F02EFD81B8DB58B4C8C1 /* PRModels */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRModels;
+		};
+		8AC33D38566C966D8028B4F8 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6168C6E04514B589714A0FA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		9AB612F1D99BBDF8234BB1CD /* PRDesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRDesignSystem;
+		};
+		BD8A0B386B2FE5FA0297EC2B /* PRCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRCore;
+		};
+		BE9D602AAE895DC6D03598BC /* PRNetworking */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRNetworking;
+		};
+		CB12FA8852FE6140F7B811FD /* PRSubscriptions */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PRSubscriptions;
+		};
+		DBABC590EB03FDEA3F1726FE /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6168C6E04514B589714A0FA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 243B1A65EC6C86D40C6AF521 /* Project object */;
+}

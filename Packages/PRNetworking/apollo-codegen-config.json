@@ -1,0 +1,33 @@
+{
+  "schemaNamespace": "PRAPI",
+  "input": {
+    "operationSearchPaths": [
+      "./Sources/PRNetworking/GraphQL/Operations/**/*.graphql"
+    ],
+    "schemaSearchPaths": [
+      "./Sources/PRNetworking/GraphQL/schema.graphqls"
+    ]
+  },
+  "output": {
+    "testMocks": {
+      "none": {}
+    },
+    "schemaTypes": {
+      "path": "./Sources/PRNetworking/GraphQL/Generated",
+      "moduleType": {
+        "embeddedInTarget": {
+          "name": "PRNetworking",
+          "accessModifier": "public"
+        }
+      }
+    },
+    "operations": {
+      "inSchemaModule": {}
+    }
+  },
+  "options": {
+    "selectionSetInitializers": {
+      "localCacheMutations": true
+    }
+  }
+}
