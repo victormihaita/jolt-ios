@@ -1,21 +1,18 @@
 import SwiftUI
 import Combine
 import JoltModels
-import JoltNetworking
 import JoltSync
 
 @MainActor
 class HomeViewModel: ObservableObject {
     // MARK: - Published Properties
 
-    @Published var quickCaptureText = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
 
     // MARK: - Dependencies
 
     private let syncEngine = SyncEngine.shared
-    private let graphQL = GraphQLClient.shared
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Computed Properties
@@ -114,122 +111,5 @@ class HomeViewModel: ObservableObject {
         }
 
         isLoading = false
-    }
-
-    // MARK: - Quick Capture
-
-    func createReminderFromQuickCapture() async -> JoltModels.Reminder? {
-        guard !quickCaptureText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return nil
-        }
-
-        let parsed = NaturalLanguageParser.parse(quickCaptureText)
-        let defaultList = syncEngine.reminderLists.first { $0.isDefault } ?? ReminderList.createDefault()
-
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            // Determine due date
-            let (dueAt, allDay) = determineDueDate(from: parsed)
-
-            let input = JoltAPI.CreateReminderInput(
-                listId: .some(defaultList.id.uuidString.lowercased()),
-                title: parsed.title,
-                notes: .null,
-                priority: .some(.init(graphQLPriority(from: parsed.priority))),
-                dueAt: iso8601String(from: dueAt),
-                allDay: allDay,
-                recurrenceRule: parsed.recurrence != nil
-                    ? .some(graphQLRecurrenceRuleInput(from: parsed.recurrence!))
-                    : .null
-            )
-
-            let mutation = JoltAPI.CreateReminderMutation(input: input)
-            print("✨ QuickCapture: Creating reminder '\(parsed.title)'...")
-            let result = try await graphQL.perform(mutation: mutation)
-            print("✨ QuickCapture: Reminder created with id: \(result.createReminder.id)")
-
-            let reminder = JoltModels.Reminder(
-                id: UUID(uuidString: result.createReminder.id) ?? UUID(),
-                title: parsed.title,
-                notes: nil,
-                priority: parsed.priority,
-                dueAt: dueAt,
-                allDay: allDay,
-                recurrenceRule: parsed.recurrence,
-                recurrenceEnd: nil,
-                status: .active,
-                completedAt: nil,
-                snoozedUntil: nil,
-                snoozeCount: 0,
-                localId: nil,
-                version: 1,
-                createdAt: Date(),
-                updatedAt: Date(),
-                listId: defaultList.id,
-                tags: parsed.tags
-            )
-
-            isLoading = false
-            quickCaptureText = ""
-            return reminder
-
-        } catch {
-            print("❌ QuickCapture: Failed to create reminder: \(error)")
-            isLoading = false
-            errorMessage = "Failed to create reminder: \(error.localizedDescription)"
-            return nil
-        }
-    }
-
-    // MARK: - Helper Methods
-
-    private func determineDueDate(from parsed: ParsedReminder) -> (Date, Bool) {
-        if let dueDate = parsed.dueDate {
-            let calendar = Calendar.current
-            let components = calendar.dateComponents([.hour, .minute], from: dueDate)
-            let isMidnight = components.hour == 0 && components.minute == 0
-            return (dueDate, isMidnight)
-        } else {
-            let calendar = Calendar.current
-            let endOfDay = calendar.startOfDay(for: Date()).addingTimeInterval(24 * 60 * 60 - 1)
-            return (endOfDay, true)
-        }
-    }
-
-    private func iso8601String(from date: Date) -> String {
-        ISO8601DateFormatter().string(from: date)
-    }
-
-    private func graphQLPriority(from priority: JoltModels.Priority) -> JoltAPI.Priority {
-        switch priority {
-        case .none: return .none
-        case .low: return .low
-        case .normal: return .normal
-        case .high: return .high
-        }
-    }
-
-    private func graphQLFrequency(from frequency: JoltModels.Frequency) -> JoltAPI.Frequency {
-        switch frequency {
-        case .hourly: return .hourly
-        case .daily: return .daily
-        case .weekly: return .weekly
-        case .monthly: return .monthly
-        case .yearly: return .yearly
-        }
-    }
-
-    private func graphQLRecurrenceRuleInput(from rule: JoltModels.RecurrenceRule) -> JoltAPI.RecurrenceRuleInput {
-        JoltAPI.RecurrenceRuleInput(
-            frequency: .init(graphQLFrequency(from: rule.frequency)),
-            interval: rule.interval,
-            daysOfWeek: rule.daysOfWeek != nil ? .some(rule.daysOfWeek!) : .null,
-            dayOfMonth: rule.dayOfMonth != nil ? .some(rule.dayOfMonth!) : .null,
-            monthOfYear: rule.monthOfYear != nil ? .some(rule.monthOfYear!) : .null,
-            endAfterOccurrences: rule.endAfterOccurrences != nil ? .some(rule.endAfterOccurrences!) : .null,
-            endDate: rule.endDate != nil ? .some(iso8601String(from: rule.endDate!)) : .null
-        )
     }
 }
