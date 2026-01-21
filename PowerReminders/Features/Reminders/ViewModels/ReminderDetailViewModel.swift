@@ -2,10 +2,12 @@ import Foundation
 import SwiftUI
 import PRNetworking
 import PRModels
+import PRSync
 import Apollo
 
 /// ViewModel for the reminder detail view that watches a single reminder for changes.
 /// Uses Apollo GraphQL watcher to keep data in sync with the cache.
+/// Supports offline mode with optimistic updates.
 @MainActor
 class ReminderDetailViewModel: ObservableObject {
     @Published var reminder: PRModels.Reminder?
@@ -13,6 +15,7 @@ class ReminderDetailViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let graphQL = GraphQLClient.shared
+    private let syncEngine = SyncEngine.shared
     private var watcher: GraphQLWatcher?
     private let reminderId: UUID
 
@@ -56,15 +59,28 @@ class ReminderDetailViewModel: ObservableObject {
         watcher?.refetch()
     }
 
-    // MARK: - API Operations
+    // MARK: - API Operations (with offline support)
 
     func deleteReminder() async -> Bool {
         isLoading = true
         defer { isLoading = false }
 
+        let queuePayload = DeleteReminderPayload(id: reminderId.uuidString.lowercased())
+        let queuedMutation = QueuedMutation.deleteReminder(queuePayload)
+
         do {
-            let mutation = PRAPI.DeleteReminderMutation(id: reminderId.uuidString)
-            _ = try await graphQL.perform(mutation: mutation)
+            let mutation = PRAPI.DeleteReminderMutation(id: reminderId.uuidString.lowercased())
+            _ = try await graphQL.performWithOfflineSupport(
+                mutation: mutation,
+                queuedMutation: queuedMutation,
+                optimisticUpdate: { [weak self] in
+                    guard let self = self else { return }
+                    self.syncEngine.removeOptimisticReminder(id: self.reminderId)
+                }
+            )
+            return true
+        } catch let error as NetworkError where error.isOffline {
+            // Offline - optimistic update applied, mutation queued
             return true
         } catch {
             errorMessage = "Failed to delete reminder: \(error.localizedDescription)"
@@ -76,9 +92,25 @@ class ReminderDetailViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
+        let queuePayload = CompleteReminderPayload(id: reminderId.uuidString.lowercased())
+        let queuedMutation = QueuedMutation.completeReminder(queuePayload)
+
         do {
-            let mutation = PRAPI.CompleteReminderMutation(id: reminderId.uuidString)
-            _ = try await graphQL.perform(mutation: mutation)
+            let mutation = PRAPI.CompleteReminderMutation(id: reminderId.uuidString.lowercased())
+            _ = try await graphQL.performWithOfflineSupport(
+                mutation: mutation,
+                queuedMutation: queuedMutation,
+                optimisticUpdate: { [weak self] in
+                    guard let self = self, var updatedReminder = self.reminder else { return }
+                    updatedReminder.status = .completed
+                    updatedReminder.completedAt = Date()
+                    self.reminder = updatedReminder
+                    self.syncEngine.updateOptimisticReminder(updatedReminder)
+                }
+            )
+            return true
+        } catch let error as NetworkError where error.isOffline {
+            // Offline - optimistic update applied, mutation queued
             return true
         } catch {
             errorMessage = "Failed to complete reminder: \(error.localizedDescription)"
@@ -90,9 +122,26 @@ class ReminderDetailViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
+        let queuePayload = SnoozeReminderPayload(id: reminderId.uuidString.lowercased(), minutes: minutes)
+        let queuedMutation = QueuedMutation.snoozeReminder(queuePayload)
+
         do {
-            let mutation = PRAPI.SnoozeReminderMutation(id: reminderId.uuidString, minutes: minutes)
-            _ = try await graphQL.perform(mutation: mutation)
+            let mutation = PRAPI.SnoozeReminderMutation(id: reminderId.uuidString.lowercased(), minutes: minutes)
+            _ = try await graphQL.performWithOfflineSupport(
+                mutation: mutation,
+                queuedMutation: queuedMutation,
+                optimisticUpdate: { [weak self] in
+                    guard let self = self, var updatedReminder = self.reminder else { return }
+                    updatedReminder.status = .snoozed
+                    updatedReminder.snoozedUntil = Date().addingTimeInterval(Double(minutes) * 60)
+                    updatedReminder.snoozeCount += 1
+                    self.reminder = updatedReminder
+                    self.syncEngine.updateOptimisticReminder(updatedReminder)
+                }
+            )
+            return true
+        } catch let error as NetworkError where error.isOffline {
+            // Offline - optimistic update applied, mutation queued
             return true
         } catch {
             errorMessage = "Failed to snooze reminder: \(error.localizedDescription)"

@@ -58,6 +58,7 @@ class NaturalLanguageInputViewModel: ObservableObject {
     // MARK: - Reminder Creation
 
     /// Creates a reminder from the current parsed input
+    /// Supports offline mode - will queue the mutation and return an optimistic reminder
     /// - Returns: The created Reminder if successful, nil otherwise
     func createReminder() async -> PRModels.Reminder? {
         guard let parsed = parsedReminder,
@@ -68,10 +69,35 @@ class NaturalLanguageInputViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        do {
-            // Determine due date - if no date parsed, use end of today with allDay = true
-            let (dueAt, allDay) = determineDueDate(from: parsed)
+        // Generate a local ID for optimistic updates
+        let localId = UUID()
 
+        // Determine due date - if no date parsed, use end of today with allDay = true
+        let (dueAt, allDay) = determineDueDate(from: parsed)
+
+        // Create optimistic reminder for immediate UI feedback
+        let optimisticReminder = PRModels.Reminder(
+            id: localId,
+            title: parsed.title,
+            notes: nil,
+            priority: parsed.priority,
+            dueAt: dueAt,
+            allDay: allDay,
+            recurrenceRule: parsed.recurrence,
+            recurrenceEnd: nil,
+            status: .active,
+            completedAt: nil,
+            snoozedUntil: nil,
+            snoozeCount: 0,
+            localId: localId.uuidString,
+            version: 0,
+            createdAt: Date(),
+            updatedAt: Date(),
+            listId: listId,
+            tags: parsed.tags
+        )
+
+        do {
             let input = PRAPI.CreateReminderInput(
                 listId: .some(listId.uuidString.lowercased()),
                 title: parsed.title,
@@ -81,38 +107,57 @@ class NaturalLanguageInputViewModel: ObservableObject {
                 allDay: allDay,
                 recurrenceRule: parsed.recurrence != nil
                     ? .some(graphQLRecurrenceRuleInput(from: parsed.recurrence!))
-                    : .null
+                    : .null,
+                localId: .some(localId.uuidString)
             )
+
+            // Build queued mutation payload for offline support
+            let queuePayload = CreateReminderPayload(
+                title: parsed.title,
+                notes: nil,
+                listId: listId.uuidString.lowercased(),
+                dueAt: iso8601String(from: dueAt),
+                allDay: allDay,
+                priority: graphQLPriority(from: parsed.priority).rawValue,
+                localId: localId.uuidString,
+                recurrenceRule: parsed.recurrence.map { rule in
+                    RecurrenceRulePayload(
+                        frequency: graphQLFrequency(from: rule.frequency).rawValue,
+                        interval: rule.interval,
+                        daysOfWeek: rule.daysOfWeek,
+                        dayOfMonth: rule.dayOfMonth,
+                        monthOfYear: rule.monthOfYear,
+                        endAfterOccurrences: rule.endAfterOccurrences,
+                        endDate: rule.endDate.map { iso8601String(from: $0) }
+                    )
+                },
+                recurrenceEnd: nil,
+                tags: parsed.tags.isEmpty ? nil : parsed.tags
+            )
+            let queuedMutation = QueuedMutation.createReminder(queuePayload)
 
             let mutation = PRAPI.CreateReminderMutation(input: input)
             print("✨ NaturalLanguageInput: Creating reminder '\(parsed.title)' in list \(listId)...")
-            let result = try await graphQL.perform(mutation: mutation)
-            print("✨ NaturalLanguageInput: Reminder created with id: \(result.createReminder.id)")
 
-            // Create a local Reminder object to return
-            let reminder = PRModels.Reminder(
-                id: UUID(uuidString: result.createReminder.id) ?? UUID(),
-                title: parsed.title,
-                notes: nil,
-                priority: parsed.priority,
-                dueAt: dueAt,
-                allDay: allDay,
-                recurrenceRule: parsed.recurrence,
-                recurrenceEnd: nil,
-                status: .active,
-                completedAt: nil,
-                snoozedUntil: nil,
-                snoozeCount: 0,
-                localId: nil,
-                version: 1,
-                createdAt: Date(),
-                updatedAt: Date(),
-                listId: listId,
-                tags: parsed.tags
+            _ = try await graphQL.performWithOfflineSupport(
+                mutation: mutation,
+                queuedMutation: queuedMutation,
+                optimisticUpdate: {
+                    // Add to local state immediately for instant UI feedback
+                    self.syncEngine.addOptimisticReminder(optimisticReminder)
+                }
             )
 
+            print("✨ NaturalLanguageInput: Reminder created successfully")
             isLoading = false
-            return reminder
+            return optimisticReminder
+
+        } catch let error as NetworkError where error.isOffline {
+            // Offline - mutation was queued, optimistic update applied
+            print("📴 NaturalLanguageInput: Offline - reminder queued for sync")
+            isLoading = false
+            // Return the optimistic reminder so UI can navigate to it
+            return optimisticReminder
 
         } catch {
             print("❌ NaturalLanguageInput: Failed to create reminder: \(error)")

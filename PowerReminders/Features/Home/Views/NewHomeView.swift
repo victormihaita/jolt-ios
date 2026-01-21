@@ -63,6 +63,9 @@ struct NewHomeView: View {
             .navigationTitle("Hi, \(userFirstName)")
             .searchable(text: $searchText, prompt: "Search all reminders")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    SyncStatusView()
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         Haptics.light()

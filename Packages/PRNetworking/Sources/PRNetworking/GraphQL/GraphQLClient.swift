@@ -319,6 +319,190 @@ public final class GraphQLClient {
         }
     }
 
+    // MARK: - Offline-Aware Mutation
+
+    /// Performs a mutation with offline support.
+    /// If offline, the mutation is queued for later sync.
+    /// - Parameters:
+    ///   - mutation: The GraphQL mutation to perform
+    ///   - queuedMutation: Optional pre-built queued mutation for offline storage
+    ///   - optimisticUpdate: Optional closure to update local state optimistically
+    /// - Returns: The mutation data if online, throws NetworkError.offline if queued
+    public func performWithOfflineSupport<Mutation: GraphQLMutation>(
+        mutation: Mutation,
+        queuedMutation: QueuedMutation?,
+        optimisticUpdate: (() -> Void)? = nil
+    ) async throws -> Mutation.Data {
+        // Check network connectivity
+        guard NetworkReachability.shared.isConnected else {
+            // Apply optimistic update
+            optimisticUpdate?()
+
+            // Queue for later sync
+            if let queued = queuedMutation {
+                OfflineMutationQueue.shared.enqueue(queued)
+            }
+
+            throw NetworkError.offline
+        }
+
+        // Attempt mutation online
+        do {
+            return try await perform(mutation: mutation)
+        } catch let error as NetworkError {
+            // On network error, queue the mutation
+            if error.isOffline {
+                optimisticUpdate?()
+                if let queued = queuedMutation {
+                    OfflineMutationQueue.shared.enqueue(queued)
+                }
+                throw NetworkError.offline
+            }
+            throw error
+        }
+    }
+
+    // MARK: - Replay Queued Mutations
+
+    /// Replays a queued mutation. Called by SyncEngine when processing the offline queue.
+    public func replayMutation(_ mutation: QueuedMutation) async -> QueueProcessingResult {
+        do {
+            switch mutation.operationType {
+            case .create:
+                return try await replayCreateReminder(mutation)
+            case .update:
+                return try await replayUpdateReminder(mutation)
+            case .delete:
+                return try await replayDeleteReminder(mutation)
+            case .complete:
+                return try await replayCompleteReminder(mutation)
+            case .snooze:
+                return try await replaySnoozeReminder(mutation)
+            case .dismiss:
+                return try await replayDismissReminder(mutation)
+            }
+        } catch let error as NetworkError {
+            if error.isRetryable {
+                return .retryableFailure(error: error)
+            }
+            return .permanentFailure(error: error)
+        } catch {
+            return .permanentFailure(error: error)
+        }
+    }
+
+    private func replayCreateReminder(_ mutation: QueuedMutation) async throws -> QueueProcessingResult {
+        let payload = try JSONDecoder().decode(CreateReminderPayload.self, from: mutation.payload)
+
+        var recurrenceRuleInput: GraphQLNullable<PRAPI.RecurrenceRuleInput> = .null
+        if let rule = payload.recurrenceRule,
+           let frequency = PRAPI.Frequency(rawValue: rule.frequency) {
+            recurrenceRuleInput = .some(PRAPI.RecurrenceRuleInput(
+                frequency: .init(frequency),
+                interval: rule.interval,
+                daysOfWeek: rule.daysOfWeek.map { .some($0) } ?? .null,
+                dayOfMonth: rule.dayOfMonth.map { .some($0) } ?? .null,
+                monthOfYear: rule.monthOfYear.map { .some($0) } ?? .null,
+                endAfterOccurrences: rule.endAfterOccurrences.map { .some($0) } ?? .null,
+                endDate: rule.endDate.map { .some($0) } ?? .null
+            ))
+        }
+
+        let input = PRAPI.CreateReminderInput(
+            listId: payload.listId.map { .some($0) } ?? .null,
+            title: payload.title,
+            notes: payload.notes.map { .some($0) } ?? .null,
+            priority: .some(.init(PRAPI.Priority(rawValue: payload.priority) ?? .normal)),
+            dueAt: payload.dueAt,
+            allDay: payload.allDay,
+            recurrenceRule: recurrenceRuleInput,
+            recurrenceEnd: payload.recurrenceEnd.map { .some($0) } ?? .null,
+            tags: payload.tags.map { .some($0) } ?? .null,
+            localId: .some(payload.localId)
+        )
+
+        let graphQLMutation = PRAPI.CreateReminderMutation(input: input)
+        _ = try await perform(mutation: graphQLMutation)
+
+        return .success
+    }
+
+    private func replayUpdateReminder(_ mutation: QueuedMutation) async throws -> QueueProcessingResult {
+        let payload = try JSONDecoder().decode(UpdateReminderPayload.self, from: mutation.payload)
+
+        // Check version for conflict detection
+        let query = PRAPI.ReminderQuery(id: payload.id)
+        if let serverData = try? await fetch(query: query, storeInCache: false),
+           let serverReminder = serverData.reminder {
+            if serverReminder.version > payload.version {
+                return .conflict(
+                    serverVersion: serverReminder.version,
+                    localVersion: payload.version
+                )
+            }
+        }
+
+        var recurrenceRuleInput: GraphQLNullable<PRAPI.RecurrenceRuleInput> = .null
+        if let rule = payload.recurrenceRule,
+           let frequency = PRAPI.Frequency(rawValue: rule.frequency) {
+            recurrenceRuleInput = .some(PRAPI.RecurrenceRuleInput(
+                frequency: .init(frequency),
+                interval: rule.interval,
+                daysOfWeek: rule.daysOfWeek.map { .some($0) } ?? .null,
+                dayOfMonth: rule.dayOfMonth.map { .some($0) } ?? .null,
+                monthOfYear: rule.monthOfYear.map { .some($0) } ?? .null,
+                endAfterOccurrences: rule.endAfterOccurrences.map { .some($0) } ?? .null,
+                endDate: rule.endDate.map { .some($0) } ?? .null
+            ))
+        }
+
+        let input = PRAPI.UpdateReminderInput(
+            listId: payload.listId.map { .some($0) } ?? .null,
+            title: payload.title.map { .some($0) } ?? .null,
+            notes: payload.notes.map { .some($0) } ?? .null,
+            priority: payload.priority.flatMap { PRAPI.Priority(rawValue: $0) }.map { .some(.init($0)) } ?? .null,
+            dueAt: payload.dueAt.map { .some($0) } ?? .null,
+            allDay: payload.allDay.map { .some($0) } ?? .null,
+            recurrenceRule: recurrenceRuleInput,
+            recurrenceEnd: payload.recurrenceEnd.map { .some($0) } ?? .null,
+            status: payload.status.flatMap { PRAPI.ReminderStatus(rawValue: $0) }.map { .some(.init($0)) } ?? .null,
+            tags: payload.tags.map { .some($0) } ?? .null
+        )
+
+        let graphQLMutation = PRAPI.UpdateReminderMutation(id: payload.id, input: input)
+        _ = try await perform(mutation: graphQLMutation)
+
+        return .success
+    }
+
+    private func replayDeleteReminder(_ mutation: QueuedMutation) async throws -> QueueProcessingResult {
+        let payload = try JSONDecoder().decode(DeleteReminderPayload.self, from: mutation.payload)
+        let graphQLMutation = PRAPI.DeleteReminderMutation(id: payload.id)
+        _ = try await perform(mutation: graphQLMutation)
+        return .success
+    }
+
+    private func replayCompleteReminder(_ mutation: QueuedMutation) async throws -> QueueProcessingResult {
+        let payload = try JSONDecoder().decode(CompleteReminderPayload.self, from: mutation.payload)
+        let graphQLMutation = PRAPI.CompleteReminderMutation(id: payload.id)
+        _ = try await perform(mutation: graphQLMutation)
+        return .success
+    }
+
+    private func replaySnoozeReminder(_ mutation: QueuedMutation) async throws -> QueueProcessingResult {
+        let payload = try JSONDecoder().decode(SnoozeReminderPayload.self, from: mutation.payload)
+        let graphQLMutation = PRAPI.SnoozeReminderMutation(id: payload.id, minutes: payload.minutes)
+        _ = try await perform(mutation: graphQLMutation)
+        return .success
+    }
+
+    private func replayDismissReminder(_ mutation: QueuedMutation) async throws -> QueueProcessingResult {
+        let payload = try JSONDecoder().decode(DismissReminderPayload.self, from: mutation.payload)
+        let graphQLMutation = PRAPI.DismissReminderMutation(id: payload.id)
+        _ = try await perform(mutation: graphQLMutation)
+        return .success
+    }
+
     // MARK: - Helpers
 
     private static func shouldTriggerRefetch(for operationName: String) -> Bool {

@@ -11,6 +11,8 @@ public enum NetworkError: LocalizedError {
     case serverError(Int)
     case premiumRequired
     case unknown
+    case offline
+    case conflictError(serverVersion: Int, localVersion: Int)
 
     public var errorDescription: String? {
         switch self {
@@ -34,6 +36,10 @@ public enum NetworkError: LocalizedError {
             return "This feature requires a premium subscription"
         case .unknown:
             return "An unknown error occurred"
+        case .offline:
+            return "You're offline. Changes will sync when you reconnect."
+        case .conflictError(let serverVersion, let localVersion):
+            return "Conflict: server has version \(serverVersion), you have \(localVersion)"
         }
     }
 
@@ -51,5 +57,27 @@ public enum NetworkError: LocalizedError {
             return true
         }
         return false
+    }
+
+    /// Whether this error indicates the device is offline
+    public var isOffline: Bool {
+        switch self {
+        case .offline:
+            return true
+        case .networkError:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Whether this error is retryable
+    public var isRetryable: Bool {
+        switch self {
+        case .offline, .networkError, .serverError:
+            return true
+        default:
+            return false
+        }
     }
 }

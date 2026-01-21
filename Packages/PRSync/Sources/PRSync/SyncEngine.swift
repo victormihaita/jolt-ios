@@ -6,6 +6,23 @@ import PRCore
 import PRModels
 import PRNetworking
 
+// MARK: - Sync Status
+
+/// Represents the current synchronization status
+public enum SyncStatus: Equatable {
+    case synced
+    case syncing
+    case offline
+    case pendingChanges(count: Int)
+    case error(message: String)
+
+    public var isOffline: Bool {
+        if case .offline = self { return true }
+        if case .pendingChanges = self { return !NetworkReachability.shared.isConnected }
+        return false
+    }
+}
+
 /// Engine responsible for synchronizing reminders between local storage and the server.
 /// Uses Apollo GraphQL watchers to keep data in sync across all devices.
 public final class SyncEngine: ObservableObject {
@@ -14,6 +31,9 @@ public final class SyncEngine: ObservableObject {
     @Published public private(set) var isSyncing = false
     @Published public private(set) var lastSyncAt: Date?
     @Published public private(set) var syncError: Error?
+
+    /// Current sync status for UI display
+    @Published public private(set) var syncStatus: SyncStatus = .synced
 
     /// Published reminders from the GraphQL cache - source of truth
     @Published public private(set) var reminders: [Reminder] = []
@@ -32,6 +52,11 @@ public final class SyncEngine: ObservableObject {
     // Refetch listener
     private var refetchCancellable: AnyCancellable?
 
+    // Network monitoring
+    private var networkCancellable: AnyCancellable?
+    private var queueCancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
+
     /// Callback for when reminders change (for SwiftData integration)
     public var onRemindersChanged: (([Reminder]) -> Void)?
     public var onReminderCreated: ((Reminder) -> Void)?
@@ -43,6 +68,8 @@ public final class SyncEngine: ObservableObject {
 
     private init() {
         setupRefetchListener()
+        setupNetworkMonitoring()
+        setupQueueMonitoring()
     }
 
     // MARK: - Setup
@@ -56,6 +83,98 @@ public final class SyncEngine: ObservableObject {
                 print("🔔 SyncEngine: Received refetch notification")
                 self?.refetch()
             }
+    }
+
+    private func setupNetworkMonitoring() {
+        // Observe network connectivity changes
+        networkCancellable = NetworkReachability.shared.$isConnected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                self?.handleNetworkChange(isConnected: isConnected)
+            }
+
+        // Also listen for the notification (more reliable for state changes)
+        NotificationCenter.default.publisher(for: NetworkReachability.didBecomeAvailable)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.handleNetworkChange(isConnected: true)
+            }
+            .store(in: &cancellables)
+
+        // Initial status update
+        updateSyncStatus()
+    }
+
+    private func setupQueueMonitoring() {
+        // Observe offline queue changes
+        queueCancellable = OfflineMutationQueue.shared.$pendingMutations
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateSyncStatus()
+            }
+    }
+
+    private func handleNetworkChange(isConnected: Bool) {
+        PRLogger.info("Network state changed: \(isConnected ? "online" : "offline")", category: .sync)
+
+        if isConnected {
+            // Back online - process queued mutations
+            Task { @MainActor in
+                await processOfflineQueue()
+            }
+        } else {
+            syncStatus = .offline
+        }
+    }
+
+    /// Process any queued offline mutations
+    @MainActor
+    public func processOfflineQueue() async {
+        guard NetworkReachability.shared.isConnected else {
+            PRLogger.debug("Not connected, skipping queue processing", category: .sync)
+            return
+        }
+
+        let queue = OfflineMutationQueue.shared
+        guard queue.hasPendingMutations else {
+            updateSyncStatus()
+            return
+        }
+
+        syncStatus = .syncing
+        PRLogger.info("Processing offline queue with \(queue.pendingCount) mutations", category: .sync)
+
+        let processed = await queue.processQueue { mutation in
+            await GraphQLClient.shared.replayMutation(mutation)
+        }
+
+        if processed > 0 {
+            // Refetch to ensure UI is consistent with server
+            refetch()
+        }
+
+        updateSyncStatus()
+    }
+
+    private func updateSyncStatus() {
+        let queue = OfflineMutationQueue.shared
+        let isConnected = NetworkReachability.shared.isConnected
+
+        if !isConnected {
+            if queue.hasPendingMutations {
+                syncStatus = .pendingChanges(count: queue.pendingCount)
+            } else {
+                syncStatus = .offline
+            }
+        } else if queue.isProcessing || isSyncing {
+            syncStatus = .syncing
+        } else if queue.hasPendingMutations {
+            syncStatus = .pendingChanges(count: queue.pendingCount)
+        } else if let error = queue.lastSyncError {
+            syncStatus = .error(message: error.localizedDescription)
+        } else {
+            syncStatus = .synced
+        }
     }
 
     // MARK: - Connection Management
@@ -611,15 +730,56 @@ public final class SyncEngine: ObservableObject {
         return lists
     }
 
+    // MARK: - Optimistic Updates
+
+    /// Add an optimistic reminder to the local state (for offline support)
+    @MainActor
+    public func addOptimisticReminder(_ reminder: Reminder) {
+        // Add to reminders if not already present
+        if !reminders.contains(where: { $0.id == reminder.id }) {
+            reminders.insert(reminder, at: 0)
+            onRemindersChanged?(reminders)
+            onReminderCreated?(reminder)
+            updateWidgetData()
+            PRLogger.debug("Added optimistic reminder: \(reminder.title)", category: .sync)
+        }
+    }
+
+    /// Update an optimistic reminder in the local state
+    @MainActor
+    public func updateOptimisticReminder(_ reminder: Reminder) {
+        if let index = reminders.firstIndex(where: { $0.id == reminder.id }) {
+            reminders[index] = reminder
+            onRemindersChanged?(reminders)
+            onReminderUpdated?(reminder)
+            updateWidgetData()
+            PRLogger.debug("Updated optimistic reminder: \(reminder.title)", category: .sync)
+        }
+    }
+
+    /// Remove an optimistic reminder from the local state
+    @MainActor
+    public func removeOptimisticReminder(id: UUID) {
+        if let index = reminders.firstIndex(where: { $0.id == id }) {
+            reminders.remove(at: index)
+            onRemindersChanged?(reminders)
+            onReminderDeleted?(id)
+            updateWidgetData()
+            PRLogger.debug("Removed optimistic reminder: \(id)", category: .sync)
+        }
+    }
+
     // MARK: - Cache Management
 
     /// Clear the GraphQL cache (useful for logout)
     public func clearCache() {
         GraphQLClient.shared.clearCache()
+        OfflineMutationQueue.shared.clearQueue()
         DispatchQueue.main.async {
             self.reminders = []
             self.reminderLists = []
             self.currentUser = nil
+            self.syncStatus = .synced
             WidgetDataService.shared.clearWidgetData()
         }
     }
