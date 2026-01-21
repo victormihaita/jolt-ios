@@ -106,26 +106,29 @@ class AuthViewModel: ObservableObject {
     }
 
     func signOut() {
-        // Unregister device from push notifications
+        // Unregister device from push notifications BEFORE clearing credentials
+        // We need the auth token to make the API call
         Task {
+            // Unregister device first (requires auth token)
             await DeviceService.shared.onUserLogout()
-        }
 
-        // Clear local state
-        keychain.clearAll()
-        graphQL.updateAuthToken(nil)
+            // Now clear local state on main actor
+            await MainActor.run {
+                keychain.clearAll()
+                graphQL.updateAuthToken(nil)
 
-        // Disconnect sync engine and clear cache
-        SyncEngine.shared.disconnect()
-        SyncEngine.shared.clearCache()
+                // Disconnect sync engine and clear cache
+                SyncEngine.shared.disconnect()
+                SyncEngine.shared.clearCache()
 
-        // Logout from RevenueCat
-        Task {
+                isAuthenticated = false
+                currentUser = nil
+            }
+
+            // Logout from RevenueCat (doesn't need auth token)
             await RevenueCatService.shared.logout()
         }
 
-        isAuthenticated = false
-        currentUser = nil
         Haptics.medium()
     }
 

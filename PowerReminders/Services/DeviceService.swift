@@ -99,16 +99,20 @@ actor DeviceService {
     }
 
     func unregisterDevice() async {
-        guard let deviceID = currentDeviceID else { return }
+        guard let deviceID = currentDeviceID else {
+            print("📱 DeviceService.unregisterDevice(): No device ID to unregister")
+            return
+        }
 
+        print("📱 DeviceService.unregisterDevice(): Unregistering device \(deviceID)...")
         let mutation = PRAPI.UnregisterDeviceMutation(id: deviceID.uuidString)
 
         do {
             _ = try await GraphQLClient.shared.perform(mutation: mutation)
             currentDeviceID = nil
-            print("Device unregistered")
+            print("📱 DeviceService: ✅ Device unregistered successfully")
         } catch {
-            print("Failed to unregister device: \(error)")
+            print("📱 DeviceService: ❌ Failed to unregister device: \(error)")
         }
     }
 
@@ -121,9 +125,11 @@ actor DeviceService {
     }
 
     func onUserLogout() async {
+        print("📱 DeviceService.onUserLogout() called")
         await unregisterDevice()
         currentPushToken = nil
         // Clear persisted device ID
         UserDefaults.standard.removeObject(forKey: deviceIDKey)
+        print("📱 DeviceService: Logout cleanup complete")
     }
 }
