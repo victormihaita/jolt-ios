@@ -66,6 +66,10 @@ class NaturalLanguageInputViewModel: ObservableObject {
             return nil
         }
 
+        // Request notification permission on first reminder creation
+        // This only prompts if we haven't prompted before
+        _ = await NotificationService.shared.requestAuthorizationIfNeeded()
+
         isLoading = true
         errorMessage = nil
 
