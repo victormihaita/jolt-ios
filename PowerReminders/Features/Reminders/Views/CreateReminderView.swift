@@ -257,6 +257,10 @@ struct CreateReminderView: View {
         errorMessage = nil
 
         Task {
+            // Request notification permission on first reminder creation
+            // This only prompts if we haven't prompted before
+            _ = await NotificationService.shared.requestAuthorizationIfNeeded()
+
             do {
                 // Use selected list ID or default list ID
                 let listIdToUse = selectedListId ?? availableLists.first(where: { $0.isDefault })?.id ?? availableLists.first?.id

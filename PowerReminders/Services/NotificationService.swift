@@ -6,11 +6,66 @@ import PRModels
 class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationService()
 
+    // Track if we've prompted for notifications (only prompt once)
+    private let hasPromptedKey = "hasPromptedForNotifications"
+
+    private var hasPromptedForNotifications: Bool {
+        get { UserDefaults.standard.bool(forKey: hasPromptedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: hasPromptedKey) }
+    }
+
     private override init() {
         super.init()
     }
 
     // MARK: - Authorization
+
+    /// Get the current notification authorization status
+    func getNotificationStatus() async -> UNAuthorizationStatus {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        return settings.authorizationStatus
+    }
+
+    /// Request authorization only if we haven't prompted before
+    /// Call this when creating the first reminder
+    func requestAuthorizationIfNeeded() async -> Bool {
+        let status = await getNotificationStatus()
+
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            // Already authorized - ensure we're registered for remote notifications
+            await MainActor.run {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+            return true
+
+        case .denied:
+            // User explicitly denied - don't prompt again
+            return false
+
+        case .notDetermined:
+            // Haven't asked yet - prompt if we haven't before
+            if !hasPromptedForNotifications {
+                hasPromptedForNotifications = true
+                return await requestAuthorization()
+            }
+            return false
+
+        @unknown default:
+            return false
+        }
+    }
+
+    /// Re-register for remote notifications if authorized
+    /// Call this when app becomes active (user may have enabled in Settings)
+    func registerForRemoteNotificationsIfAuthorized() async {
+        let status = await getNotificationStatus()
+        if status == .authorized || status == .provisional {
+            await MainActor.run {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+    }
 
     func requestAuthorization() async -> Bool {
         do {

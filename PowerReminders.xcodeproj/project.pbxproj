@@ -128,7 +128,7 @@
 		AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		B5DCAFBCC8694CA31E711197 /* PRKeychain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRKeychain; path = Packages/PRKeychain; sourceTree = SOURCE_ROOT; };
 		C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PowerRemindersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PowerRemindersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAFCCBF597C6BC9379C6F92A /* PRCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRCore; path = Packages/PRCore; sourceTree = SOURCE_ROOT; };
 		CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageParser.swift; sourceTree = "<group>"; };
 		CFA5EC6B0521645D6F4C6F25 /* NotificationSoundSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSoundSettings.swift; sourceTree = "<group>"; };
@@ -769,6 +769,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -788,6 +790,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -804,6 +808,7 @@
 				CODE_SIGN_ENTITLEMENTS = PowerReminders/Widget/PowerRemindersWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -889,6 +894,7 @@
 				CODE_SIGN_ENTITLEMENTS = PowerReminders/Widget/PowerRemindersWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

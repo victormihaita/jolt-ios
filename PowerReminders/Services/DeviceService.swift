@@ -10,7 +10,21 @@ actor DeviceService {
     private var currentDeviceID: UUID?
     private var currentPushToken: String?
 
-    private init() {}
+    // Persist device ID across app launches
+    private let deviceIDKey = "registeredDeviceID"
+
+    private init() {
+        // Restore device ID from UserDefaults on init
+        if let idString = UserDefaults.standard.string(forKey: deviceIDKey),
+           let id = UUID(uuidString: idString) {
+            currentDeviceID = id
+        }
+    }
+
+    /// Public getter for the current device's registered ID
+    var deviceID: UUID? {
+        currentDeviceID
+    }
 
     // MARK: - Push Token Registration
 
@@ -50,11 +64,21 @@ actor DeviceService {
             let result = try await GraphQLClient.shared.perform(mutation: mutation)
             if let id = UUID(uuidString: result.registerDevice.id) {
                 currentDeviceID = id
+                // Persist device ID to UserDefaults
+                UserDefaults.standard.set(id.uuidString, forKey: deviceIDKey)
                 print("Device registered: \(id)")
             }
         } catch {
             print("Failed to register device: \(error)")
         }
+    }
+
+    /// Unregister a different device (not the current device)
+    /// Used for device management in Settings
+    func unregisterOtherDevice(id: String) async throws {
+        let mutation = PRAPI.UnregisterDeviceMutation(id: id)
+        _ = try await GraphQLClient.shared.perform(mutation: mutation)
+        print("Device unregistered: \(id)")
     }
 
     func unregisterDevice() async {
@@ -80,5 +104,7 @@ actor DeviceService {
     func onUserLogout() async {
         await unregisterDevice()
         currentPushToken = nil
+        // Clear persisted device ID
+        UserDefaults.standard.removeObject(forKey: deviceIDKey)
     }
 }

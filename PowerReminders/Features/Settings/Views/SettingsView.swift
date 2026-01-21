@@ -1,5 +1,6 @@
 import SwiftUI
 import RevenueCat
+import UserNotifications
 
 struct SettingsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -131,6 +132,13 @@ struct SettingsView: View {
                     )
                 } header: {
                     Text("Preferences")
+                }
+
+                // Notifications Section
+                Section {
+                    NotificationPermissionRow()
+                } header: {
+                    Text("Notifications")
                 }
 
                 // Sync Section
@@ -309,6 +317,109 @@ struct SettingsRow: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
+}
+
+// MARK: - Notification Permission Row
+
+struct NotificationPermissionRow: View {
+    @State private var status: UNAuthorizationStatus = .notDetermined
+    @State private var isChecking = true
+
+    var body: some View {
+        HStack {
+            SettingsIconView(icon: statusIcon, color: statusColor)
+
+            VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
+                Text("Push Notifications")
+                    .font(Theme.Typography.body)
+
+                Text(statusDescription)
+                    .font(Theme.Typography.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if isChecking {
+                ProgressView()
+                    .scaleEffect(0.8)
+            } else if status == .denied || status == .notDetermined {
+                Button("Enable") {
+                    openAppSettings()
+                }
+                .font(Theme.Typography.subheadline)
+                .foregroundStyle(Color.accentColor)
+            } else {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            }
+        }
+        .task {
+            await checkPermissionStatus()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            Task {
+                await checkPermissionStatus()
+            }
+        }
+    }
+
+    private var statusIcon: String {
+        switch status {
+        case .authorized, .provisional:
+            return "bell.badge.fill"
+        case .denied:
+            return "bell.slash.fill"
+        case .notDetermined:
+            return "bell"
+        case .ephemeral:
+            return "bell.badge"
+        @unknown default:
+            return "bell"
+        }
+    }
+
+    private var statusColor: Color {
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            return .green
+        case .denied:
+            return .red
+        case .notDetermined:
+            return .orange
+        @unknown default:
+            return .gray
+        }
+    }
+
+    private var statusDescription: String {
+        switch status {
+        case .authorized:
+            return "You'll receive reminder notifications"
+        case .provisional:
+            return "Notifications delivered quietly"
+        case .denied:
+            return "Enable to receive reminder alerts"
+        case .notDetermined:
+            return "Enable to never miss a reminder"
+        case .ephemeral:
+            return "Temporary notifications enabled"
+        @unknown default:
+            return "Unknown status"
+        }
+    }
+
+    private func checkPermissionStatus() async {
+        isChecking = true
+        status = await NotificationService.shared.getNotificationStatus()
+        isChecking = false
+    }
+
+    private func openAppSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
 }

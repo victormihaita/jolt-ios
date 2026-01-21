@@ -17,12 +17,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Register notification categories for actionable notifications
         NotificationService.shared.registerCategories()
 
-        // Request notification permissions
-        Task {
-            await NotificationService.shared.requestAuthorization()
-        }
+        // Note: We no longer request notification permissions here.
+        // Permissions are requested when the user creates their first reminder
+        // for a better user experience.
 
         return true
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Re-check notification permissions when app becomes active
+        // This handles the case where user enabled notifications in iOS Settings
+        Task {
+            await NotificationService.shared.registerForRemoteNotificationsIfAuthorized()
+        }
     }
 
     func application(
