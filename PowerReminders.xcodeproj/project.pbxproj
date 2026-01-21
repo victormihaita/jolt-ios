@@ -39,7 +39,6 @@
 		7ABDCBBCA5ABF84D59BBD904 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A91AF486732A1131B753BFD7 /* WidgetKit.framework */; };
 		7FA1FBA63EB3D97B45AC05CB /* NaturalLanguageInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6388118AE4069CBF03F0069 /* NaturalLanguageInputViewModel.swift */; };
 		83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B53F9E7984A441EB3F45A63 /* ListsSection.swift */; };
-		8600436F78E0ABD07195636A /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106E676F3DF7CC86AA3ECFCF /* SplashView.swift */; };
 		89507EB65597205462A98F17 /* PRCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD8A0B386B2FE5FA0297EC2B /* PRCore */; };
 		925900AE804AABDAC5622F03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */; };
 		A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */; };
@@ -91,7 +90,6 @@
 		0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
 		1001073F48C5B6D683AB7C86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1058DCFF0D357278C1DC3BBE /* PRModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRModels; path = Packages/PRModels; sourceTree = SOURCE_ROOT; };
-		106E676F3DF7CC86AA3ECFCF /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
 		138120992C6175B1602DD66B /* PRNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNotifications; path = Packages/PRNotifications; sourceTree = SOURCE_ROOT; };
 		1440C76CB571C37566369A26 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
@@ -237,14 +235,6 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		26D4AED2C1DB67690B9D2210 /* Splash */ = {
-			isa = PBXGroup;
-			children = (
-				106E676F3DF7CC86AA3ECFCF /* SplashView.swift */,
-			);
-			path = Splash;
-			sourceTree = "<group>";
-		};
 		2D328536FCC2A5C67A39CCA1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -302,7 +292,6 @@
 				BA7E23B684BF8CA9148603AC /* Premium */,
 				AA18B0ADC3FCA5AF531EB54B /* Reminders */,
 				0FAB848A4D97D358EC109879 /* Settings */,
-				26D4AED2C1DB67690B9D2210 /* Splash */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -669,7 +658,6 @@
 				37F18C1C3F219638A41476FC /* SettingsViewModel.swift in Sources */,
 				56CA364C9B8ACEC3291D0F70 /* SmartFilterCard.swift in Sources */,
 				A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */,
-				8600436F78E0ABD07195636A /* SplashView.swift in Sources */,
 				CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */,
 				CADC5A683E02B6D92267325D /* Theme.swift in Sources */,
 				331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */,
@@ -775,6 +763,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JL84E9GK95;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Power Reminders";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -795,6 +785,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JL84E9GK95;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Power Reminders";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

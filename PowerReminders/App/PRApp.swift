@@ -27,26 +27,15 @@ struct PRApp: App {
 
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var showSplash = true
 
     var body: some View {
-        ZStack {
-            // Main content
-            Group {
-                if authViewModel.isAuthenticated {
-                    NewHomeView()
-                } else {
-                    WelcomeView()
-                }
-            }
-            .animation(.easeInOut, value: authViewModel.isAuthenticated)
-
-            // Splash screen overlay
-            if showSplash {
-                SplashView(isActive: $showSplash)
-                    .transition(.opacity)
-                    .zIndex(1)
+        Group {
+            if authViewModel.isAuthenticated {
+                NewHomeView()
+            } else {
+                WelcomeView()
             }
         }
+        .animation(.easeInOut, value: authViewModel.isAuthenticated)
     }
 }

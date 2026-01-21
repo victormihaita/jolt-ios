@@ -71,7 +71,7 @@ struct FilteredRemindersView: View {
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
                 ReminderDetailView(reminder: reminder)
-                    .navigationTransition(.zoom(sourceID: reminder.id, in: namespace))
+                    .modifier(ZoomTransitionModifier(sourceID: reminder.id, namespace: namespace))
             }
         }
     }
@@ -81,7 +81,7 @@ struct FilteredRemindersView: View {
             ForEach(reminders) { reminder in
                 ReminderRowView(reminder: reminder)
                     .contentShape(Rectangle())
-                    .matchedTransitionSource(id: reminder.id, in: namespace)
+                    .modifier(MatchedTransitionSourceModifier(id: reminder.id, namespace: namespace))
                     .onTapGesture {
                         selectedReminder = reminder
                     }
