@@ -41,6 +41,14 @@ class AuthViewModel: ObservableObject {
             // SQLite cache persists across launches - show cached data immediately
             // SyncEngine watchers use .returnCacheDataAndFetch to update from network
             SyncEngine.shared.connect()
+
+            // Request push token and register device for returning users
+            Task {
+                // First, request remote notifications if authorized (this triggers APNs token delivery)
+                await NotificationService.shared.registerForRemoteNotificationsIfAuthorized()
+                // Then register device (if token is already available from a previous session)
+                await DeviceService.shared.onUserAuthenticated()
+            }
         }
     }
 
@@ -83,6 +91,9 @@ class AuthViewModel: ObservableObject {
             isAuthenticated = true
             isLoading = false
 
+            // Register device for push notifications if we have a token
+            await DeviceService.shared.onUserAuthenticated()
+
             Haptics.success()
         } catch {
             print("❌ Auth error: \(error)")
@@ -95,6 +106,11 @@ class AuthViewModel: ObservableObject {
     }
 
     func signOut() {
+        // Unregister device from push notifications
+        Task {
+            await DeviceService.shared.onUserLogout()
+        }
+
         // Clear local state
         keychain.clearAll()
         graphQL.updateAuthToken(nil)

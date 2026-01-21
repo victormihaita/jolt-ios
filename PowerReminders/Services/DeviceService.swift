@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import PRNetworking
+import PRKeychain
 import ApolloAPI
 
 /// Service for managing device registration and push tokens
@@ -29,26 +30,41 @@ actor DeviceService {
     // MARK: - Push Token Registration
 
     func registerPushToken(_ token: String) async {
+        print("📱 DeviceService.registerPushToken() called with token: \(token.prefix(20))...")
         currentPushToken = token
 
         // Only register if user is authenticated
-        guard KeychainService.shared.getToken() != nil else {
+        guard PRKeychain.KeychainService.shared.getToken() != nil else {
+            print("📱 DeviceService: No auth token, will register when user authenticates")
             return
         }
 
+        print("📱 DeviceService: User is authenticated, proceeding with registration")
         await registerDevice()
     }
 
     // MARK: - Device Registration
 
     func registerDevice() async {
+        print("📱 DeviceService.registerDevice() called")
+        print("📱 DeviceService: currentPushToken = \(currentPushToken ?? "nil")")
+
         guard let pushToken = currentPushToken else {
+            print("📱 DeviceService: No push token available, skipping registration")
+            return
+        }
+
+        // Verify we have an auth token
+        guard PRKeychain.KeychainService.shared.getToken() != nil else {
+            print("📱 DeviceService: No auth token in registerDevice(), skipping")
             return
         }
 
         let deviceName = await UIDevice.current.name
         let osVersion = await UIDevice.current.systemVersion
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+
+        print("📱 DeviceService: Registering device '\(deviceName)' with token \(pushToken.prefix(20))...")
 
         let input = PRAPI.RegisterDeviceInput(
             platform: .case(.ios),
@@ -61,15 +77,16 @@ actor DeviceService {
         let mutation = PRAPI.RegisterDeviceMutation(input: input)
 
         do {
+            print("📱 DeviceService: Calling GraphQL mutation...")
             let result = try await GraphQLClient.shared.perform(mutation: mutation)
             if let id = UUID(uuidString: result.registerDevice.id) {
                 currentDeviceID = id
                 // Persist device ID to UserDefaults
                 UserDefaults.standard.set(id.uuidString, forKey: deviceIDKey)
-                print("Device registered: \(id)")
+                print("📱 DeviceService: ✅ Device registered successfully: \(id)")
             }
         } catch {
-            print("Failed to register device: \(error)")
+            print("📱 DeviceService: ❌ Failed to register device: \(error)")
         }
     }
 
@@ -98,6 +115,8 @@ actor DeviceService {
     // MARK: - Authentication Events
 
     func onUserAuthenticated() async {
+        print("📱 DeviceService.onUserAuthenticated() called")
+        print("📱 DeviceService: currentPushToken at auth = \(currentPushToken ?? "nil")")
         await registerDevice()
     }
 

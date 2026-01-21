@@ -47,7 +47,6 @@
 		B2283CA11FE13AC40FE2013C /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */; };
 		B7B02FD01CC3D5D75A4473F5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 758BF0B629E2D874148A8CE2 /* SwiftUI.framework */; };
 		B7FA309D02BB6311CD91A9C9 /* DevicesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCBAEAB04A3AE0B1EB21AC8 /* DevicesListView.swift */; };
-		BA70F5B457E0684AB13B3494 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1440C76CB571C37566369A26 /* KeychainService.swift */; };
 		BACBBF947A7DA1121ED27428 /* DeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40040A29924D279DDFB2C95 /* DeviceService.swift */; };
 		C279166103F4925306097D79 /* PRSync in Frameworks */ = {isa = PBXBuildFile; productRef = 573316C1E95064017A538EDA /* PRSync */; };
 		CADC5A683E02B6D92267325D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7271C32CF7900ADB8FB63A6 /* Theme.swift */; };
@@ -94,7 +93,6 @@
 		1058DCFF0D357278C1DC3BBE /* PRModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRModels; path = Packages/PRModels; sourceTree = SOURCE_ROOT; };
 		1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
 		138120992C6175B1602DD66B /* PRNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNotifications; path = Packages/PRNotifications; sourceTree = SOURCE_ROOT; };
-		1440C76CB571C37566369A26 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		16FC6F4DE59E9442402A128E /* ListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailView.swift; sourceTree = "<group>"; };
 		22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthService.swift; sourceTree = "<group>"; };
 		2A7152C33DD586CC727F55F8 /* NaturalLanguageInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageInputView.swift; sourceTree = "<group>"; };
@@ -451,7 +449,6 @@
 				1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */,
 				F40040A29924D279DDFB2C95 /* DeviceService.swift */,
 				22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */,
-				1440C76CB571C37566369A26 /* KeychainService.swift */,
 				CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */,
 				FF3C02E69BB0B658D8F04731 /* NotificationService.swift */,
 				523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */,
@@ -642,7 +639,6 @@
 				E3303256969D4785F44901EF /* FilteredRemindersView.swift in Sources */,
 				1912ABEC033BFE0B8ED20E7A /* GoogleAuthService.swift in Sources */,
 				A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */,
-				BA70F5B457E0684AB13B3494 /* KeychainService.swift in Sources */,
 				61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */,
 				83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */,
 				1C974AA84D28612FB12A1400 /* NaturalLanguageInputView.swift in Sources */,

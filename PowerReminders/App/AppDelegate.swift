@@ -27,7 +27,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Re-check notification permissions when app becomes active
         // This handles the case where user enabled notifications in iOS Settings
+        print("📱 AppDelegate: applicationDidBecomeActive - checking notification permissions")
         Task {
+            let status = await NotificationService.shared.getNotificationStatus()
+            print("📱 AppDelegate: Current notification status = \(status)")
             await NotificationService.shared.registerForRemoteNotificationsIfAuthorized()
         }
     }
@@ -59,6 +62,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         print("❌ Failed to register for remote notifications: \(error.localizedDescription)")
+
+        #if targetEnvironment(simulator)
+        // Simulator cannot receive real push tokens - use a mock token for testing
+        print("📱 Running on simulator - using mock push token for device registration")
+        let mockToken = "simulator-mock-token-\(UUID().uuidString)"
+        Task {
+            await DeviceService.shared.registerPushToken(mockToken)
+        }
+        #endif
     }
 
     func application(

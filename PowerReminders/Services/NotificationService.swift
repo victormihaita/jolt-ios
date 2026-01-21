@@ -63,10 +63,14 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     /// Call this when app becomes active (user may have enabled in Settings)
     func registerForRemoteNotificationsIfAuthorized() async {
         let status = await getNotificationStatus()
+        print("🔔 NotificationService: registerForRemoteNotificationsIfAuthorized - status = \(status)")
         if status == .authorized || status == .provisional {
+            print("🔔 NotificationService: Calling UIApplication.registerForRemoteNotifications()")
             await MainActor.run {
                 UIApplication.shared.registerForRemoteNotifications()
             }
+        } else {
+            print("🔔 NotificationService: Not authorized, skipping remote notification registration")
         }
     }
 

@@ -1,6 +1,7 @@
 import Foundation
 import RevenueCat
 import PRNetworking
+import PRKeychain
 
 /// RevenueCatService handles all subscription and in-app purchase logic
 class RevenueCatService: NSObject, ObservableObject {
@@ -179,7 +180,7 @@ class RevenueCatService: NSObject, ObservableObject {
     /// This syncs the RevenueCat subscription status with the backend database
     func verifySubscriptionWithBackend() async {
         // Only verify with backend if user is authenticated
-        guard KeychainService.shared.getToken() != nil else {
+        guard PRKeychain.KeychainService.shared.getToken() != nil else {
             print("⏭️ Skipping backend verification - user not authenticated")
             return
         }
