@@ -38,11 +38,8 @@ class AuthViewModel: ObservableObject {
     func checkAuthentication() {
         if let _ = keychain.getToken() {
             isAuthenticated = true
-            // Clear any stale cache data before connecting
-            // This ensures we don't serve cached introspection data to queries
-            graphQL.clearCache()
-            print("🧹 Cleared Apollo cache on app launch")
-            // Connect SyncEngine immediately so it starts fetching user data
+            // SQLite cache persists across launches - show cached data immediately
+            // SyncEngine watchers use .returnCacheDataAndFetch to update from network
             SyncEngine.shared.connect()
         }
     }
