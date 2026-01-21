@@ -19,6 +19,9 @@ actor DeviceService {
         if let idString = UserDefaults.standard.string(forKey: deviceIDKey),
            let id = UUID(uuidString: idString) {
             currentDeviceID = id
+            print("📱 DeviceService.init(): Restored device ID from UserDefaults: \(id)")
+        } else {
+            print("📱 DeviceService.init(): No device ID found in UserDefaults")
         }
     }
 
@@ -49,7 +52,7 @@ actor DeviceService {
         print("📱 DeviceService.registerDevice() called")
         print("📱 DeviceService: currentPushToken = \(currentPushToken ?? "nil")")
 
-        guard let pushToken = currentPushToken else {
+        guard let pushToken = currentPushToken, !pushToken.isEmpty else {
             print("📱 DeviceService: No push token available, skipping registration")
             return
         }
@@ -59,6 +62,7 @@ actor DeviceService {
             print("📱 DeviceService: No auth token in registerDevice(), skipping")
             return
         }
+
 
         let deviceName = await UIDevice.current.name
         let osVersion = await UIDevice.current.systemVersion

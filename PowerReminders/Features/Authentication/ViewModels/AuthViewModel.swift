@@ -91,7 +91,10 @@ class AuthViewModel: ObservableObject {
             isAuthenticated = true
             isLoading = false
 
-            // Register device for push notifications if we have a token
+            // Request push token and register device for push notifications
+            // First, request remote notifications if authorized (this triggers APNs token delivery)
+            await NotificationService.shared.registerForRemoteNotificationsIfAuthorized()
+            // Then register device (the token will arrive via AppDelegate callback)
             await DeviceService.shared.onUserAuthenticated()
 
             Haptics.success()
