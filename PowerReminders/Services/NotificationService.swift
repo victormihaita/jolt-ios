@@ -6,14 +6,6 @@ import PRModels
 class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationService()
 
-    // Track if we've prompted for notifications (only prompt once)
-    private let hasPromptedKey = "hasPromptedForNotifications"
-
-    private var hasPromptedForNotifications: Bool {
-        get { UserDefaults.standard.bool(forKey: hasPromptedKey) }
-        set { UserDefaults.standard.set(newValue, forKey: hasPromptedKey) }
-    }
-
     private override init() {
         super.init()
     }
@@ -26,32 +18,43 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         return settings.authorizationStatus
     }
 
-    /// Request authorization only if we haven't prompted before
+    /// Request authorization if not yet determined
     /// Call this when creating the first reminder
     func requestAuthorizationIfNeeded() async -> Bool {
         let status = await getNotificationStatus()
 
+        print("🔔 NotificationService: Current status = \(status.rawValue)")
+
         switch status {
-        case .authorized, .provisional, .ephemeral:
+        case .authorized:
             // Already authorized - ensure we're registered for remote notifications
+            print("🔔 NotificationService: Already authorized, registering for remote notifications")
             await MainActor.run {
                 UIApplication.shared.registerForRemoteNotifications()
             }
             return true
 
+        case .provisional:
+            // Provisional authorization - upgrade to full authorization
+            print("🔔 NotificationService: Provisional, requesting full authorization")
+            return await requestAuthorization()
+
         case .denied:
             // User explicitly denied - don't prompt again
+            print("🔔 NotificationService: Denied by user")
             return false
 
         case .notDetermined:
-            // Haven't asked yet - prompt if we haven't before
-            if !hasPromptedForNotifications {
-                hasPromptedForNotifications = true
-                return await requestAuthorization()
-            }
-            return false
+            // Haven't asked yet - show the prompt
+            print("🔔 NotificationService: Not determined, requesting authorization")
+            return await requestAuthorization()
+
+        case .ephemeral:
+            print("🔔 NotificationService: Ephemeral authorization")
+            return true
 
         @unknown default:
+            print("🔔 NotificationService: Unknown status")
             return false
         }
     }
@@ -69,8 +72,9 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
     func requestAuthorization() async -> Bool {
         do {
+            print("🔔 NotificationService: Requesting authorization with alert, sound, badge")
             let granted = try await UNUserNotificationCenter.current().requestAuthorization(
-                options: [.alert, .sound, .badge, .provisional]
+                options: [.alert, .sound, .badge]
             )
 
             if granted {
