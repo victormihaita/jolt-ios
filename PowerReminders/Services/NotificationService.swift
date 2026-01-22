@@ -308,21 +308,22 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             return
         }
 
+        // Stop any playing alarm on the main actor
+        await MainActor.run {
+            AlarmManager.shared.stopAlarm()
+        }
+
         switch response.actionIdentifier {
         case "SNOOZE_5":
-            AlarmManager.shared.stopAlarm()
             await handleSnooze(reminderID: reminderID, minutes: 5)
 
         case "SNOOZE_15":
-            AlarmManager.shared.stopAlarm()
             await handleSnooze(reminderID: reminderID, minutes: 15)
 
         case "SNOOZE_30":
-            AlarmManager.shared.stopAlarm()
             await handleSnooze(reminderID: reminderID, minutes: 30)
 
         case "SNOOZE_CUSTOM":
-            AlarmManager.shared.stopAlarm()
             // Open app to custom snooze picker
             await MainActor.run {
                 NotificationCenter.default.post(
@@ -333,19 +334,15 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             }
 
         case "COMPLETE":
-            AlarmManager.shared.stopAlarm()
             await handleComplete(reminderID: reminderID)
 
         case "DISMISS":
-            AlarmManager.shared.stopAlarm()
             await handleDismiss(reminderID: reminderID)
 
         case "STOP_ALARM":
-            AlarmManager.shared.stopAlarm()
             await handleDismiss(reminderID: reminderID)
 
         case UNNotificationDefaultActionIdentifier:
-            AlarmManager.shared.stopAlarm()
             // User tapped the notification - open app to reminder detail
             await MainActor.run {
                 NotificationCenter.default.post(

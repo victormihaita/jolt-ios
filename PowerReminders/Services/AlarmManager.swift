@@ -4,6 +4,7 @@ import AudioToolbox
 
 /// Manages alarm sound playback and vibration for reminder notifications.
 /// Supports playing alarm sounds that can be stopped from any device via cross-device sync.
+@MainActor
 class AlarmManager {
     static let shared = AlarmManager()
 
@@ -11,6 +12,7 @@ class AlarmManager {
     private var isPlaying = false
     private var vibrationTimer: Timer?
     private var currentReminderID: UUID?
+    private var systemSoundTask: Task<Void, Never>?
 
     private init() {
         setupAudioSession()
@@ -67,6 +69,10 @@ class AlarmManager {
         audioPlayer?.stop()
         audioPlayer = nil
 
+        // Stop system sound task
+        systemSoundTask?.cancel()
+        systemSoundTask = nil
+
         // Stop vibration
         stopVibration()
 
@@ -114,12 +120,11 @@ class AlarmManager {
     }
 
     private func playSystemAlarmSound() {
-        // Play system alarm sound on loop
-        // Using AudioServicesPlaySystemSound for system sounds
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            while self?.isPlaying == true {
+        // Play system alarm sound on loop using a Task
+        systemSoundTask = Task {
+            while !Task.isCancelled && isPlaying {
                 AudioServicesPlaySystemSound(1005) // Default alarm sound
-                Thread.sleep(forTimeInterval: 1.5) // Wait before repeating
+                try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
             }
         }
     }
@@ -129,13 +134,15 @@ class AlarmManager {
     private func startVibration() {
         // Create a repeating timer for vibration
         vibrationTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard self?.isPlaying == true else {
-                self?.stopVibration()
-                return
-            }
+            Task { @MainActor in
+                guard let self = self, self.isPlaying else {
+                    self?.stopVibration()
+                    return
+                }
 
-            // Trigger vibration
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                // Trigger vibration
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+            }
         }
 
         // Also trigger immediate vibration

@@ -36,6 +36,10 @@ struct ContentView: View {
     @State private var notificationReminder: PRModels.Reminder?
     @State private var showCustomSnoozeForReminder: PRModels.Reminder?
 
+    // Pending notification actions (stored until reminders are loaded)
+    @State private var pendingOpenReminderID: UUID?
+    @State private var pendingSnoozeReminderID: UUID?
+
     var body: some View {
         Group {
             if authViewModel.isAuthenticated {
@@ -52,6 +56,10 @@ struct ContentView: View {
         // Handle custom snooze action from notification
         .onReceive(NotificationCenter.default.publisher(for: .showCustomSnooze)) { notification in
             handleShowCustomSnooze(notification)
+        }
+        // When reminders change, check for pending actions
+        .onChange(of: syncEngine.reminders) { _, newReminders in
+            processPendingActions(reminders: newReminders)
         }
         // Present reminder detail when triggered by notification
         .fullScreenCover(item: $notificationReminder) { reminder in
@@ -70,12 +78,34 @@ struct ContentView: View {
         // Look up reminder from sync engine
         if let reminder = syncEngine.reminders.first(where: { $0.id == reminderID }) {
             notificationReminder = reminder
+        } else {
+            // Store pending action - will be processed when reminders load
+            pendingOpenReminderID = reminderID
         }
     }
 
     private func handleShowCustomSnooze(_ notification: Notification) {
         guard let reminderID = notification.userInfo?["reminder_id"] as? UUID else { return }
         if let reminder = syncEngine.reminders.first(where: { $0.id == reminderID }) {
+            showCustomSnoozeForReminder = reminder
+        } else {
+            // Store pending action - will be processed when reminders load
+            pendingSnoozeReminderID = reminderID
+        }
+    }
+
+    private func processPendingActions(reminders: [PRModels.Reminder]) {
+        // Process pending open reminder action
+        if let pendingID = pendingOpenReminderID,
+           let reminder = reminders.first(where: { $0.id == pendingID }) {
+            pendingOpenReminderID = nil
+            notificationReminder = reminder
+        }
+
+        // Process pending snooze action
+        if let pendingID = pendingSnoozeReminderID,
+           let reminder = reminders.first(where: { $0.id == pendingID }) {
+            pendingSnoozeReminderID = nil
             showCustomSnoozeForReminder = reminder
         }
     }
