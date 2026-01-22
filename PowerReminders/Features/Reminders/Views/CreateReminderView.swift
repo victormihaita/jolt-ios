@@ -24,6 +24,7 @@ struct CreateReminderView: View {
     @State private var showPremiumPaywall = false
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var isAlarm = false
 
     // Available lists from SyncEngine
     private var availableLists: [ReminderList] {
@@ -116,6 +117,22 @@ struct CreateReminderView: View {
                         }
                     }
                     .pickerStyle(.menu)
+                }
+
+                // Alarm section
+                Section {
+                    Toggle(isOn: $isAlarm) {
+                        HStack {
+                            Image(systemName: "bell.fill")
+                                .foregroundStyle(isAlarm ? .orange : .secondary)
+                            Text("Alarm")
+                        }
+                    }
+                    if isAlarm {
+                        Text("Alarms play a louder sound and vibrate repeatedly until dismissed")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 // List section
@@ -215,6 +232,7 @@ struct CreateReminderView: View {
         dueTime = reminder.dueAt
         allDay = reminder.allDay
         priority = reminder.priority
+        isAlarm = reminder.isAlarm
         recurrenceEnabled = reminder.recurrenceRule != nil
         recurrenceRule = reminder.recurrenceRule
         selectedListId = reminder.listId
@@ -272,6 +290,7 @@ struct CreateReminderView: View {
                     priority: .some(.init(graphQLPriority(from: priority))),
                     dueAt: iso8601String(from: finalDueDate),
                     allDay: allDay,
+                    isAlarm: .some(isAlarm),
                     recurrenceRule: recurrenceEnabled && recurrenceRule != nil
                         ? .some(graphQLRecurrenceRuleInput(from: recurrenceRule!))
                         : .null
@@ -326,6 +345,7 @@ struct CreateReminderView: View {
                     priority: .some(.init(graphQLPriority(from: priority))),
                     dueAt: .some(iso8601String(from: finalDueDate)),
                     allDay: .some(allDay),
+                    isAlarm: .some(isAlarm),
                     recurrenceRule: recurrenceEnabled && recurrenceRule != nil
                         ? .some(graphQLRecurrenceRuleInput(from: recurrenceRule!))
                         : .null

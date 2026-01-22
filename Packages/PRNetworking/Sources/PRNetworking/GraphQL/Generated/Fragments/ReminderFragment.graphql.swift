@@ -6,7 +6,7 @@
 public extension PRAPI {
   struct ReminderFragment: PRAPI.SelectionSet, Fragment {
     public static var fragmentDefinition: StaticString {
-      #"fragment ReminderFragment on Reminder { __typename id listId title notes priority dueAt allDay recurrenceRule { __typename frequency interval daysOfWeek dayOfMonth monthOfYear endAfterOccurrences endDate } recurrenceEnd status completedAt snoozedUntil snoozeCount tags localId version createdAt updatedAt }"#
+      #"fragment ReminderFragment on Reminder { __typename id listId title notes priority dueAt allDay isAlarm recurrenceRule { __typename frequency interval daysOfWeek dayOfMonth monthOfYear endAfterOccurrences endDate } recurrenceEnd status completedAt snoozedUntil snoozeCount tags localId version createdAt updatedAt }"#
     }
 
     public let __data: DataDict
@@ -22,6 +22,7 @@ public extension PRAPI {
       .field("priority", GraphQLEnum<PRAPI.Priority>.self),
       .field("dueAt", PRAPI.DateTime.self),
       .field("allDay", Bool.self),
+      .field("isAlarm", Bool.self),
       .field("recurrenceRule", RecurrenceRule?.self),
       .field("recurrenceEnd", PRAPI.DateTime?.self),
       .field("status", GraphQLEnum<PRAPI.ReminderStatus>.self),
@@ -45,6 +46,7 @@ public extension PRAPI {
     public var priority: GraphQLEnum<PRAPI.Priority> { __data["priority"] }
     public var dueAt: PRAPI.DateTime { __data["dueAt"] }
     public var allDay: Bool { __data["allDay"] }
+    public var isAlarm: Bool { __data["isAlarm"] }
     public var recurrenceRule: RecurrenceRule? { __data["recurrenceRule"] }
     public var recurrenceEnd: PRAPI.DateTime? { __data["recurrenceEnd"] }
     public var status: GraphQLEnum<PRAPI.ReminderStatus> { __data["status"] }

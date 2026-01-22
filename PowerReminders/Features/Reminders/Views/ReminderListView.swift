@@ -214,6 +214,13 @@ struct ReminderRowView: View {
                         .font(Theme.Typography.caption)
                         .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
 
+                    // Alarm indicator
+                    if reminder.isAlarm {
+                        Label("Alarm", systemImage: "bell.fill")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.orange)
+                    }
+
                     // Recurrence indicator
                     if reminder.isRecurring {
                         Label(reminder.recurrenceRule?.displayString ?? "", systemImage: "repeat")

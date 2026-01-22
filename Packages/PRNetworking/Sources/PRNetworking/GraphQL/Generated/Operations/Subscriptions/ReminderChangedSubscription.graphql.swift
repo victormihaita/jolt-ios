@@ -76,6 +76,7 @@ public extension PRAPI {
           public var priority: GraphQLEnum<PRAPI.Priority> { __data["priority"] }
           public var dueAt: PRAPI.DateTime { __data["dueAt"] }
           public var allDay: Bool { __data["allDay"] }
+          public var isAlarm: Bool { __data["isAlarm"] }
           public var recurrenceRule: RecurrenceRule? { __data["recurrenceRule"] }
           public var recurrenceEnd: PRAPI.DateTime? { __data["recurrenceEnd"] }
           public var status: GraphQLEnum<PRAPI.ReminderStatus> { __data["status"] }

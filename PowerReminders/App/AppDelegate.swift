@@ -121,9 +121,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             // Remove notification from notification center
             NotificationService.shared.cancelNotification(for: reminderID)
 
-            // Stop alarm if playing and post notification to update UI
+            // Stop alarm if playing (thread-safe)
+            AlarmManager.shared.stopAlarm()
+
+            // Post notification to update UI on main thread
             Task { @MainActor in
-                AlarmManager.shared.stopAlarm()
                 NotificationCenter.default.post(
                     name: .crossDeviceActionReceived,
                     object: nil,

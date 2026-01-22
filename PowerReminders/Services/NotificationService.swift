@@ -287,10 +287,8 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         if let isAlarm = userInfo["is_alarm"] as? Bool, isAlarm,
            let reminderIDString = userInfo["reminder_id"] as? String,
            let reminderID = UUID(uuidString: reminderIDString) {
-            // Start alarm sound/vibration
-            await MainActor.run {
-                AlarmManager.shared.startAlarm(for: reminderID)
-            }
+            // Start alarm sound/vibration (thread-safe)
+            AlarmManager.shared.startAlarm(for: reminderID)
         }
 
         // Show notification even when app is in foreground
@@ -308,10 +306,8 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             return
         }
 
-        // Stop any playing alarm on the main actor
-        await MainActor.run {
-            AlarmManager.shared.stopAlarm()
-        }
+        // Stop any playing alarm (thread-safe, no MainActor needed)
+        AlarmManager.shared.stopAlarm()
 
         switch response.actionIdentifier {
         case "SNOOZE_5":
@@ -366,19 +362,20 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             _ = try await GraphQLClient.shared.perform(mutation: mutation)
             print("Snoozed reminder \(reminderID) for \(minutes) minutes")
 
-            // Update local database
+            // Update local database and provide haptic feedback on main thread
             await MainActor.run {
                 NotificationCenter.default.post(
                     name: .reminderSnoozed,
                     object: nil,
                     userInfo: ["reminder_id": reminderID, "minutes": minutes]
                 )
+                Haptics.success()
             }
-
-            Haptics.success()
         } catch {
             print("Failed to snooze reminder: \(error)")
-            Haptics.error()
+            await MainActor.run {
+                Haptics.error()
+            }
         }
     }
 
@@ -395,12 +392,13 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
                     object: nil,
                     userInfo: ["reminder_id": reminderID]
                 )
+                Haptics.success()
             }
-
-            Haptics.success()
         } catch {
             print("Failed to complete reminder: \(error)")
-            Haptics.error()
+            await MainActor.run {
+                Haptics.error()
+            }
         }
     }
 
@@ -417,9 +415,8 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
                     object: nil,
                     userInfo: ["reminder_id": reminderID]
                 )
+                Haptics.medium()
             }
-
-            Haptics.medium()
         } catch {
             print("Failed to dismiss reminder: \(error)")
         }

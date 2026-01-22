@@ -55,6 +55,7 @@ fragment ReminderFragment on Reminder {
   priority
   dueAt
   allDay
+  isAlarm
   recurrenceRule {
     frequency
     interval

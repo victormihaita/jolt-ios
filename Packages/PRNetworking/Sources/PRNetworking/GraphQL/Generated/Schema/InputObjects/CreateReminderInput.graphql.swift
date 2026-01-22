@@ -18,6 +18,7 @@ public extension PRAPI {
       priority: GraphQLNullable<GraphQLEnum<Priority>> = nil,
       dueAt: DateTime,
       allDay: Bool,
+      isAlarm: GraphQLNullable<Bool> = nil,
       recurrenceRule: GraphQLNullable<RecurrenceRuleInput> = nil,
       recurrenceEnd: GraphQLNullable<DateTime> = nil,
       tags: GraphQLNullable<[String]> = nil,
@@ -30,6 +31,7 @@ public extension PRAPI {
         "priority": priority,
         "dueAt": dueAt,
         "allDay": allDay,
+        "isAlarm": isAlarm,
         "recurrenceRule": recurrenceRule,
         "recurrenceEnd": recurrenceEnd,
         "tags": tags,
@@ -65,6 +67,11 @@ public extension PRAPI {
     public var allDay: Bool {
       get { __data["allDay"] }
       set { __data["allDay"] = newValue }
+    }
+
+    public var isAlarm: GraphQLNullable<Bool> {
+      get { __data["isAlarm"] }
+      set { __data["isAlarm"] = newValue }
     }
 
     public var recurrenceRule: GraphQLNullable<RecurrenceRuleInput> {

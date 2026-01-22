@@ -151,6 +151,7 @@ type Reminder {
   priority: Priority!
   dueAt: DateTime!
   allDay: Boolean!
+  isAlarm: Boolean!
   recurrenceRule: RecurrenceRule
   recurrenceEnd: DateTime
   status: ReminderStatus!
@@ -172,6 +173,7 @@ input CreateReminderInput {
   priority: Priority
   dueAt: DateTime!
   allDay: Boolean!
+  isAlarm: Boolean
   recurrenceRule: RecurrenceRuleInput
   recurrenceEnd: DateTime
   tags: [String!]
@@ -185,6 +187,7 @@ input UpdateReminderInput {
   priority: Priority
   dueAt: DateTime
   allDay: Boolean
+  isAlarm: Boolean
   recurrenceRule: RecurrenceRuleInput
   recurrenceEnd: DateTime
   status: ReminderStatus

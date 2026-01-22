@@ -71,6 +71,31 @@ struct ContentView: View {
             NotificationSnoozePickerView(reminder: reminder)
                 .environmentObject(subscriptionViewModel)
         }
+        // Schedule local notifications for exact timing (server push is backup)
+        .onAppear {
+            setupLocalNotificationScheduling()
+        }
+    }
+
+    private func setupLocalNotificationScheduling() {
+        // Schedule local notification when reminder is created
+        SyncEngine.shared.onReminderCreated = { reminder in
+            Task {
+                await NotificationService.shared.scheduleNotification(for: reminder)
+            }
+        }
+
+        // Reschedule local notification when reminder is updated
+        SyncEngine.shared.onReminderUpdated = { reminder in
+            Task {
+                // Cancel old notification first
+                NotificationService.shared.cancelNotification(for: reminder.id)
+                // Only reschedule if reminder is still active or snoozed
+                if reminder.status == .active || reminder.status == .snoozed {
+                    await NotificationService.shared.scheduleNotification(for: reminder)
+                }
+            }
+        }
     }
 
     private func handleOpenReminderDetail(_ notification: Notification) {
