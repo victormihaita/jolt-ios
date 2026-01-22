@@ -68,6 +68,7 @@ targets:
     info:
       path: PowerReminders/Info.plist
       properties:
+        GIDClientID: 874217308291-580dfr043s14an56ts5rpu19pl409frf.apps.googleusercontent.com
         CFBundleDisplayName: Power Reminders
         CFBundleName: $(PRODUCT_NAME)
         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
