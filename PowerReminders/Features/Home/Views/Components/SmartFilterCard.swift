@@ -34,16 +34,7 @@ struct SmartFilterCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Theme.Spacing.md)
-            .background(
-                LinearGradient(
-                    colors: [
-                        filterType.color.opacity(0.15),
-                        filterType.color.opacity(0.05)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .background(Theme.Gradients.filter(for: filterType.color))
             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
         }
         .buttonStyle(.plain)
@@ -79,10 +70,10 @@ enum SmartFilterType: CaseIterable {
 
     var color: Color {
         switch self {
-        case .today: return .blue
-        case .all: return .gray
-        case .scheduled: return .orange
-        case .completed: return .green
+        case .today: return Theme.Colors.filterToday
+        case .all: return Theme.Colors.filterAll
+        case .scheduled: return Theme.Colors.filterScheduled
+        case .completed: return Theme.Colors.filterCompleted
         }
     }
 }

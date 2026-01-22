@@ -63,15 +63,17 @@ actor DeviceService {
             return
         }
 
-
+        // Get stable device identifier that persists across push token changes
+        let deviceIdentifier = await UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
         let deviceName = await UIDevice.current.name
         let osVersion = await UIDevice.current.systemVersion
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
 
-        print("📱 DeviceService: Registering device '\(deviceName)' with token \(pushToken.prefix(20))...")
+        print("📱 DeviceService: Registering device '\(deviceName)' (id: \(deviceIdentifier.prefix(8))...) with token \(pushToken.prefix(20))...")
 
         let input = PRAPI.RegisterDeviceInput(
             platform: .case(.ios),
+            deviceIdentifier: deviceIdentifier,
             pushToken: pushToken,
             deviceName: deviceName.isEmpty ? .null : .some(deviceName),
             appVersion: appVersion.map { .some($0) } ?? .null,

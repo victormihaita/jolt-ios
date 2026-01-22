@@ -88,9 +88,9 @@ struct NewHomeView: View {
                             .font(.title2.weight(.semibold))
                             .foregroundColor(.white)
                             .frame(width: 56, height: 56)
-                            .background(Color.accentColor)
+                            .background(Theme.Colors.primary)
                             .clipShape(Circle())
-                            .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
+                            .prShadow(Theme.Shadows.glow(color: Theme.Colors.primary))
                     }
                     .modifier(MatchedTransitionSourceModifier(id: "createReminder", namespace: namespace))
                     .padding(.trailing, Theme.Spacing.lg)

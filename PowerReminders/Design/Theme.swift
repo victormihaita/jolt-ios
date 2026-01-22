@@ -1,36 +1,60 @@
 import SwiftUI
 
-// MARK: - Liquid Glass Theme for iOS 26
+// MARK: - Power Reminders Theme
+// Designed for Sam Beckman's tech-savvy audience
+// Electric Cyan accent with true black dark mode
 
 struct Theme {
     // MARK: - Colors
 
     struct Colors {
+        // Primary - Electric Cyan
         static let primary = Color.accentColor
-        static let secondary = Color.secondary
+        static let primaryVariant = Color(hex: "#00A5B5")
+
+        // Secondary - Warm Coral
+        static let secondary = Color(hex: "#FF6B6B")
+        static let secondaryDark = Color(hex: "#FF8585")
+
+        // Backgrounds
         static let background = Color(uiColor: .systemBackground)
         static let secondaryBackground = Color(uiColor: .secondarySystemBackground)
         static let tertiaryBackground = Color(uiColor: .tertiarySystemBackground)
         static let groupedBackground = Color(uiColor: .systemGroupedBackground)
 
-        // Priority colors
-        static let priorityHigh = Color.red
-        static let priorityNormal = Color.orange
-        static let priorityLow = Color.blue
-        static let priorityNone = Color.gray
+        // Surface colors for cards
+        static let surface = Color("PRSurface", bundle: nil)
+        static let surfaceElevated = Color("PRSurfaceElevated", bundle: nil)
+        static let surfaceCard = Color("PRSurfaceCard", bundle: nil)
 
-        // Status colors
-        static let success = Color.green
-        static let warning = Color.orange
-        static let error = Color.red
-        static let info = Color.blue
+        // Priority colors (refined)
+        static let priorityHigh = Color(hex: "#FF4757")
+        static let priorityNormal = Color(hex: "#FFA502")
+        static let priorityLow = Color(hex: "#3742FA")
+        static let priorityNone = Color(hex: "#636E72")
 
-        // Gradient for premium features
+        // Semantic/Status colors
+        static let success = Color(hex: "#00D9A5")
+        static let warning = Color(hex: "#FFB800")
+        static let error = Color(hex: "#FF5252")
+        static let info = Color(hex: "#4FC3F7")
+
+        // Premium gradient (Indigo → Purple → Pink)
         static let premiumGradient = LinearGradient(
-            colors: [.purple, .pink, .orange],
+            colors: [
+                Color(hex: "#667EEA"),
+                Color(hex: "#764BA2"),
+                Color(hex: "#F093FB")
+            ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+
+        // Filter card colors
+        static let filterToday = Color(hex: "#00C9E0")
+        static let filterAll = Color(hex: "#636E72")
+        static let filterScheduled = Color(hex: "#FFA502")
+        static let filterCompleted = Color(hex: "#00D9A5")
     }
 
     // MARK: - Typography
@@ -64,11 +88,63 @@ struct Theme {
     // MARK: - Corner Radius
 
     struct CornerRadius {
-        static let sm: CGFloat = 8
-        static let md: CGFloat = 12
-        static let lg: CGFloat = 16
-        static let xl: CGFloat = 24
+        static let xs: CGFloat = 6
+        static let sm: CGFloat = 10
+        static let md: CGFloat = 14
+        static let lg: CGFloat = 20
+        static let xl: CGFloat = 28
         static let full: CGFloat = 9999
+    }
+
+    // MARK: - Shadows
+
+    struct Shadows {
+        static let subtle = ShadowStyle(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+        static let medium = ShadowStyle(color: .black.opacity(0.08), radius: 16, x: 0, y: 4)
+        static let strong = ShadowStyle(color: .black.opacity(0.12), radius: 24, x: 0, y: 8)
+
+        static func glow(color: Color) -> ShadowStyle {
+            ShadowStyle(color: color.opacity(0.3), radius: 20, x: 0, y: 4)
+        }
+    }
+
+    // MARK: - Gradients
+
+    struct Gradients {
+        static func filter(for color: Color) -> LinearGradient {
+            LinearGradient(
+                colors: [
+                    color.opacity(0.20),
+                    color.opacity(0.08)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+
+        static let card = LinearGradient(
+            colors: [
+                Color.white.opacity(0.08),
+                Color.white.opacity(0.02)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
+// MARK: - Shadow Style
+
+struct ShadowStyle {
+    let color: Color
+    let radius: CGFloat
+    let x: CGFloat
+    let y: CGFloat
+}
+
+extension View {
+    func prShadow(_ style: ShadowStyle) -> some View {
+        shadow(color: style.color, radius: style.radius, x: style.x, y: style.y)
     }
 }
 
@@ -157,5 +233,33 @@ struct RoundedCorner: Shape {
             cornerRadii: CGSize(width: radius, height: radius)
         )
         return Path(path.cgPath)
+    }
+}
+
+// MARK: - Color Hex Extension
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
     }
 }
