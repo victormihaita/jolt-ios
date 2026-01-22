@@ -13,6 +13,7 @@ public extension PRAPI {
 
     public init(
       platform: GraphQLEnum<Platform>,
+      deviceIdentifier: String,
       pushToken: String,
       deviceName: GraphQLNullable<String> = nil,
       appVersion: GraphQLNullable<String> = nil,
@@ -20,6 +21,7 @@ public extension PRAPI {
     ) {
       __data = InputDict([
         "platform": platform,
+        "deviceIdentifier": deviceIdentifier,
         "pushToken": pushToken,
         "deviceName": deviceName,
         "appVersion": appVersion,
@@ -30,6 +32,11 @@ public extension PRAPI {
     public var platform: GraphQLEnum<Platform> {
       get { __data["platform"] }
       set { __data["platform"] = newValue }
+    }
+
+    public var deviceIdentifier: String {
+      get { __data["deviceIdentifier"] }
+      set { __data["deviceIdentifier"] = newValue }
     }
 
     public var pushToken: String {

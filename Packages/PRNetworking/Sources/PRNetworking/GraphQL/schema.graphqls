@@ -1,5 +1,5 @@
 # Jolt GraphQL API Schema
-# Combined schema for iOS Apollo client
+# Combined schema for backend server
 
 # Custom scalar types
 scalar DateTime
@@ -50,6 +50,7 @@ enum Platform {
 type Device {
   id: UUID!
   platform: Platform!
+  deviceIdentifier: String!
   pushToken: String!
   deviceName: String
   appVersion: String
@@ -60,6 +61,7 @@ type Device {
 
 input RegisterDeviceInput {
   platform: Platform!
+  deviceIdentifier: String!
   pushToken: String!
   deviceName: String
   appVersion: String
@@ -92,11 +94,16 @@ input UpdateReminderListInput {
   sortOrder: Int
 }
 
-type ReminderListChangeEvent {
-  action: ChangeAction!
-  reminderList: ReminderList
-  reminderListId: UUID!
-  timestamp: DateTime!
+# Connection types for lists
+type ReminderListConnection {
+  edges: [ReminderListEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ReminderListEdge {
+  node: ReminderList!
+  cursor: String!
 }
 
 # Reminder types
@@ -151,13 +158,13 @@ type Reminder {
   priority: Priority!
   dueAt: DateTime!
   allDay: Boolean!
-  isAlarm: Boolean!
   recurrenceRule: RecurrenceRule
   recurrenceEnd: DateTime
   status: ReminderStatus!
   completedAt: DateTime
   snoozedUntil: DateTime
   snoozeCount: Int!
+  isAlarm: Boolean!
   tags: [String!]!
   localId: String
   version: Int!
@@ -173,9 +180,9 @@ input CreateReminderInput {
   priority: Priority
   dueAt: DateTime!
   allDay: Boolean!
-  isAlarm: Boolean
   recurrenceRule: RecurrenceRuleInput
   recurrenceEnd: DateTime
+  isAlarm: Boolean
   tags: [String!]
   localId: String
 }
@@ -187,9 +194,9 @@ input UpdateReminderInput {
   priority: Priority
   dueAt: DateTime
   allDay: Boolean
-  isAlarm: Boolean
   recurrenceRule: RecurrenceRuleInput
   recurrenceEnd: DateTime
+  isAlarm: Boolean
   status: ReminderStatus
   tags: [String!]
 }
@@ -226,6 +233,13 @@ type ReminderChangeEvent {
   action: ChangeAction!
   reminder: Reminder
   reminderId: UUID!
+  timestamp: DateTime!
+}
+
+type ReminderListChangeEvent {
+  action: ChangeAction!
+  reminderList: ReminderList
+  reminderListId: UUID!
   timestamp: DateTime!
 }
 

@@ -290,10 +290,10 @@ struct CreateReminderView: View {
                     priority: .some(.init(graphQLPriority(from: priority))),
                     dueAt: iso8601String(from: finalDueDate),
                     allDay: allDay,
-                    isAlarm: .some(isAlarm),
                     recurrenceRule: recurrenceEnabled && recurrenceRule != nil
                         ? .some(graphQLRecurrenceRuleInput(from: recurrenceRule!))
-                        : .null
+                        : .null,
+                    isAlarm: .some(isAlarm)
                 )
 
                 let mutation = PRAPI.CreateReminderMutation(input: input)
@@ -345,10 +345,10 @@ struct CreateReminderView: View {
                     priority: .some(.init(graphQLPriority(from: priority))),
                     dueAt: .some(iso8601String(from: finalDueDate)),
                     allDay: .some(allDay),
-                    isAlarm: .some(isAlarm),
                     recurrenceRule: recurrenceEnabled && recurrenceRule != nil
                         ? .some(graphQLRecurrenceRuleInput(from: recurrenceRule!))
-                        : .null
+                        : .null,
+                    isAlarm: .some(isAlarm)
                 )
 
                 let mutation = PRAPI.UpdateReminderMutation(

@@ -10,11 +10,11 @@ struct Theme {
     struct Colors {
         // Primary - Electric Cyan
         static let primary = Color.accentColor
-        static let primaryVariant = Color(hex: "#00A5B5")
+        static let primaryVariant = Color(hexString: "#00A5B5")
 
         // Secondary - Warm Coral
-        static let secondary = Color(hex: "#FF6B6B")
-        static let secondaryDark = Color(hex: "#FF8585")
+        static let secondary = Color(hexString: "#FF6B6B")
+        static let secondaryDark = Color(hexString: "#FF8585")
 
         // Backgrounds
         static let background = Color(uiColor: .systemBackground)
@@ -28,33 +28,33 @@ struct Theme {
         static let surfaceCard = Color("PRSurfaceCard", bundle: nil)
 
         // Priority colors (refined)
-        static let priorityHigh = Color(hex: "#FF4757")
-        static let priorityNormal = Color(hex: "#FFA502")
-        static let priorityLow = Color(hex: "#3742FA")
-        static let priorityNone = Color(hex: "#636E72")
+        static let priorityHigh = Color(hexString: "#FF4757")
+        static let priorityNormal = Color(hexString: "#FFA502")
+        static let priorityLow = Color(hexString: "#3742FA")
+        static let priorityNone = Color(hexString: "#636E72")
 
         // Semantic/Status colors
-        static let success = Color(hex: "#00D9A5")
-        static let warning = Color(hex: "#FFB800")
-        static let error = Color(hex: "#FF5252")
-        static let info = Color(hex: "#4FC3F7")
+        static let success = Color(hexString: "#00D9A5")
+        static let warning = Color(hexString: "#FFB800")
+        static let error = Color(hexString: "#FF5252")
+        static let info = Color(hexString: "#4FC3F7")
 
         // Premium gradient (Indigo → Purple → Pink)
         static let premiumGradient = LinearGradient(
             colors: [
-                Color(hex: "#667EEA"),
-                Color(hex: "#764BA2"),
-                Color(hex: "#F093FB")
+                Color(hexString: "#667EEA"),
+                Color(hexString: "#764BA2"),
+                Color(hexString: "#F093FB")
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
 
         // Filter card colors
-        static let filterToday = Color(hex: "#00C9E0")
-        static let filterAll = Color(hex: "#636E72")
-        static let filterScheduled = Color(hex: "#FFA502")
-        static let filterCompleted = Color(hex: "#00D9A5")
+        static let filterToday = Color(hexString: "#00C9E0")
+        static let filterAll = Color(hexString: "#636E72")
+        static let filterScheduled = Color(hexString: "#FFA502")
+        static let filterCompleted = Color(hexString: "#00D9A5")
     }
 
     // MARK: - Typography
@@ -238,9 +238,9 @@ struct RoundedCorner: Shape {
 
 // MARK: - Color Hex Extension
 
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+extension SwiftUI.Color {
+    init(hexString: String) {
+        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
         let a, r, g, b: UInt64

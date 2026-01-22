@@ -18,9 +18,9 @@ public extension PRAPI {
       priority: GraphQLNullable<GraphQLEnum<Priority>> = nil,
       dueAt: GraphQLNullable<DateTime> = nil,
       allDay: GraphQLNullable<Bool> = nil,
-      isAlarm: GraphQLNullable<Bool> = nil,
       recurrenceRule: GraphQLNullable<RecurrenceRuleInput> = nil,
       recurrenceEnd: GraphQLNullable<DateTime> = nil,
+      isAlarm: GraphQLNullable<Bool> = nil,
       status: GraphQLNullable<GraphQLEnum<ReminderStatus>> = nil,
       tags: GraphQLNullable<[String]> = nil
     ) {
@@ -31,9 +31,9 @@ public extension PRAPI {
         "priority": priority,
         "dueAt": dueAt,
         "allDay": allDay,
-        "isAlarm": isAlarm,
         "recurrenceRule": recurrenceRule,
         "recurrenceEnd": recurrenceEnd,
+        "isAlarm": isAlarm,
         "status": status,
         "tags": tags
       ])
@@ -69,11 +69,6 @@ public extension PRAPI {
       set { __data["allDay"] = newValue }
     }
 
-    public var isAlarm: GraphQLNullable<Bool> {
-      get { __data["isAlarm"] }
-      set { __data["isAlarm"] = newValue }
-    }
-
     public var recurrenceRule: GraphQLNullable<RecurrenceRuleInput> {
       get { __data["recurrenceRule"] }
       set { __data["recurrenceRule"] = newValue }
@@ -82,6 +77,11 @@ public extension PRAPI {
     public var recurrenceEnd: GraphQLNullable<DateTime> {
       get { __data["recurrenceEnd"] }
       set { __data["recurrenceEnd"] = newValue }
+    }
+
+    public var isAlarm: GraphQLNullable<Bool> {
+      get { __data["isAlarm"] }
+      set { __data["isAlarm"] = newValue }
     }
 
     public var status: GraphQLNullable<GraphQLEnum<ReminderStatus>> {
