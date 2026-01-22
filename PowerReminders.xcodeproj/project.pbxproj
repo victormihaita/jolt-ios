@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -117,7 +117,7 @@
 		7F918149692F135910BD94AB /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredRemindersView.swift; sourceTree = "<group>"; };
 		8B53F9E7984A441EB3F45A63 /* ListsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsSection.swift; sourceTree = "<group>"; };
-		9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */ = {isa = PBXFileReference; path = PRProducts.storekit; sourceTree = "<group>"; };
+		9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = PRProducts.storekit; sourceTree = "<group>"; };
 		9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerRemindersWidget.entitlements; sourceTree = "<group>"; };
 		A4A543048D81C6ADCCA5D83C /* PRSync */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRSync; path = Packages/PRSync; sourceTree = SOURCE_ROOT; };
@@ -126,12 +126,12 @@
 		AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		B5DCAFBCC8694CA31E711197 /* PRKeychain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRKeychain; path = Packages/PRKeychain; sourceTree = SOURCE_ROOT; };
 		C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PowerRemindersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PowerRemindersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAFCCBF597C6BC9379C6F92A /* PRCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRCore; path = Packages/PRCore; sourceTree = SOURCE_ROOT; };
 		CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageParser.swift; sourceTree = "<group>"; };
 		CFA5EC6B0521645D6F4C6F25 /* NotificationSoundSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSoundSettings.swift; sourceTree = "<group>"; };
 		D8C27E773456BA6EEB61AA2F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		DEE63FD3B850950717E9A4B4 /* PowerReminders.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PowerReminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DEE63FD3B850950717E9A4B4 /* PowerReminders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PowerReminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6388118AE4069CBF03F0069 /* NaturalLanguageInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageInputViewModel.swift; sourceTree = "<group>"; };
 		E690D00B94870C180F005439 /* ReminderListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListViewModel.swift; sourceTree = "<group>"; };
 		E6AB7478FF01015189F21CCE /* PRDesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRDesignSystem; path = Packages/PRDesignSystem; sourceTree = SOURCE_ROOT; };
@@ -602,7 +602,6 @@
 				29527FC4EEA46122949EDF6E /* XCLocalSwiftPackageReference "Packages/PRSubscriptions" */,
 				C4ABA8A0BFE479757A3B0477 /* XCLocalSwiftPackageReference "Packages/PRSync" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -765,6 +764,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -783,6 +783,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -799,7 +800,12 @@
 				CODE_SIGN_ENTITLEMENTS = PowerReminders/Widget/PowerRemindersWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -880,7 +886,12 @@
 				CODE_SIGN_ENTITLEMENTS = PowerReminders/Widget/PowerRemindersWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
