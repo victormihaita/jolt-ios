@@ -312,23 +312,22 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         // Stop any playing alarm (thread-safe)
         AlarmManager.shared.stopAlarm()
 
+        // Handle the action - fire async work in detached task and call completion immediately
+        // This prevents crashes during cold start when the app isn't fully initialized
         switch response.actionIdentifier {
         case "SNOOZE_5":
-            Task {
-                await handleSnooze(reminderID: reminderID, minutes: 5)
-                completionHandler()
+            Task.detached { [weak self] in
+                await self?.handleSnooze(reminderID: reminderID, minutes: 5)
             }
 
         case "SNOOZE_15":
-            Task {
-                await handleSnooze(reminderID: reminderID, minutes: 15)
-                completionHandler()
+            Task.detached { [weak self] in
+                await self?.handleSnooze(reminderID: reminderID, minutes: 15)
             }
 
         case "SNOOZE_30":
-            Task {
-                await handleSnooze(reminderID: reminderID, minutes: 30)
-                completionHandler()
+            Task.detached { [weak self] in
+                await self?.handleSnooze(reminderID: reminderID, minutes: 30)
             }
 
         case "SNOOZE_CUSTOM":
@@ -340,24 +339,20 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
                     userInfo: ["reminder_id": reminderID]
                 )
             }
-            completionHandler()
 
         case "COMPLETE":
-            Task {
-                await handleComplete(reminderID: reminderID)
-                completionHandler()
+            Task.detached { [weak self] in
+                await self?.handleComplete(reminderID: reminderID)
             }
 
         case "DISMISS":
-            Task {
-                await handleDismiss(reminderID: reminderID)
-                completionHandler()
+            Task.detached { [weak self] in
+                await self?.handleDismiss(reminderID: reminderID)
             }
 
         case "STOP_ALARM":
-            Task {
-                await handleDismiss(reminderID: reminderID)
-                completionHandler()
+            Task.detached { [weak self] in
+                await self?.handleDismiss(reminderID: reminderID)
             }
 
         case UNNotificationDefaultActionIdentifier:
@@ -369,11 +364,13 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
                     userInfo: ["reminder_id": reminderID]
                 )
             }
-            completionHandler()
 
         default:
-            completionHandler()
+            break
         }
+
+        // Always call completion handler immediately - don't wait for async work
+        completionHandler()
     }
 
     // MARK: - Action Handlers
