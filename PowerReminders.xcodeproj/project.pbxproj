@@ -44,6 +44,7 @@
 		A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */; };
 		A230E0F7962B0111547E1F68 /* SyncStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEE25D944D6F41B9DCC6E89 /* SyncStatusView.swift */; };
 		A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58AC312793DB5E028CC8AED8 /* SmartFiltersGrid.swift */; };
+		AA425BB3EF09F4F07EB96ED3 /* NotificationSnoozePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7AB6DB19CA095194DCF145 /* NotificationSnoozePickerView.swift */; };
 		B2283CA11FE13AC40FE2013C /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */; };
 		B7B02FD01CC3D5D75A4473F5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 758BF0B629E2D874148A8CE2 /* SwiftUI.framework */; };
 		B7FA309D02BB6311CD91A9C9 /* DevicesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCBAEAB04A3AE0B1EB21AC8 /* DevicesListView.swift */; };
@@ -117,6 +118,7 @@
 		7F918149692F135910BD94AB /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredRemindersView.swift; sourceTree = "<group>"; };
 		8B53F9E7984A441EB3F45A63 /* ListsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsSection.swift; sourceTree = "<group>"; };
+		9A7AB6DB19CA095194DCF145 /* NotificationSnoozePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSnoozePickerView.swift; sourceTree = "<group>"; };
 		9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */ = {isa = PBXFileReference; path = PRProducts.storekit; sourceTree = "<group>"; };
 		9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerRemindersWidget.entitlements; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 			children = (
 				447C0B18E79221FFC3C84E8C /* CreateReminderView.swift */,
 				862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */,
+				9A7AB6DB19CA095194DCF145 /* NotificationSnoozePickerView.swift */,
 				46234AE44C534E0C9DFD2216 /* ReminderDetailView.swift */,
 				0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */,
 			);
@@ -647,6 +650,7 @@
 				10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */,
 				64FAC1E9CBA28001727D83EA /* NewHomeView.swift in Sources */,
 				1168AF46FAAED3D9736888BC /* NotificationService.swift in Sources */,
+				AA425BB3EF09F4F07EB96ED3 /* NotificationSnoozePickerView.swift in Sources */,
 				F0F8AC39C25900598206EB28 /* NotificationSoundSettings.swift in Sources */,
 				57C0D0AA065D3AB88B2436B7 /* PRApp.swift in Sources */,
 				6450B4040E99F4DE83448729 /* PaywallView.swift in Sources */,
