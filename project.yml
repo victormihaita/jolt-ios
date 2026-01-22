@@ -79,6 +79,7 @@ targets:
       properties:
         GIDClientID: 874217308291-580dfr043s14an56ts5rpu19pl409frf.apps.googleusercontent.com
         CFBundleDisplayName: Power Reminders
+        LSApplicationCategoryType: public.app-category.productivity
         CFBundleName: $(PRODUCT_NAME)
         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
