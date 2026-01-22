@@ -279,8 +279,9 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification
-    ) async -> UNNotificationPresentationOptions {
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         let userInfo = notification.request.content.userInfo
 
         // Check if this is an alarm notification
@@ -292,64 +293,86 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
 
         // Show notification even when app is in foreground
-        return [.banner, .sound, .badge]
+        completionHandler([.banner, .sound, .badge])
     }
 
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse
-    ) async {
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         let userInfo = response.notification.request.content.userInfo
 
         guard let reminderIDString = userInfo["reminder_id"] as? String,
               let reminderID = UUID(uuidString: reminderIDString) else {
+            completionHandler()
             return
         }
 
-        // Stop any playing alarm (thread-safe, no MainActor needed)
+        // Stop any playing alarm (thread-safe)
         AlarmManager.shared.stopAlarm()
 
         switch response.actionIdentifier {
         case "SNOOZE_5":
-            await handleSnooze(reminderID: reminderID, minutes: 5)
+            Task {
+                await handleSnooze(reminderID: reminderID, minutes: 5)
+                completionHandler()
+            }
 
         case "SNOOZE_15":
-            await handleSnooze(reminderID: reminderID, minutes: 15)
+            Task {
+                await handleSnooze(reminderID: reminderID, minutes: 15)
+                completionHandler()
+            }
 
         case "SNOOZE_30":
-            await handleSnooze(reminderID: reminderID, minutes: 30)
+            Task {
+                await handleSnooze(reminderID: reminderID, minutes: 30)
+                completionHandler()
+            }
 
         case "SNOOZE_CUSTOM":
             // Open app to custom snooze picker
-            await MainActor.run {
+            DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: .showCustomSnooze,
                     object: nil,
                     userInfo: ["reminder_id": reminderID]
                 )
             }
+            completionHandler()
 
         case "COMPLETE":
-            await handleComplete(reminderID: reminderID)
+            Task {
+                await handleComplete(reminderID: reminderID)
+                completionHandler()
+            }
 
         case "DISMISS":
-            await handleDismiss(reminderID: reminderID)
+            Task {
+                await handleDismiss(reminderID: reminderID)
+                completionHandler()
+            }
 
         case "STOP_ALARM":
-            await handleDismiss(reminderID: reminderID)
+            Task {
+                await handleDismiss(reminderID: reminderID)
+                completionHandler()
+            }
 
         case UNNotificationDefaultActionIdentifier:
             // User tapped the notification - open app to reminder detail
-            await MainActor.run {
+            DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: .openReminderDetail,
                     object: nil,
                     userInfo: ["reminder_id": reminderID]
                 )
             }
+            completionHandler()
 
         default:
-            break
+            completionHandler()
         }
     }
 
@@ -363,7 +386,7 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             print("Snoozed reminder \(reminderID) for \(minutes) minutes")
 
             // Update local database and provide haptic feedback on main thread
-            await MainActor.run {
+            DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: .reminderSnoozed,
                     object: nil,
@@ -373,7 +396,7 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             }
         } catch {
             print("Failed to snooze reminder: \(error)")
-            await MainActor.run {
+            DispatchQueue.main.async {
                 Haptics.error()
             }
         }
@@ -386,7 +409,7 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             _ = try await GraphQLClient.shared.perform(mutation: mutation)
             print("Completed reminder \(reminderID)")
 
-            await MainActor.run {
+            DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: .reminderCompleted,
                     object: nil,
@@ -396,7 +419,7 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             }
         } catch {
             print("Failed to complete reminder: \(error)")
-            await MainActor.run {
+            DispatchQueue.main.async {
                 Haptics.error()
             }
         }
@@ -409,7 +432,7 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             _ = try await GraphQLClient.shared.perform(mutation: mutation)
             print("Dismissed reminder \(reminderID)")
 
-            await MainActor.run {
+            DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: .reminderDismissed,
                     object: nil,
