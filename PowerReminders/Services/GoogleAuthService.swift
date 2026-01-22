@@ -31,8 +31,8 @@ class GoogleAuthService: NSObject, ObservableObject {
             return
         }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootVC) { [weak self] result, error in
-            self?.isSigningIn = false
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootVC) { result, error in
+            GoogleAuthService.shared.isSigningIn = false
 
             if let error = error {
                 continuation.resume(throwing: error)
