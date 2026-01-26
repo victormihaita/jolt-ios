@@ -21,6 +21,7 @@ public extension PRAPI {
       recurrenceRule: GraphQLNullable<RecurrenceRuleInput> = nil,
       recurrenceEnd: GraphQLNullable<DateTime> = nil,
       isAlarm: GraphQLNullable<Bool> = nil,
+      soundId: GraphQLNullable<String> = nil,
       status: GraphQLNullable<GraphQLEnum<ReminderStatus>> = nil,
       tags: GraphQLNullable<[String]> = nil
     ) {
@@ -34,6 +35,7 @@ public extension PRAPI {
         "recurrenceRule": recurrenceRule,
         "recurrenceEnd": recurrenceEnd,
         "isAlarm": isAlarm,
+        "soundId": soundId,
         "status": status,
         "tags": tags
       ])
@@ -82,6 +84,11 @@ public extension PRAPI {
     public var isAlarm: GraphQLNullable<Bool> {
       get { __data["isAlarm"] }
       set { __data["isAlarm"] = newValue }
+    }
+
+    public var soundId: GraphQLNullable<String> {
+      get { __data["soundId"] }
+      set { __data["soundId"] = newValue }
     }
 
     public var status: GraphQLNullable<GraphQLEnum<ReminderStatus>> {

@@ -7,12 +7,12 @@ struct WelcomeView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient
+            // Background gradient - Electric Cyan theme
             LinearGradient(
                 colors: [
-                    Color.blue.opacity(0.3),
-                    Color.purple.opacity(0.2),
-                    Color.pink.opacity(0.1)
+                    Theme.Colors.primary.opacity(0.3),
+                    Theme.Colors.premiumStart.opacity(0.2),
+                    Theme.Colors.premiumMid.opacity(0.1)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -82,7 +82,7 @@ struct WelcomeView: View {
                             if authViewModel.isLoading {
                                 ProgressView()
                                     .progressViewStyle(.circular)
-                                    .tint(.white)
+                                    .tint(.black)
                             } else {
                                 Image(systemName: "g.circle.fill")
                                     .font(.title2)
@@ -90,10 +90,10 @@ struct WelcomeView: View {
                             Text("Continue with Google")
                                 .font(Theme.Typography.headline)
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
-                        .background(authViewModel.isLoading ? Color.blue.opacity(0.7) : Color.blue)
+                        .background(authViewModel.isLoading ? Theme.Colors.primary.opacity(0.7) : Theme.Colors.primary)
                         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
                     }
                     .disabled(authViewModel.isLoading)
@@ -145,9 +145,9 @@ struct FeatureRow: View {
         HStack(spacing: Theme.Spacing.md) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundStyle(.blue)
+                .foregroundStyle(Theme.Colors.primary)
                 .frame(width: 40, height: 40)
-                .background(.ultraThinMaterial)
+                .background(Theme.Colors.primary.opacity(0.15))
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
@@ -161,7 +161,8 @@ struct FeatureRow: View {
             Spacer()
         }
         .padding(Theme.Spacing.md)
-        .liquidGlass()
+        .background(Color.white.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
     }
 }
 

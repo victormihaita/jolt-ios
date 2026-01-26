@@ -86,6 +86,12 @@ public final class NotificationService: NSObject, ObservableObject {
     // MARK: - Schedule Notifications
 
     public func scheduleNotification(for reminder: Reminder) async {
+        // Skip scheduling if reminder has no due date
+        guard let dueAt = reminder.dueAt else {
+            PRLogger.debug("Skipping notification for reminder without date: \(reminder.id)", category: .notifications)
+            return
+        }
+
         let content = UNMutableNotificationContent()
         content.title = reminder.title
         if let notes = reminder.notes {
@@ -98,7 +104,7 @@ public final class NotificationService: NSObject, ObservableObject {
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: Calendar.current.dateComponents(
                 [.year, .month, .day, .hour, .minute],
-                from: reminder.dueAt
+                from: dueAt
             ),
             repeats: false
         )

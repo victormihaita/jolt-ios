@@ -29,7 +29,9 @@ class HomeViewModel: ObservableObject {
 
     var scheduledCount: Int {
         syncEngine.reminders.filter { reminder in
-            (reminder.status == .active || reminder.status == .snoozed) && reminder.dueAt > Date()
+            (reminder.status == .active || reminder.status == .snoozed) &&
+            reminder.dueAt != nil &&
+            reminder.dueAt! > Date()
         }.count
     }
 

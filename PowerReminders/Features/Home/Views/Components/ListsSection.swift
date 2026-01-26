@@ -153,6 +153,7 @@ private struct InlineListCreator: View {
                 .focused(isFocused)
                 .submitLabel(.done)
                 .onSubmit(onSubmit)
+                .tint(selectedColor)
 
             // Color picker button
             Button(action: {
@@ -195,7 +196,7 @@ private struct InlineListCreator: View {
             Button(action: onSubmit) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.title2)
-                    .foregroundStyle(isValid ? Color.accentColor : Color.secondary.opacity(0.3))
+                    .foregroundStyle(isValid ? selectedColor : Color.secondary.opacity(0.3))
             }
             .buttonStyle(.plain)
             .disabled(!isValid)
@@ -422,17 +423,17 @@ private struct NewListCard: View {
                 // Plus icon
                 ZStack {
                     Circle()
-                        .strokeBorder(Color.accentColor.opacity(0.3), lineWidth: 2)
+                        .strokeBorder(Color.secondary.opacity(0.3), lineWidth: 2)
                         .frame(width: 36, height: 36)
 
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(.secondary)
                 }
 
                 Text("New List")
                     .font(.system(size: 17, weight: .medium))
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(.secondary)
 
                 Spacer()
             }
@@ -442,7 +443,7 @@ private struct NewListCard: View {
                     .strokeBorder(
                         style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
                     )
-                    .foregroundStyle(Color.accentColor.opacity(0.3))
+                    .foregroundStyle(Color.secondary.opacity(0.3))
             )
             .contentShape(Rectangle())
         }

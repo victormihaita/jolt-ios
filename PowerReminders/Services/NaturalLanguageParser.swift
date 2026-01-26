@@ -8,6 +8,8 @@ struct ParsedReminder {
     var recurrence: RecurrenceRule?
     var listName: String?
     var tags: [String]
+    var suggestedListId: UUID?
+    var hasSpecificTime: Bool
 
     init(
         title: String,
@@ -15,7 +17,9 @@ struct ParsedReminder {
         priority: Priority = .none,
         recurrence: RecurrenceRule? = nil,
         listName: String? = nil,
-        tags: [String] = []
+        tags: [String] = [],
+        suggestedListId: UUID? = nil,
+        hasSpecificTime: Bool = false
     ) {
         self.title = title
         self.dueDate = dueDate
@@ -23,6 +27,8 @@ struct ParsedReminder {
         self.recurrence = recurrence
         self.listName = listName
         self.tags = tags
+        self.suggestedListId = suggestedListId
+        self.hasSpecificTime = hasSpecificTime
     }
 }
 

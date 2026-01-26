@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import PRNetworking
+import PRSync
 
 enum ReminderFilter: String, CaseIterable {
     case all = "All"
@@ -23,6 +24,8 @@ class ReminderListViewModel: ObservableObject {
         do {
             let mutation = PRAPI.DeleteReminderMutation(id: id.uuidString)
             _ = try await graphQL.perform(mutation: mutation)
+            // Trigger refetch to update UI immediately
+            SyncEngine.shared.refetch()
         } catch {
             errorMessage = "Failed to delete reminder: \(error.localizedDescription)"
         }
@@ -32,6 +35,8 @@ class ReminderListViewModel: ObservableObject {
         do {
             let mutation = PRAPI.CompleteReminderMutation(id: id.uuidString)
             _ = try await graphQL.perform(mutation: mutation)
+            // Trigger refetch to update UI immediately
+            SyncEngine.shared.refetch()
         } catch {
             errorMessage = "Failed to complete reminder: \(error.localizedDescription)"
         }
@@ -41,6 +46,8 @@ class ReminderListViewModel: ObservableObject {
         do {
             let mutation = PRAPI.SnoozeReminderMutation(id: id.uuidString, minutes: minutes)
             _ = try await graphQL.perform(mutation: mutation)
+            // Trigger refetch to update UI immediately
+            SyncEngine.shared.refetch()
         } catch {
             errorMessage = "Failed to snooze reminder: \(error.localizedDescription)"
         }

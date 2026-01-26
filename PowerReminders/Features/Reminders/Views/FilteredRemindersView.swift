@@ -1,6 +1,7 @@
 import SwiftUI
 import PRModels
 import PRSync
+import PRNetworking
 
 struct FilteredRemindersView: View {
     let filterType: SmartFilterType
@@ -12,6 +13,8 @@ struct FilteredRemindersView: View {
     @State private var searchText = ""
 
     @Namespace private var namespace
+
+    private let graphQL = GraphQLClient.shared
 
     private var reminders: [Reminder] {
         var result: [Reminder]
@@ -27,7 +30,8 @@ struct FilteredRemindersView: View {
         case .scheduled:
             result = syncEngine.reminders.filter { reminder in
                 (reminder.status == .active || reminder.status == .snoozed) &&
-                reminder.dueAt > Date()
+                reminder.dueAt != nil &&
+                reminder.dueAt! > Date()
             }
         case .completed:
             result = syncEngine.reminders.filter { $0.status == .completed }
@@ -41,8 +45,15 @@ struct FilteredRemindersView: View {
             }
         }
 
-        // Sort by due date
-        return result.sorted { $0.dueAt < $1.dueAt }
+        // Sort by due date (reminders without dates go to end)
+        return result.sorted { r1, r2 in
+            switch (r1.dueAt, r2.dueAt) {
+            case (nil, nil): return r1.createdAt > r2.createdAt
+            case (nil, _): return false
+            case (_, nil): return true
+            case (let d1?, let d2?): return d1 < d2
+            }
+        }
     }
 
     var body: some View {
@@ -58,6 +69,7 @@ struct FilteredRemindersView: View {
             }
             .navigationTitle(filterType.title)
             .navigationBarTitleDisplayMode(.large)
+            .tint(filterType.color)
             .searchable(text: $searchText, prompt: "Search reminders")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -70,51 +82,53 @@ struct FilteredRemindersView: View {
                 }
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
-                ReminderDetailView(reminder: reminder)
+                CreateReminderView(editingReminder: reminder)
                     .modifier(ZoomTransitionModifier(sourceID: reminder.id, namespace: namespace))
             }
         }
     }
 
-    private var reminderList: some View {
-        List {
-            ForEach(reminders) { reminder in
-                ReminderRowView(reminder: reminder)
-                    .contentShape(Rectangle())
-                    .modifier(MatchedTransitionSourceModifier(id: reminder.id, namespace: namespace))
-                    .onTapGesture {
-                        selectedReminder = reminder
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            deleteReminder(reminder)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-
-                        if filterType != .completed {
-                            Button {
-                                completeReminder(reminder)
-                            } label: {
-                                Label("Done", systemImage: "checkmark")
-                            }
-                            .tint(.green)
-                        }
-                    }
-                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                        if filterType != .completed {
-                            Button {
-                                // Show snooze options
-                                selectedReminder = reminder
-                            } label: {
-                                Label("Snooze", systemImage: "clock.arrow.circlepath")
-                            }
-                            .tint(.orange)
-                        }
-                    }
-            }
+    /// Get the list color for a reminder
+    private func listColor(for reminder: Reminder) -> Color {
+        let listId = reminder.listId
+        
+        guard let list = syncEngine.reminderLists.first(where: { $0.id == listId }) else {
+            return filterType.color
         }
-        .listStyle(.insetGrouped)
+        return list.color
+    }
+
+    private var reminderList: some View {
+        ScrollView {
+            LazyVStack(spacing: Theme.Spacing.sm) {
+                ForEach(reminders) { reminder in
+                    ReminderRowView(reminder: reminder, listColor: listColor(for: reminder))
+                        .contentShape(Rectangle())
+                        .modifier(MatchedTransitionSourceModifier(id: reminder.id, namespace: namespace))
+                        .onTapGesture {
+                            selectedReminder = reminder
+                        }
+                        .contextMenu {
+                            if filterType != .completed {
+                                Button {
+                                    completeReminder(reminder)
+                                } label: {
+                                    Label("Done", systemImage: "checkmark.circle")
+                                }
+                            }
+
+                            Button(role: .destructive) {
+                                deleteReminder(reminder)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.top, Theme.Spacing.sm)
+            .padding(.bottom, Theme.Spacing.xl)
+        }
     }
 
     private var emptyState: some View {
@@ -172,14 +186,28 @@ struct FilteredRemindersView: View {
     private func deleteReminder(_ reminder: Reminder) {
         Haptics.medium()
         Task {
-            // TODO: Call delete mutation via ViewModel
+            do {
+                let mutation = PRAPI.DeleteReminderMutation(id: reminder.id.uuidString.lowercased())
+                _ = try await graphQL.perform(mutation: mutation)
+                // Trigger refetch to update UI immediately
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to delete reminder: \(error)")
+            }
         }
     }
 
     private func completeReminder(_ reminder: Reminder) {
         Haptics.success()
         Task {
-            // TODO: Call complete mutation via ViewModel
+            do {
+                let mutation = PRAPI.CompleteReminderMutation(id: reminder.id.uuidString.lowercased())
+                _ = try await graphQL.perform(mutation: mutation)
+                // Trigger refetch to update UI immediately
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to complete reminder: \(error)")
+            }
         }
     }
 }

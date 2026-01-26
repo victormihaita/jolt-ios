@@ -1,7 +1,10 @@
 import UserNotifications
 import UIKit
+import AudioToolbox
+import AVFoundation
 import PRNetworking
 import PRModels
+import PRKeychain
 
 class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationService()
@@ -174,12 +177,18 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     // MARK: - Schedule Notifications
 
     func scheduleNotification(for reminder: PRModels.Reminder) async {
+        // Skip scheduling if reminder has no due date
+        guard let dueAt = reminder.dueAt else {
+            print("Skipping notification for reminder without date: \(reminder.id)")
+            return
+        }
+
         let content = UNMutableNotificationContent()
         content.title = reminder.isAlarm ? "Alarm" : "Reminder"
         content.body = reminder.title
         content.userInfo = [
             "reminder_id": reminder.id.uuidString,
-            "due_at": reminder.dueAt.ISO8601Format(),
+            "due_at": dueAt.ISO8601Format(),
             "is_alarm": reminder.isAlarm
         ]
 
@@ -193,14 +202,18 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
         // Configure based on alarm vs regular reminder
         if reminder.isAlarm {
-            // Alarm-style notification with Critical Alert (bypasses DND)
+            // Alarm-style notification with time-sensitive priority
             content.categoryIdentifier = "ALARM_ACTIONS"
-            // Use critical sound (requires Critical Alert entitlement)
-            content.sound = UNNotificationSound.criticalSoundNamed(
-                UNNotificationSoundName("alarm_default.m4a"),
-                withAudioVolume: 1.0
-            )
-            content.interruptionLevel = .critical
+            // Try custom alarm sound first, fall back to default if not in bundle
+            // Custom sound must be ≤30 seconds and in app bundle (.caf, .wav, .aiff, .m4a)
+            if Bundle.main.url(forResource: "alarm_default", withExtension: "caf") != nil {
+                content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm_default.caf"))
+            } else {
+                // Fall back to default sound if custom sound not found
+                content.sound = .default
+            }
+            // Time-sensitive notifications can break through Focus modes (except DND)
+            content.interruptionLevel = .timeSensitive
         } else {
             // Regular reminder notification
             content.categoryIdentifier = "REMINDER_ACTIONS"
@@ -282,18 +295,55 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
+        // SECURITY: Block notifications if user is not authenticated
+        // This prevents showing notifications for logged-out or expired sessions
+        guard KeychainService.shared.getToken() != nil else {
+            print("🔔 NotificationService: Blocking notification display - user not authenticated")
+            completionHandler([])
+            return
+        }
+
         let userInfo = notification.request.content.userInfo
 
-        // Check if this is an alarm notification
-        if let isAlarm = userInfo["is_alarm"] as? Bool, isAlarm,
-           let reminderIDString = userInfo["reminder_id"] as? String,
-           let reminderID = UUID(uuidString: reminderIDString) {
-            // Start alarm sound/vibration (thread-safe)
+        // If this is not a reminder notification, show system banner
+        guard let reminderIDString = userInfo["reminder_id"] as? String,
+              let reminderID = UUID(uuidString: reminderIDString) else {
+            completionHandler([.banner, .sound, .badge])
+            return
+        }
+
+        // Handle is_alarm (may come as Bool or String "true"/"false" from backend)
+        let isAlarm = (userInfo["is_alarm"] as? Bool) ??
+                      (userInfo["is_alarm"] as? String == "true")
+
+        // Start alarm sound if this is an alarm notification
+        if isAlarm {
             AlarmManager.shared.startAlarm(for: reminderID)
         }
 
-        // Show notification even when app is in foreground
-        completionHandler([.banner, .sound, .badge])
+        // Extract sound_id for custom sound playback
+        let soundID = userInfo["sound_id"] as? String
+
+        // Parse due date
+        var dueAt: Date?
+        if let dueAtString = userInfo["due_at"] as? String {
+            dueAt = ISO8601DateFormatter().date(from: dueAtString)
+        }
+
+        // Show custom in-app banner instead of system notification
+        Task { @MainActor in
+            InAppNotificationManager.shared.show(
+                title: notification.request.content.title,
+                subtitle: notification.request.content.body,
+                reminderID: reminderID,
+                dueAt: dueAt,
+                soundID: soundID,
+                isAlarm: isAlarm
+            )
+        }
+
+        // Suppress system notification - we handle it with our custom UI
+        completionHandler([])
     }
 
     func userNotificationCenter(
@@ -441,6 +491,7 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             print("Failed to dismiss reminder: \(error)")
         }
     }
+
 }
 
 // MARK: - Notification Names

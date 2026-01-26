@@ -229,8 +229,8 @@ public struct CreateReminderPayload: Codable {
     public let title: String
     public let notes: String?
     public let listId: String?
-    public let dueAt: String
-    public let allDay: Bool
+    public let dueAt: String?
+    public let allDay: Bool?
     public let priority: String
     public let localId: String
     public let recurrenceRule: RecurrenceRulePayload?
@@ -241,8 +241,8 @@ public struct CreateReminderPayload: Codable {
         title: String,
         notes: String?,
         listId: String?,
-        dueAt: String,
-        allDay: Bool,
+        dueAt: String?,
+        allDay: Bool?,
         priority: String,
         localId: String,
         recurrenceRule: RecurrenceRulePayload?,

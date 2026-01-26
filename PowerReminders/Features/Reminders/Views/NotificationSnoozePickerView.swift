@@ -165,3 +165,43 @@ struct NotificationSnoozePickerView: View {
         }
     }
 }
+
+// MARK: - Quick Snooze Button
+
+private struct QuickSnoozeButton: View {
+    let minutes: Int
+    let isLoading: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: Theme.Spacing.xs) {
+                Text(displayValue)
+                    .font(Theme.Typography.title2)
+                    .fontWeight(.semibold)
+                Text(displayUnit)
+                    .font(Theme.Typography.caption)
+            }
+            .frame(width: 60, height: 60)
+            .background(Theme.Colors.secondaryBackground)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md))
+        }
+        .disabled(isLoading)
+        .opacity(isLoading ? 0.5 : 1)
+    }
+
+    private var displayValue: String {
+        if minutes >= 60 {
+            return "\(minutes / 60)"
+        }
+        return "\(minutes)"
+    }
+
+    private var displayUnit: String {
+        if minutes >= 60 {
+            let hours = minutes / 60
+            return hours == 1 ? "hour" : "hours"
+        }
+        return "min"
+    }
+}

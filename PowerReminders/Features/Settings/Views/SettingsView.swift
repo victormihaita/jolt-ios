@@ -454,13 +454,11 @@ struct AboutView: View {
         List {
             Section {
                 VStack(spacing: Theme.Spacing.md) {
-                    Image(systemName: "bell.badge.fill")
-                        .font(.system(size: 60))
-                        .foregroundStyle(.linearGradient(
-                            colors: [.blue, .purple],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ))
+                    Image("AppLogo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
 
                     Text("Power Reminders")
                         .font(Theme.Typography.title)
@@ -494,17 +492,18 @@ struct NotificationSoundPickerView: View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(NotificationSoundSettings.freeSounds, id: \.0) { sound in
+                    ForEach(soundSettings.freeSounds) { sound in
                         SoundRow(
-                            id: sound.0,
-                            name: sound.1,
-                            isSelected: soundSettings.selectedSound == sound.0,
+                            id: sound.filename,
+                            name: sound.name,
+                            isSelected: soundSettings.selectedSound == sound.filename,
                             isLocked: false,
                             onSelect: {
-                                _ = soundSettings.selectSound(sound.0, isPremium: subscriptionViewModel.isPremium)
+                                // Select the sound (preview is handled separately)
+                                _ = soundSettings.selectSound(sound.filename, isPremium: subscriptionViewModel.isPremium)
                             },
                             onPreview: {
-                                soundSettings.playPreview(sound.0)
+                                soundSettings.playPreview(sound.filename)
                             }
                         )
                     }
@@ -513,19 +512,18 @@ struct NotificationSoundPickerView: View {
                 }
 
                 Section {
-                    ForEach(NotificationSoundSettings.premiumSounds, id: \.0) { sound in
+                    ForEach(soundSettings.premiumSounds) { sound in
                         SoundRow(
-                            id: sound.0,
-                            name: sound.1,
-                            isSelected: soundSettings.selectedSound == sound.0,
+                            id: sound.filename,
+                            name: sound.name,
+                            isSelected: soundSettings.selectedSound == sound.filename,
                             isLocked: !subscriptionViewModel.isPremium,
                             onSelect: {
-                                if soundSettings.selectSound(sound.0, isPremium: subscriptionViewModel.isPremium) {
-                                    soundSettings.playPreview(sound.0)
-                                }
+                                // Select the sound (preview is handled separately)
+                                _ = soundSettings.selectSound(sound.filename, isPremium: subscriptionViewModel.isPremium)
                             },
                             onPreview: {
-                                soundSettings.playPreview(sound.0)
+                                soundSettings.playPreview(sound.filename)
                             }
                         )
                     }
@@ -548,6 +546,9 @@ struct NotificationSoundPickerView: View {
                     }
                 }
             }
+            .task {
+                await soundSettings.fetchSounds()
+            }
         }
     }
 }
@@ -561,31 +562,49 @@ struct SoundRow: View {
     let onPreview: () -> Void
 
     var body: some View {
-        Button(action: onSelect) {
+        if isLocked {
+            // Premium sounds: separate preview button, no row selection
             HStack {
-                Text(name)
-                    .foregroundColor(isLocked ? .secondary : .primary)
+                HStack {
+                    Text(name)
+                        .foregroundColor(.secondary)
 
-                Spacer()
+                    Spacer()
 
-                if isLocked {
                     Image(systemName: "lock.fill")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                } else if isSelected {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(Color.accentColor)
                 }
 
+                // Preview button for locked sounds
                 Button(action: onPreview) {
                     Image(systemName: "speaker.wave.2.fill")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.body)
+                        .foregroundStyle(Color.accentColor)
+                        .padding(.leading, 8)
                 }
                 .buttonStyle(.plain)
             }
+        } else {
+            // Free sounds: tap anywhere to select AND play
+            Button(action: {
+                onSelect()
+                onPreview()
+            }) {
+                HStack {
+                    Text(name)
+                        .foregroundColor(.primary)
+
+                    Spacer()
+
+                    if isSelected {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(Color.accentColor)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
         }
-        .disabled(isLocked)
     }
 }
 
@@ -606,9 +625,11 @@ struct PremiumView: View {
                 VStack(spacing: Theme.Spacing.xl) {
                     // Header
                     VStack(spacing: Theme.Spacing.md) {
-                        Image(systemName: "star.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundStyle(Theme.Colors.premiumGradient)
+                        Image("AppLogo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 80, height: 80)
+                            .clipShape(RoundedRectangle(cornerRadius: 18))
 
                         Text("Unlock the Full Experience")
                             .font(Theme.Typography.title2)

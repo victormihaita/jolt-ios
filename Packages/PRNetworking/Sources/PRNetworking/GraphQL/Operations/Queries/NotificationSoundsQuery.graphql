@@ -1,0 +1,8 @@
+query NotificationSounds {
+  notificationSounds {
+    id
+    name
+    filename
+    isFree
+  }
+}

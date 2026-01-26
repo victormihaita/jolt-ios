@@ -89,7 +89,7 @@ struct HomeView: View {
                     .modifier(ZoomTransitionModifier(sourceID: "settings", namespace: namespace))
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
-                ReminderDetailView(reminder: reminder)
+                CreateReminderView(editingReminder: reminder)
                     .modifier(ZoomTransitionModifier(sourceID: reminder.id, namespace: namespace))
             }
             .refreshable {
@@ -106,10 +106,20 @@ struct HomeView: View {
         }
     }
 
+    /// Get the list color for a reminder
+    private func listColor(for reminder: JReminder) -> Color {
+        let listId = reminder.listId
+        
+        guard let list = syncEngine.reminderLists.first(where: { $0.id == listId }) else {
+            return .accentColor
+        }
+        return list.color
+    }
+
     private var reminderList: some View {
         List {
             ForEach(filteredReminders) { reminder in
-                ReminderRowView(reminder: reminder)
+                ReminderRowView(reminder: reminder, listColor: listColor(for: reminder))
                     .contentShape(Rectangle())
                     .modifier(MatchedTransitionSourceModifier(id: reminder.id, namespace: namespace))
                     .onTapGesture {
@@ -165,8 +175,15 @@ struct HomeView: View {
             result = result.filter { $0.isOverdue }
         }
 
-        // Sort by due date
-        return result.sorted { $0.dueAt < $1.dueAt }
+        // Sort by due date (reminders without dates go to end)
+        return result.sorted { r1, r2 in
+            switch (r1.dueAt, r2.dueAt) {
+            case (nil, nil): return r1.createdAt > r2.createdAt
+            case (nil, _): return false
+            case (_, nil): return true
+            case (let d1?, let d2?): return d1 < d2
+            }
+        }
     }
 
     private func deleteReminder(_ reminder: JReminder) {
@@ -195,42 +212,62 @@ struct HomeView: View {
 
 struct ReminderRowView: View {
     let reminder: JReminder
+    var listColor: Color = .accentColor
 
     var body: some View {
         HStack(spacing: Theme.Spacing.md) {
-            // Priority indicator
-            Circle()
-                .fill(priorityColor)
-                .frame(width: 8, height: 8)
+            // Priority indicator circle (matching the inline creation style)
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [listColor, listColor.opacity(0.7)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 32, height: 32)
+
+                Image(systemName: priorityIcon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
 
             VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
                 Text(reminder.title)
-                    .font(Theme.Typography.headline)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(.primary)
                     .lineLimit(2)
 
                 HStack(spacing: Theme.Spacing.sm) {
-                    // Due date
-                    Label(formattedDueDate, systemImage: "clock")
-                        .font(Theme.Typography.caption)
-                        .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
+                    // Due date (only show if set)
+                    if reminder.dueAt != nil {
+                        Label(formattedDueDate, systemImage: reminder.isOverdue ? "exclamationmark.circle" : "clock")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
+                    } else {
+                        Label("No date", systemImage: "calendar.badge.minus")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.tertiary)
+                    }
 
                     // Alarm indicator
                     if reminder.isAlarm {
-                        Label("Alarm", systemImage: "bell.fill")
-                            .font(Theme.Typography.caption)
+                        Image(systemName: "bell.fill")
+                            .font(.caption2)
                             .foregroundStyle(.orange)
                     }
 
                     // Recurrence indicator
                     if reminder.isRecurring {
-                        Label(reminder.recurrenceRule?.displayString ?? "", systemImage: "repeat")
-                            .font(Theme.Typography.caption)
+                        Image(systemName: "repeat")
+                            .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
 
                     // Snoozed indicator
                     if reminder.isSnoozed {
-                        Label("Snoozed", systemImage: "moon.zzz")
+                        Label("Snoozed", systemImage: "moon.zzz.fill")
                             .font(Theme.Typography.caption)
                             .foregroundStyle(.orange)
                     }
@@ -239,29 +276,53 @@ struct ReminderRowView: View {
 
             Spacer()
 
+            // Snooze count badge
             if reminder.snoozeCount > 0 {
-                Text("\(reminder.snoozeCount)x")
-                    .font(Theme.Typography.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, Theme.Spacing.xs)
+                Text("\(reminder.snoozeCount)×")
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(listColor)
+                    .padding(.horizontal, Theme.Spacing.sm)
                     .padding(.vertical, Theme.Spacing.xxs)
-                    .background(.ultraThinMaterial)
+                    .background(listColor.opacity(0.12))
                     .clipShape(Capsule())
             }
+
+            // Chevron
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.tertiary)
         }
-        .padding(.vertical, Theme.Spacing.xs)
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            listColor.opacity(0.08),
+                            listColor.opacity(0.03)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous)
+                .strokeBorder(listColor.opacity(0.1), lineWidth: 1)
+        )
     }
 
-    private var priorityColor: Color {
+    private var priorityIcon: String {
         switch reminder.priority {
-        case .high: return Theme.Colors.priorityHigh
-        case .normal: return Theme.Colors.priorityNormal
-        case .low: return Theme.Colors.priorityLow
-        case .none: return Theme.Colors.priorityNone
+        case .high: return "exclamationmark"
+        case .normal: return "minus"
+        case .low: return "arrow.down"
+        case .none: return "circle"
         }
     }
 
     private var formattedDueDate: String {
+        guard reminder.dueAt != nil else { return "No date" }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: reminder.effectiveDueDate, relativeTo: Date())
@@ -315,7 +376,7 @@ struct MatchedTransitionSourceModifier<ID: Hashable>: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {
             content.matchedTransitionSource(id: id, in: namespace) { source in
-                source.clipShape(RoundedRectangle(cornerRadius: 28))
+                source.clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
             }
         } else {
             content

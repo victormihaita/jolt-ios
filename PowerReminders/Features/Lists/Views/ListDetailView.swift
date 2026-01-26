@@ -1,6 +1,7 @@
 import SwiftUI
 import PRModels
 import PRSync
+import PRNetworking
 
 struct ListDetailView: View {
     let list: ReminderList
@@ -9,10 +10,13 @@ struct ListDetailView: View {
     @ObservedObject private var syncEngine = SyncEngine.shared
 
     @State private var selectedReminder: Reminder?
-    @State private var showNaturalLanguageInput = false
+    @State private var showCreateReminder = false
+    @State private var isCreatingReminder = false
     @State private var searchText = ""
     @State private var sortOption: SortOption = .dueDate
     @State private var filterOption: FilterOption = .active
+
+    private let graphQL = GraphQLClient.shared
 
     @Namespace private var namespace
 
@@ -42,7 +46,15 @@ struct ListDetailView: View {
         // Apply sort
         switch sortOption {
         case .dueDate:
-            result = result.sorted { $0.dueAt < $1.dueAt }
+            result = result.sorted { r1, r2 in
+                // Reminders without dates go to the end
+                switch (r1.dueAt, r2.dueAt) {
+                case (nil, nil): return r1.createdAt > r2.createdAt
+                case (nil, _): return false
+                case (_, nil): return true
+                case (let d1?, let d2?): return d1 < d2
+                }
+            }
         case .priority:
             result = result.sorted { $0.priority.rawValue > $1.priority.rawValue }
         case .createdAt:
@@ -56,37 +68,16 @@ struct ListDetailView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
+            Group {
                 if reminders.isEmpty && searchText.isEmpty {
                     emptyState
                 } else {
                     reminderList
                 }
-
-                // Floating Action Button
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            Haptics.medium()
-                            showNaturalLanguageInput = true
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.title2.weight(.semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 56, height: 56)
-                                .background(list.color)
-                                .clipShape(Circle())
-                                .shadow(color: list.color.opacity(0.3), radius: 8, x: 0, y: 4)
-                        }
-                        .padding(.trailing, Theme.Spacing.lg)
-                        .padding(.bottom, Theme.Spacing.lg)
-                    }
-                }
             }
             .navigationTitle(list.name)
             .navigationBarTitleDisplayMode(.large)
+            .tint(list.color)
             .searchable(text: $searchText, prompt: "Search in \(list.name)")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -106,7 +97,13 @@ struct ListDetailView: View {
                                 Button(action: {
                                     sortOption = option
                                 }) {
-                                    Label(option.title, systemImage: sortOption == option ? "checkmark" : "")
+                                    HStack {
+                                        Text(option.title)
+                                        Spacer()
+                                        if sortOption == option {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -117,7 +114,13 @@ struct ListDetailView: View {
                                 Button(action: {
                                     filterOption = option
                                 }) {
-                                    Label(option.title, systemImage: filterOption == option ? "checkmark" : "")
+                                    HStack {
+                                        Text(option.title)
+                                        Spacer()
+                                        if filterOption == option {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -127,46 +130,58 @@ struct ListDetailView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $showNaturalLanguageInput) {
-                NaturalLanguageInputView(listId: list.id) { reminder in
-                    selectedReminder = reminder
-                }
+            .fullScreenCover(isPresented: $showCreateReminder) {
+                CreateReminderView(preselectedListId: list.id)
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
-                ReminderDetailView(reminder: reminder)
+                CreateReminderView(editingReminder: reminder)
             }
         }
     }
 
     private var reminderList: some View {
-        List {
-            ForEach(reminders) { reminder in
-                ReminderRowView(reminder: reminder)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        selectedReminder = reminder
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            deleteReminder(reminder)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+        ScrollView {
+            LazyVStack(spacing: Theme.Spacing.sm) {
+                ForEach(reminders) { reminder in
+                    ReminderRowView(reminder: reminder, listColor: list.color)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            // Cancel inline creation when tapping a reminder
+                            if isCreatingReminder {
+                                withAnimation(.snappy) {
+                                    isCreatingReminder = false
+                                }
+                            }
+                            selectedReminder = reminder
                         }
+                        .contextMenu {
+                            Button {
+                                completeReminder(reminder)
+                            } label: {
+                                Label("Complete", systemImage: "checkmark.circle")
+                            }
 
-                        Button {
-                            completeReminder(reminder)
-                        } label: {
-                            Label("Done", systemImage: "checkmark")
+                            Button(role: .destructive) {
+                                deleteReminder(reminder)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
-                        .tint(.green)
-                    }
+                }
+
+                // Inline reminder creation row at the end
+                InlineReminderInput(listId: list.id, isCreating: $isCreatingReminder, themeColor: list.color)
             }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.top, Theme.Spacing.sm)
+            .padding(.bottom, Theme.Spacing.xl)
         }
-        .listStyle(.insetGrouped)
     }
 
     private var emptyState: some View {
         VStack(spacing: Theme.Spacing.lg) {
+            Spacer()
+
             Image(systemName: list.iconName.isEmpty ? "list.bullet" : list.iconName)
                 .font(.system(size: 60))
                 .foregroundStyle(list.color.opacity(0.5))
@@ -174,25 +189,46 @@ struct ListDetailView: View {
             Text("No Reminders")
                 .font(Theme.Typography.title2)
 
-            Text("Tap the + button to add a reminder to this list.")
+            Text("Create your first reminder below")
                 .font(Theme.Typography.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+
+            Spacer()
+
+            // Inline reminder creation at bottom of empty state - auto-focus for fast input
+            InlineReminderInput(listId: list.id, isCreating: $isCreatingReminder, autoFocus: true, themeColor: list.color)
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.bottom, Theme.Spacing.xl)
         }
-        .padding(Theme.Spacing.xl)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func deleteReminder(_ reminder: Reminder) {
         Haptics.medium()
         Task {
-            // TODO: Call delete mutation via ViewModel
+            do {
+                let mutation = PRAPI.DeleteReminderMutation(id: reminder.id.uuidString.lowercased())
+                _ = try await graphQL.perform(mutation: mutation)
+                // Trigger refetch to update UI immediately
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to delete reminder: \(error)")
+            }
         }
     }
 
     private func completeReminder(_ reminder: Reminder) {
         Haptics.success()
         Task {
-            // TODO: Call complete mutation via ViewModel
+            do {
+                let mutation = PRAPI.CompleteReminderMutation(id: reminder.id.uuidString.lowercased())
+                _ = try await graphQL.perform(mutation: mutation)
+                // Trigger refetch to update UI immediately
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to complete reminder: \(error)")
+            }
         }
     }
 }

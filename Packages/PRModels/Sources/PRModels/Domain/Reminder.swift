@@ -5,9 +5,10 @@ public struct Reminder: Identifiable, Hashable, Sendable {
     public var title: String
     public var notes: String?
     public var priority: Priority
-    public var dueAt: Date
+    public var dueAt: Date?
     public var allDay: Bool
     public var isAlarm: Bool
+    public var soundId: String?
     public var recurrenceRule: RecurrenceRule?
     public var recurrenceEnd: Date?
     public var status: ReminderStatus
@@ -26,9 +27,10 @@ public struct Reminder: Identifiable, Hashable, Sendable {
         title: String,
         notes: String? = nil,
         priority: Priority = .none,
-        dueAt: Date,
+        dueAt: Date? = nil,
         allDay: Bool = false,
         isAlarm: Bool = false,
+        soundId: String? = nil,
         recurrenceRule: RecurrenceRule? = nil,
         recurrenceEnd: Date? = nil,
         status: ReminderStatus = .active,
@@ -49,6 +51,7 @@ public struct Reminder: Identifiable, Hashable, Sendable {
         self.dueAt = dueAt
         self.allDay = allDay
         self.isAlarm = isAlarm
+        self.soundId = soundId
         self.recurrenceRule = recurrenceRule
         self.recurrenceEnd = recurrenceEnd
         self.status = status
@@ -64,7 +67,13 @@ public struct Reminder: Identifiable, Hashable, Sendable {
     }
 
     public var isOverdue: Bool {
-        status == .active && effectiveDueDate < Date()
+        guard dueAt != nil else { return false }
+        return status == .active && effectiveDueDate < Date()
+    }
+
+    /// Whether this reminder has a scheduled date/time
+    public var hasScheduledDate: Bool {
+        dueAt != nil
     }
 
     public var isRecurring: Bool {
@@ -79,11 +88,12 @@ public struct Reminder: Identifiable, Hashable, Sendable {
     }
 
     /// The effective due date, accounting for snooze
+    /// Returns Date.distantFuture if no due date is set
     public var effectiveDueDate: Date {
         if let snoozedUntil = snoozedUntil, status == .snoozed {
             return snoozedUntil
         }
-        return dueAt
+        return dueAt ?? Date.distantFuture
     }
 }
 

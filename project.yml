@@ -2,7 +2,7 @@ name: PowerReminders
 options:
   bundleIdPrefix: com.vm.power
   deploymentTarget:
-    iOS: "18.6"
+    iOS: "26.0"
   xcodeVersion: "16.0"
   generateEmptyDirectories: true
   groupSortPosition: top
@@ -63,7 +63,7 @@ targets:
         INFOPLIST_FILE: PowerReminders/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.vm.power.reminders
         DEVELOPMENT_TEAM: JL84E9GK95
-        IPHONEOS_DEPLOYMENT_TARGET: "18.6"
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_ENTITLEMENTS: PowerReminders/PowerReminders.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -121,7 +121,7 @@ targets:
         INFOPLIST_FILE: PowerReminders/Widget/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.vm.power.reminders.widget
         DEVELOPMENT_TEAM: JL84E9GK95
-        IPHONEOS_DEPLOYMENT_TARGET: "18.6"
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_ENTITLEMENTS: PowerReminders/Widget/PowerRemindersWidget.entitlements
         SKIP_INSTALL: YES

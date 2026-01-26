@@ -2,6 +2,7 @@ import UIKit
 import UserNotifications
 import GoogleSignIn
 import PRSync
+import PRKeychain
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
@@ -78,6 +79,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
+        // SECURITY: Block all push notifications if user is not authenticated
+        // This prevents notifications for logged-out or expired sessions
+        guard KeychainService.shared.getToken() != nil else {
+            print("📱 AppDelegate: Blocking push notification - user not authenticated")
+            completionHandler(.noData)
+            return
+        }
+
         // Handle background notification
         guard let type = userInfo["type"] as? String else {
             completionHandler(.noData)

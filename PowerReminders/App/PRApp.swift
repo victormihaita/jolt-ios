@@ -31,6 +31,7 @@ struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
     @ObservedObject private var syncEngine = SyncEngine.shared
+    @StateObject private var notificationManager = InAppNotificationManager.shared
 
     // State for notification-triggered navigation
     @State private var notificationReminder: PRModels.Reminder?
@@ -41,39 +42,81 @@ struct ContentView: View {
     @State private var pendingSnoozeReminderID: UUID?
 
     var body: some View {
-        Group {
-            if authViewModel.isAuthenticated {
-                NewHomeView()
-            } else {
-                WelcomeView()
+        ZStack(alignment: .top) {
+            // Main app content
+            Group {
+                if authViewModel.isAuthenticated {
+                    NewHomeView()
+                } else {
+                    WelcomeView()
+                }
             }
-        }
-        .animation(.easeInOut, value: authViewModel.isAuthenticated)
-        // Handle tap on notification → open reminder detail
-        .onReceive(NotificationCenter.default.publisher(for: .openReminderDetail)) { notification in
-            handleOpenReminderDetail(notification)
-        }
-        // Handle custom snooze action from notification
-        .onReceive(NotificationCenter.default.publisher(for: .showCustomSnooze)) { notification in
-            handleShowCustomSnooze(notification)
-        }
-        // When reminders change, check for pending actions
-        .onChange(of: syncEngine.reminders) { _, newReminders in
-            processPendingActions(reminders: newReminders)
-        }
-        // Present reminder detail when triggered by notification
-        .fullScreenCover(item: $notificationReminder) { reminder in
-            ReminderDetailView(reminder: reminder)
-                .environmentObject(subscriptionViewModel)
-        }
-        // Present snooze picker when triggered by notification
-        .sheet(item: $showCustomSnoozeForReminder) { reminder in
-            NotificationSnoozePickerView(reminder: reminder)
-                .environmentObject(subscriptionViewModel)
-        }
-        // Schedule local notifications for exact timing (server push is backup)
-        .onAppear {
-            setupLocalNotificationScheduling()
+            .animation(.easeInOut, value: authViewModel.isAuthenticated)
+            // Handle tap on notification → open reminder detail
+            .onReceive(NotificationCenter.default.publisher(for: .openReminderDetail)) { notification in
+                handleOpenReminderDetail(notification)
+            }
+            // Handle custom snooze action from notification
+            .onReceive(NotificationCenter.default.publisher(for: .showCustomSnooze)) { notification in
+                handleShowCustomSnooze(notification)
+            }
+            // When reminders change, check for pending actions
+            .onChange(of: syncEngine.reminders) { _, newReminders in
+                processPendingActions(reminders: newReminders)
+            }
+            // Present reminder edit when triggered by notification
+            .fullScreenCover(item: $notificationReminder) { reminder in
+                CreateReminderView(editingReminder: reminder)
+                    .environmentObject(subscriptionViewModel)
+            }
+            // Present snooze picker when triggered by notification
+            .sheet(item: $showCustomSnoozeForReminder) { reminder in
+                NotificationSnoozePickerView(reminder: reminder)
+                    .environmentObject(subscriptionViewModel)
+            }
+            // Schedule local notifications for exact timing (server push is backup)
+            .onAppear {
+                setupLocalNotificationScheduling()
+            }
+
+            // In-app notification banner overlay
+            if notificationManager.isVisible, let notification = notificationManager.currentNotification {
+                VStack {
+                    InAppNotificationBanner(
+                        title: notification.title,
+                        subtitle: notification.subtitle,
+                        reminderID: notification.reminderID,
+                        dueAt: notification.dueAt,
+                        soundID: notification.soundID,
+                        isAlarm: notification.isAlarm,
+                        onComplete: {
+                            notificationManager.handleComplete()
+                        },
+                        onSnooze: { minutes in
+                            notificationManager.handleSnooze(minutes: minutes)
+                        },
+                        onDismiss: {
+                            notificationManager.dismiss()
+                        },
+                        onTap: {
+                            // Open reminder detail if found
+                            if let reminder = syncEngine.reminders.first(where: { $0.id == notification.reminderID }) {
+                                notificationReminder = reminder
+                            }
+                            notificationManager.dismiss()
+                        }
+                    )
+                    .padding(.horizontal, Theme.Spacing.md)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .top).combined(with: .opacity),
+                        removal: .move(edge: .top).combined(with: .opacity)
+                    ))
+
+                    Spacer()
+                }
+                .padding(.top, 60) // Safe area + extra spacing
+                .zIndex(1000) // Ensure banner is above all content
+            }
         }
     }
 

@@ -7,7 +7,7 @@ struct NewHomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @ObservedObject private var syncEngine = SyncEngine.shared
 
-    @State private var showNaturalLanguageInput = false
+    @State private var showCreateReminder = false
     @State private var showSettingsSheet = false
     @State private var selectedFilter: SmartFilterType?
     @State private var selectedList: ReminderList?
@@ -32,7 +32,15 @@ struct NewHomeView: View {
                 reminder.title.localizedCaseInsensitiveContains(searchText) ||
                 (reminder.notes?.localizedCaseInsensitiveContains(searchText) ?? false)
             }
-            .sorted { $0.dueAt < $1.dueAt }
+            .sorted { r1, r2 in
+                // Reminders without dates go to the end
+                switch (r1.dueAt, r2.dueAt) {
+                case (nil, nil): return r1.createdAt > r2.createdAt
+                case (nil, _): return false
+                case (_, nil): return true
+                case (let d1?, let d2?): return d1 < d2
+                }
+            }
     }
 
     /// Check if we're currently searching
@@ -82,15 +90,15 @@ struct NewHomeView: View {
                 if !isCreatingList {
                     Button(action: {
                         Haptics.medium()
-                        showNaturalLanguageInput = true
+                        showCreateReminder = true
                     }) {
                         Image(systemName: "plus")
                             .font(.title2.weight(.semibold))
                             .foregroundColor(.white)
                             .frame(width: 56, height: 56)
-                            .background(Theme.Colors.primary)
+                            .background(Color.accentColor)
                             .clipShape(Circle())
-                            .prShadow(Theme.Shadows.glow(color: Theme.Colors.primary))
+                            .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
                     }
                     .modifier(MatchedTransitionSourceModifier(id: "createReminder", namespace: namespace))
                     .padding(.trailing, Theme.Spacing.lg)
@@ -98,14 +106,12 @@ struct NewHomeView: View {
                     .transition(.scale.combined(with: .opacity))
                 }
             }
-            .fullScreenCover(isPresented: $showNaturalLanguageInput) {
-                NaturalLanguageInputView(listId: defaultListId) { reminder in
-                    selectedReminder = reminder
-                }
-                .modifier(ZoomTransitionModifier(sourceID: "createReminder", namespace: namespace))
+            .fullScreenCover(isPresented: $showCreateReminder) {
+                CreateReminderView(preselectedListId: defaultListId)
+                    .modifier(ZoomTransitionModifier(sourceID: "createReminder", namespace: namespace))
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
-                ReminderDetailView(reminder: reminder)
+                CreateReminderView(editingReminder: reminder)
             }
             .fullScreenCover(isPresented: $showSettingsSheet) {
                 SettingsView()
@@ -255,10 +261,16 @@ private struct SearchResultRow: View {
                         .font(Theme.Typography.caption)
                         .foregroundStyle(.secondary)
 
-                    // Due date
-                    Label(formattedDueDate, systemImage: "clock")
-                        .font(Theme.Typography.caption)
-                        .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
+                    // Due date (only show if set)
+                    if reminder.dueAt != nil {
+                        Label(formattedDueDate, systemImage: "clock")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
+                    } else {
+                        Label("No date", systemImage: "calendar.badge.minus")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.tertiary)
+                    }
 
                     // Recurrence indicator
                     if reminder.isRecurring {
@@ -288,6 +300,7 @@ private struct SearchResultRow: View {
     }
 
     private var formattedDueDate: String {
+        guard reminder.dueAt != nil else { return "No date" }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: reminder.effectiveDueDate, relativeTo: Date())

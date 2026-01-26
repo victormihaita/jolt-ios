@@ -39,13 +39,14 @@ struct Theme {
         static let error = Color(hexString: "#FF5252")
         static let info = Color(hexString: "#4FC3F7")
 
-        // Premium gradient (Indigo → Purple → Pink)
+        // Premium gradient colors (Indigo → Purple → Pink)
+        static let premiumStart = Color(hexString: "#667EEA")
+        static let premiumMid = Color(hexString: "#764BA2")
+        static let premiumEnd = Color(hexString: "#F093FB")
+
+        // Premium gradient
         static let premiumGradient = LinearGradient(
-            colors: [
-                Color(hexString: "#667EEA"),
-                Color(hexString: "#764BA2"),
-                Color(hexString: "#F093FB")
-            ],
+            colors: [premiumStart, premiumMid, premiumEnd],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

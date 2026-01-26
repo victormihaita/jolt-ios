@@ -12,6 +12,7 @@ struct CreateReminderView: View {
 
     @State private var title = ""
     @State private var notes = ""
+    @State private var hasDate = true
     @State private var dueDate = Date()
     @State private var dueTime = Date()
     @State private var allDay = false
@@ -25,6 +26,9 @@ struct CreateReminderView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var isAlarm = false
+    @State private var selectedSoundId: String = NotificationSoundSettings.shared.selectedSound
+    @State private var showSoundPicker = false
+    @State private var notificationsDenied = false
 
     // Available lists from SyncEngine
     private var availableLists: [ReminderList] {
@@ -53,51 +57,64 @@ struct CreateReminderView: View {
 
                 // Date & Time section
                 Section("When") {
-                    Toggle("All day", isOn: $allDay)
+                    Toggle(isOn: $hasDate) {
+                        HStack {
+                            Image(systemName: "calendar")
+                                .foregroundStyle(Theme.Colors.primary)
+                            Text("Schedule Date & Time")
+                        }
+                    }
+                    .tint(Theme.Colors.primary)
 
-                    DatePicker(
-                        "Date",
-                        selection: $dueDate,
-                        displayedComponents: .date
-                    )
+                    if hasDate {
+                        Toggle("All day", isOn: $allDay)
 
-                    if !allDay {
                         DatePicker(
-                            "Time",
-                            selection: $dueTime,
-                            displayedComponents: .hourAndMinute
+                            "Date",
+                            selection: $dueDate,
+                            displayedComponents: .date
                         )
+
+                        if !allDay {
+                            DatePicker(
+                                "Time",
+                                selection: $dueTime,
+                                displayedComponents: .hourAndMinute
+                            )
+                        }
                     }
                 }
 
-                // Recurrence section
-                Section("Repeat") {
-                    Toggle("Repeat", isOn: $recurrenceEnabled)
+                // Recurrence section (only show if date is scheduled)
+                if hasDate {
+                    Section("Repeat") {
+                        Toggle("Repeat", isOn: $recurrenceEnabled)
 
-                    if recurrenceEnabled {
-                        Button {
-                            showRecurrencePicker = true
-                        } label: {
-                            HStack {
-                                Text("Frequency")
-                                Spacer()
-                                Text(recurrenceRule?.displayString ?? "Daily")
-                                    .foregroundStyle(.secondary)
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                        if recurrenceEnabled {
+                            Button {
+                                showRecurrencePicker = true
+                            } label: {
+                                HStack {
+                                    Text("Frequency")
+                                    Spacer()
+                                    Text(recurrenceRule?.displayString ?? "Daily")
+                                        .foregroundStyle(.secondary)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
-                        }
-                        .foregroundStyle(.primary)
+                            .foregroundStyle(.primary)
 
-                        // Premium badge for advanced recurrence
-                        if let rule = recurrenceRule, isAdvancedRecurrence(rule) {
-                            HStack {
-                                Image(systemName: "crown.fill")
-                                    .foregroundStyle(.yellow)
-                                Text("Premium feature")
-                                    .font(Theme.Typography.caption)
-                                    .foregroundStyle(.secondary)
+                            // Premium badge for advanced recurrence
+                            if let rule = recurrenceRule, isAdvancedRecurrence(rule) {
+                                HStack {
+                                    Image(systemName: "crown.fill")
+                                        .foregroundStyle(.yellow)
+                                    Text("Premium feature")
+                                        .font(Theme.Typography.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
                     }
@@ -119,19 +136,74 @@ struct CreateReminderView: View {
                     .pickerStyle(.menu)
                 }
 
-                // Alarm section
-                Section {
-                    Toggle(isOn: $isAlarm) {
-                        HStack {
-                            Image(systemName: "bell.fill")
-                                .foregroundStyle(isAlarm ? .orange : .secondary)
-                            Text("Alarm")
+                // Alarm section (only show if date is scheduled)
+                if hasDate {
+                    Section {
+                        Toggle(isOn: $isAlarm) {
+                            HStack {
+                                Image(systemName: "bell.fill")
+                                    .foregroundStyle(isAlarm ? .orange : .secondary)
+                                Text("Alarm")
+                            }
+                        }
+                        if isAlarm {
+                            Text("Alarms play a louder sound and vibrate repeatedly until dismissed")
+                                .font(Theme.Typography.caption)
+                                .foregroundStyle(.secondary)
                         }
                     }
-                    if isAlarm {
-                        Text("Alarms play a louder sound and vibrate repeatedly until dismissed")
-                            .font(Theme.Typography.caption)
-                            .foregroundStyle(.secondary)
+                }
+
+                // Sound picker section (only show if date is scheduled)
+                if hasDate {
+                    Section("Sound") {
+                        Button {
+                            showSoundPicker = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "speaker.wave.2.fill")
+                                    .foregroundStyle(Theme.Colors.primary)
+                                Text("Notification Sound")
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Text(soundDisplayName(for: selectedSoundId))
+                                    .foregroundStyle(.secondary)
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+
+                // Notification denied warning (only show if date is scheduled and notifications denied)
+                if hasDate && notificationsDenied {
+                    Section {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            Image(systemName: "bell.slash.fill")
+                                .foregroundStyle(.orange)
+
+                            VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
+                                Text("Notifications Disabled")
+                                    .font(Theme.Typography.subheadline)
+                                    .fontWeight(.medium)
+
+                                Text("Enable notifications in Settings to receive alerts for your reminders")
+                                    .font(Theme.Typography.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Button("Enable") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                        }
+                        .padding(.vertical, Theme.Spacing.xs)
                     }
                 }
 
@@ -205,6 +277,13 @@ struct CreateReminderView: View {
                 )
                 .presentationDetents([.medium])
             }
+            .sheet(isPresented: $showSoundPicker) {
+                SoundPickerSheet(
+                    selectedSoundId: $selectedSoundId,
+                    isPremium: subscriptionViewModel.isPremium
+                )
+                .presentationDetents([.medium])
+            }
             .onAppear {
                 loadExistingReminder()
                 // Set preselected list if provided
@@ -214,6 +293,11 @@ struct CreateReminderView: View {
                     // Default to first list
                     selectedListId = availableLists.first?.id
                 }
+            }
+            .task {
+                // Check notification permission status
+                let status = await NotificationService.shared.getNotificationStatus()
+                notificationsDenied = (status == .denied)
             }
             .onChange(of: recurrenceEnabled) { _, newValue in
                 if newValue && recurrenceRule == nil {
@@ -228,14 +312,22 @@ struct CreateReminderView: View {
         guard let reminder = editingReminder else { return }
         title = reminder.title
         notes = reminder.notes ?? ""
-        dueDate = reminder.dueAt
-        dueTime = reminder.dueAt
+        hasDate = reminder.dueAt != nil
+        if let dueAt = reminder.dueAt {
+            dueDate = dueAt
+            dueTime = dueAt
+        }
         allDay = reminder.allDay
         priority = reminder.priority
         isAlarm = reminder.isAlarm
+        selectedSoundId = reminder.soundId ?? NotificationSoundSettings.shared.selectedSound
         recurrenceEnabled = reminder.recurrenceRule != nil
         recurrenceRule = reminder.recurrenceRule
         selectedListId = reminder.listId
+    }
+
+    private func soundDisplayName(for filename: String) -> String {
+        NotificationSoundSettings.shared.sounds.first { $0.filename == filename }?.name ?? "Ambient"
     }
 
     private func colorForPriority(_ priority: PRModels.Priority) -> Color {
@@ -255,18 +347,21 @@ struct CreateReminderView: View {
     }
 
     private func createReminder() {
-        // Combine date and time
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day], from: dueDate)
-        if !allDay {
-            let timeComponents = calendar.dateComponents([.hour, .minute], from: dueTime)
-            components.hour = timeComponents.hour
-            components.minute = timeComponents.minute
+        // Compute final due date only if hasDate is true
+        var finalDueDate: Date?
+        if hasDate {
+            let calendar = Calendar.current
+            var components = calendar.dateComponents([.year, .month, .day], from: dueDate)
+            if !allDay {
+                let timeComponents = calendar.dateComponents([.hour, .minute], from: dueTime)
+                components.hour = timeComponents.hour
+                components.minute = timeComponents.minute
+            }
+            finalDueDate = calendar.date(from: components) ?? dueDate
         }
-        let finalDueDate = calendar.date(from: components) ?? dueDate
 
-        // Check premium for advanced recurrence
-        if let rule = recurrenceRule, isAdvancedRecurrence(rule), !subscriptionViewModel.isPremium {
+        // Check premium for advanced recurrence (only if date is set)
+        if hasDate, let rule = recurrenceRule, isAdvancedRecurrence(rule), !subscriptionViewModel.isPremium {
             showPremiumPaywall = true
             return
         }
@@ -275,9 +370,10 @@ struct CreateReminderView: View {
         errorMessage = nil
 
         Task {
-            // Request notification permission on first reminder creation
-            // This only prompts if we haven't prompted before
-            _ = await NotificationService.shared.requestAuthorizationIfNeeded()
+            // Request notification permission on first reminder creation (only if date is set)
+            if hasDate {
+                _ = await NotificationService.shared.requestAuthorizationIfNeeded()
+            }
 
             do {
                 // Use selected list ID or default list ID
@@ -288,18 +384,22 @@ struct CreateReminderView: View {
                     title: title,
                     notes: notes.isEmpty ? .null : .some(notes),
                     priority: .some(.init(graphQLPriority(from: priority))),
-                    dueAt: iso8601String(from: finalDueDate),
-                    allDay: allDay,
-                    recurrenceRule: recurrenceEnabled && recurrenceRule != nil
+                    dueAt: finalDueDate.map { .some(iso8601String(from: $0)) } ?? .null,
+                    allDay: hasDate ? .some(allDay) : .null,
+                    recurrenceRule: hasDate && recurrenceEnabled && recurrenceRule != nil
                         ? .some(graphQLRecurrenceRuleInput(from: recurrenceRule!))
                         : .null,
-                    isAlarm: .some(isAlarm)
+                    isAlarm: hasDate ? .some(isAlarm) : .null,
+                    soundId: hasDate ? .some(selectedSoundId) : .null
                 )
 
                 let mutation = PRAPI.CreateReminderMutation(input: input)
                 print("✨ CreateReminderView: Performing mutation with listId: \(listIdToUse?.uuidString ?? "nil")...")
                 let result = try await graphQL.perform(mutation: mutation)
                 print("✨ CreateReminderView: Mutation completed, reminder id: \(result.createReminder.id)")
+
+                // Trigger SyncEngine to refetch so lists and reminders update immediately
+                SyncEngine.shared.refetch()
 
                 await MainActor.run {
                     Haptics.success()
@@ -317,18 +417,21 @@ struct CreateReminderView: View {
     private func updateReminder() {
         guard let reminder = editingReminder else { return }
 
-        // Combine date and time
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day], from: dueDate)
-        if !allDay {
-            let timeComponents = calendar.dateComponents([.hour, .minute], from: dueTime)
-            components.hour = timeComponents.hour
-            components.minute = timeComponents.minute
+        // Compute final due date only if hasDate is true
+        var finalDueDate: Date?
+        if hasDate {
+            let calendar = Calendar.current
+            var components = calendar.dateComponents([.year, .month, .day], from: dueDate)
+            if !allDay {
+                let timeComponents = calendar.dateComponents([.hour, .minute], from: dueTime)
+                components.hour = timeComponents.hour
+                components.minute = timeComponents.minute
+            }
+            finalDueDate = calendar.date(from: components) ?? dueDate
         }
-        let finalDueDate = calendar.date(from: components) ?? dueDate
 
-        // Check premium for advanced recurrence
-        if let rule = recurrenceRule, isAdvancedRecurrence(rule), !subscriptionViewModel.isPremium {
+        // Check premium for advanced recurrence (only if date is set)
+        if hasDate, let rule = recurrenceRule, isAdvancedRecurrence(rule), !subscriptionViewModel.isPremium {
             showPremiumPaywall = true
             return
         }
@@ -343,12 +446,13 @@ struct CreateReminderView: View {
                     title: .some(title),
                     notes: notes.isEmpty ? .null : .some(notes),
                     priority: .some(.init(graphQLPriority(from: priority))),
-                    dueAt: .some(iso8601String(from: finalDueDate)),
-                    allDay: .some(allDay),
-                    recurrenceRule: recurrenceEnabled && recurrenceRule != nil
+                    dueAt: finalDueDate.map { .some(iso8601String(from: $0)) } ?? .null,
+                    allDay: hasDate ? .some(allDay) : .null,
+                    recurrenceRule: hasDate && recurrenceEnabled && recurrenceRule != nil
                         ? .some(graphQLRecurrenceRuleInput(from: recurrenceRule!))
                         : .null,
-                    isAlarm: .some(isAlarm)
+                    isAlarm: hasDate ? .some(isAlarm) : .null,
+                    soundId: hasDate ? .some(selectedSoundId) : .null
                 )
 
                 let mutation = PRAPI.UpdateReminderMutation(
@@ -356,6 +460,9 @@ struct CreateReminderView: View {
                     input: input
                 )
                 _ = try await graphQL.perform(mutation: mutation)
+
+                // Trigger SyncEngine to refetch so lists and reminders update immediately
+                SyncEngine.shared.refetch()
 
                 await MainActor.run {
                     Haptics.success()
@@ -564,6 +671,114 @@ struct ListPickerSheet: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Sound Picker Sheet
+
+struct SoundPickerSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var selectedSoundId: String
+    let isPremium: Bool
+
+    @ObservedObject private var soundSettings = NotificationSoundSettings.shared
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Free Sounds") {
+                    ForEach(soundSettings.freeSounds) { sound in
+                        SoundOptionRow(
+                            sound: sound,
+                            isSelected: selectedSoundId == sound.filename,
+                            isLocked: false,
+                            onSelect: { selectSound(sound.filename) },
+                            onPreview: { previewSound(sound.filename) }
+                        )
+                    }
+                }
+
+                Section("Premium Sounds") {
+                    ForEach(soundSettings.premiumSounds) { sound in
+                        SoundOptionRow(
+                            sound: sound,
+                            isSelected: selectedSoundId == sound.filename,
+                            isLocked: !isPremium,
+                            onSelect: { selectSound(sound.filename) },
+                            onPreview: { previewSound(sound.filename) }
+                        )
+                    }
+                }
+            }
+            .navigationTitle("Notification Sound")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+            .task {
+                await soundSettings.fetchSounds()
+            }
+        }
+    }
+
+    private func selectSound(_ filename: String) {
+        if !soundSettings.selectSound(filename, isPremium: isPremium) {
+            return
+        }
+        Haptics.selection()
+        selectedSoundId = filename
+    }
+
+    private func previewSound(_ filename: String) {
+        soundSettings.playPreview(filename)
+    }
+}
+
+private struct SoundOptionRow: View {
+    let sound: NotificationSoundItem
+    let isSelected: Bool
+    let isLocked: Bool
+    let onSelect: () -> Void
+    let onPreview: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack(spacing: Theme.Spacing.md) {
+                // Sound name
+                Text(sound.name)
+                    .foregroundStyle(isLocked ? .secondary : .primary)
+
+                if isLocked {
+                    Image(systemName: "crown.fill")
+                        .font(.caption)
+                        .foregroundStyle(.yellow)
+                }
+
+                Spacer()
+
+                // Preview button
+                Button {
+                    onPreview()
+                } label: {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .font(.body)
+                        .foregroundStyle(Theme.Colors.primary)
+                }
+                .buttonStyle(.plain)
+
+                // Checkmark
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+        }
+        .disabled(isLocked)
     }
 }
 
