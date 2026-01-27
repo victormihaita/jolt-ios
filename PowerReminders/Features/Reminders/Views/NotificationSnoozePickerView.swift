@@ -123,7 +123,7 @@ struct NotificationSnoozePickerView: View {
                 }
             }
             .sheet(isPresented: $showPremiumPrompt) {
-                PremiumView()
+                PaywallView()
             }
         }
         .presentationDetents([.medium])

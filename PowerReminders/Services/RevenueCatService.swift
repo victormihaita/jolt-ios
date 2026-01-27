@@ -23,21 +23,31 @@ class RevenueCatService: NSObject, ObservableObject {
         static let lifetimeAccess = "lifetime"
     }
 
-    // Entitlement identifier
-    private let premiumEntitlementID = "PR Pro"
+    // Entitlement identifier - must match RevenueCat dashboard and backend
+    private let premiumEntitlementID = "premium"
 
     private override init() {
         super.init()
     }
 
     /// Configure RevenueCat with your API key
+    /// Note: RevenueCat automatically detects sandbox vs production based on the receipt
+    /// - Debug builds on simulator/device: Sandbox
+    /// - TestFlight builds: Sandbox
+    /// - App Store builds: Production
     func configure() {
         #if DEBUG
         Purchases.logLevel = .debug
         #endif
 
-        // RevenueCat API key
-        let apiKey = "test_KrWrpjWEMFsyKSvqOLTDITucsbf"
+        // RevenueCat Public SDK API key
+        // DEBUG: Test Store key - uses RevenueCat's mock store (no Apple account needed)
+        // RELEASE: Production key - uses Apple Sandbox (TestFlight) / Production (App Store)
+        #if DEBUG
+        let apiKey = "test_jNGAilWTnvFoTboAQDJfjmxqnOJ"
+        #else
+        let apiKey = "appl_VDoLpZavpbDHGhXyXqNwiOJFDLF"
+        #endif
 
         Purchases.configure(withAPIKey: apiKey)
         isConfigured = true

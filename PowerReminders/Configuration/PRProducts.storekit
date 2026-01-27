@@ -5,7 +5,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "99.99",
+      "displayPrice" : "79.99",
       "familyShareable" : false,
       "internalID" : "F5D5F5D5-0003-F5D5-F5D5-F5D5F5D5F5D5",
       "localizations" : [
@@ -90,7 +90,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "9.99",
+          "displayPrice" : "4.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "F5D5F5D5-0001-0001-F5D5-F5D5F5D5F5D5",
@@ -115,14 +115,20 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "79.99",
+          "displayPrice" : "29.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "F5D5F5D5-0001-0002-F5D5-F5D5F5D5F5D5",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "internalID" : "F5D5F5D5-0001-0002-INTRO-F5D5F5D5F5D5",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W",
+            "numberOfPeriods" : 1,
+            "displayPrice" : "0"
+          },
           "localizations" : [
             {
-              "description" : "Unlock all premium features - Save 44%",
+              "description" : "Unlock all premium features - Save 50%",
               "displayName" : "Yearly Premium",
               "locale" : "en_US"
             }

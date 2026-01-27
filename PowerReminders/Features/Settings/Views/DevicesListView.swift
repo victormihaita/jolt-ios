@@ -120,7 +120,7 @@ struct DevicesListView: View {
             }
         }
         .sheet(isPresented: $viewModel.showUpgradePrompt) {
-            PremiumView()
+            PaywallView()
         }
         .overlay {
             if viewModel.isDeleting {

@@ -8,10 +8,10 @@ class SubscriptionViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    // Subscription products
-    @Published var monthlyPrice: String = "$9.99"
-    @Published var yearlyPrice: String = "$79.99"
-    @Published var lifetimePrice: String = "$99.99"
+    // Subscription products (fallback prices - actual prices fetched from RevenueCat)
+    @Published var monthlyPrice: String = "$4.99"
+    @Published var yearlyPrice: String = "$29.99"
+    @Published var lifetimePrice: String = "$79.99"
 
     // Premium feature limits
     static let freeDeviceLimit = 2
