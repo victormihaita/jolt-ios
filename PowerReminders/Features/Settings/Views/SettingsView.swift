@@ -195,7 +195,7 @@ struct SettingsView: View {
                         )
                     }
 
-                    Link(destination: URL(string: "https://powerreminders.app/help")!) {
+                    Link(destination: URL(string: "https://jolt-website-liart.vercel.app/help")!) {
                         SettingsRow(
                             icon: "questionmark.circle",
                             iconColor: .green,
@@ -205,7 +205,17 @@ struct SettingsView: View {
                     }
                     .foregroundColor(.primary)
 
-                    Link(destination: URL(string: "https://powerreminders.app/privacy")!) {
+                    Link(destination: URL(string: "https://jolt-website-liart.vercel.app/terms")!) {
+                        SettingsRow(
+                            icon: "doc.text",
+                            iconColor: .orange,
+                            title: "Terms of Service",
+                            isExternalLink: true
+                        )
+                    }
+                    .foregroundColor(.primary)
+
+                    Link(destination: URL(string: "https://jolt-website-liart.vercel.app/privacy")!) {
                         SettingsRow(
                             icon: "hand.raised",
                             iconColor: .blue,

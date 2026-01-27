@@ -110,12 +110,23 @@ struct WelcomeView: View {
                     }
                     .frame(minHeight: 20)
 
-                    Text("By continuing, you agree to our\nTerms of Service and Privacy Policy")
-                        .font(Theme.Typography.caption)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .opacity(isAnimating ? 1.0 : 0.0)
+                    VStack(spacing: 4) {
+                        Text("By continuing, you agree to our")
+                            .font(Theme.Typography.caption)
+                            .foregroundStyle(.secondary)
+                        HStack(spacing: 0) {
+                            Link("Terms of Service", destination: URL(string: "https://jolt-website-liart.vercel.app/terms")!)
+                                .font(Theme.Typography.caption.bold())
+                                .foregroundColor(Theme.Colors.primary)
+                            Text(" and ")
+                                .font(Theme.Typography.caption)
+                                .foregroundStyle(.secondary)
+                            Link("Privacy Policy", destination: URL(string: "https://jolt-website-liart.vercel.app/privacy")!)
+                                .font(Theme.Typography.caption.bold())
+                                .foregroundColor(Theme.Colors.primary)
+                        }
+                    }
+                    .opacity(isAnimating ? 1.0 : 0.0)
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
                 .padding(.bottom, Theme.Spacing.xl)
