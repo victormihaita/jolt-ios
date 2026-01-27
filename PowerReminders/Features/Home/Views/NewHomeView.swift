@@ -14,6 +14,7 @@ struct NewHomeView: View {
     @State private var selectedReminder: PRModels.Reminder?
     @State private var searchText = ""
     @State private var isCreatingList = false
+    @State private var isEditingList = false
 
     @Namespace private var namespace
 
@@ -86,24 +87,24 @@ struct NewHomeView: View {
                 }
             }
             .overlay(alignment: .bottomTrailing) {
-                // Floating Action Button - hidden when creating a list
-                if !isCreatingList {
+                // Floating Action Button - hidden when creating or editing a list
+                if !isCreatingList && !isEditingList {
                     Button(action: {
                         Haptics.medium()
                         showCreateReminder = true
                     }) {
                         Image(systemName: "plus")
                             .font(.title2.weight(.semibold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.background)
                             .frame(width: 56, height: 56)
-                            .background(Color.accentColor)
+                            .background(Color.primary)
                             .clipShape(Circle())
-                            .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                            .shadow(color: .primary.opacity(0.3), radius: 8, x: 0, y: 4)
                     }
-                    .modifier(MatchedTransitionSourceModifier(id: "createReminder", namespace: namespace))
+                    .contentShape(Circle())
+                    .buttonStyle(.plain)
                     .padding(.trailing, Theme.Spacing.lg)
                     .padding(.bottom, Theme.Spacing.lg)
-                    .transition(.scale.combined(with: .opacity))
                 }
             }
             .fullScreenCover(isPresented: $showCreateReminder) {
@@ -125,9 +126,6 @@ struct NewHomeView: View {
                 ListDetailView(list: list)
                     .modifier(ZoomTransitionModifier(sourceID: "list-\(list.id.uuidString)", namespace: namespace))
             }
-            .refreshable {
-                syncEngine.refetch()
-            }
             .onAppear {
                 syncEngine.connect()
             }
@@ -137,61 +135,49 @@ struct NewHomeView: View {
     // MARK: - Home Content View
 
     private var homeContentView: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack(spacing: Theme.Spacing.lg) {
-                    // Smart Filters Grid
-                    SmartFiltersGrid(
-                        todayCount: viewModel.todayCount,
-                        allCount: viewModel.allCount,
-                        scheduledCount: viewModel.scheduledCount,
-                        completedCount: viewModel.completedCount,
-                        namespace: namespace
-                    ) { filter in
-                        selectedFilter = filter
-                    }
-                    .padding(.horizontal, Theme.Spacing.md)
-
-                    // Lists Section
-                    ListsSection(
-                        lists: syncEngine.reminderLists,
-                        reminderCountForList: { list in
-                            list.reminderCount
-                        },
-                        namespace: namespace,
-                        onListTap: { list in
-                            selectedList = list
-                        },
-                        onCreateList: { name, colorHex, iconName in
-                            Task {
-                                await viewModel.createList(name: name, colorHex: colorHex, iconName: iconName)
-                            }
-                        },
-                        onDeleteList: { list in
-                            Task {
-                                await viewModel.deleteList(list)
-                            }
-                        },
-                        isCreatingList: $isCreatingList
-                    )
-                    .padding(.horizontal, Theme.Spacing.md)
-
-                    // Anchor for scrolling to bottom when creating list
-                    Color.clear
-                        .frame(height: 1)
-                        .id("listCreationAnchor")
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                // Smart Filters Grid
+                SmartFiltersGrid(
+                    todayCount: viewModel.todayCount,
+                    allCount: viewModel.allCount,
+                    scheduledCount: viewModel.scheduledCount,
+                    completedCount: viewModel.completedCount,
+                    namespace: namespace
+                ) { filter in
+                    selectedFilter = filter
                 }
-                .padding(.top, Theme.Spacing.md)
-                .padding(.bottom, 80) // Extra padding to scroll above FAB
+                .padding(.horizontal, Theme.Spacing.md)
+
+                // Lists Section
+                ListsSection(
+                    lists: syncEngine.reminderLists,
+                    reminderCountForList: { list in
+                        list.reminderCount
+                    },
+                    namespace: namespace,
+                    onListTap: { list in
+                        selectedList = list
+                    },
+                    onCreateList: { name, colorHex, iconName in
+                        Task {
+                            await viewModel.createList(name: name, colorHex: colorHex, iconName: iconName)
+                        }
+                    },
+                    onDeleteList: { list in
+                        Task {
+                            await viewModel.deleteList(list)
+                        }
+                    },
+                    isCreatingList: $isCreatingList,
+                    isEditingList: $isEditingList
+                )
+                .padding(.horizontal, Theme.Spacing.md)
             }
-            .onChange(of: isCreatingList) { _, isCreating in
-                if isCreating {
-                    withAnimation(.snappy) {
-                        proxy.scrollTo("listCreationAnchor", anchor: .bottom)
-                    }
-                }
-            }
+            .padding(.top, Theme.Spacing.md)
+            .padding(.bottom, 100)
         }
+        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Search Results View

@@ -341,6 +341,40 @@ public final class SyncEngine: ObservableObject {
                 PRLogger.error("Subscription error: \(error)", category: .sync)
             }
         }
+
+        // Also subscribe to list changes
+        subscribeToListChanges()
+    }
+
+    private func subscribeToListChanges() {
+        PRLogger.debug("Subscribing to reminder list changes", category: .sync)
+
+        let subscription = PRAPI.ReminderListChangedSubscription()
+        listSubscriptionCancellable = GraphQLClient.shared.subscribe(subscription: subscription) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let data):
+                self.handleListChange(data.reminderListChanged)
+            case .failure(let error):
+                PRLogger.error("List subscription error: \(error)", category: .sync)
+            }
+        }
+    }
+
+    private func handleListChange(_ event: PRAPI.ReminderListChangedSubscription.Data.ReminderListChanged) {
+        let action = event.action
+        let listId = event.reminderListId
+
+        PRLogger.info("Received list change: \(action.rawValue) for \(listId)", category: .sync)
+
+        // Refetch lists to update the watcher's cache
+        listsWatcher?.refetch()
+
+        // Notify listeners
+        DispatchQueue.main.async {
+            self.onListsChanged?(self.reminderLists)
+        }
     }
 
     private func handleReminderChange(_ event: PRAPI.ReminderChangedSubscription.Data.ReminderChanged) {

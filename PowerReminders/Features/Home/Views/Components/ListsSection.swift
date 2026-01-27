@@ -1,5 +1,6 @@
 import SwiftUI
 import PRModels
+import PRSync
 
 struct ListsSection: View {
     let lists: [ReminderList]
@@ -9,12 +10,32 @@ struct ListsSection: View {
     let onCreateList: (String, String, String) -> Void
     let onDeleteList: (ReminderList) -> Void
     @Binding var isCreatingList: Bool
+    @Binding var isEditingList: Bool
 
-    @State private var isEditMode = false
+    // Create new list state
     @State private var newListName = ""
     @State private var newListColorHex = ReminderList.presetColors[0]
     @State private var newListIconName = ReminderList.presetIcons[0]
     @FocusState private var isNameFieldFocused: Bool
+
+    // Edit list state
+    @State private var listBeingEdited: ReminderList?
+    @State private var editName = ""
+    @State private var editColorHex = ""
+    @State private var editIconName = ""
+    @FocusState private var isEditFieldFocused: Bool
+    @State private var isSubmittingEdit = false
+
+    /// Calculate the minimum height needed for the list
+    /// Each card is ~68pt, inline creator/editor is ~68pt
+    private var listMinHeight: CGFloat {
+        let rowHeight: CGFloat = 68
+        let spacing: CGFloat = 8
+        let itemCount = lists.count + 1 // +1 for new list button/creator
+        let baseHeight = CGFloat(itemCount) * (rowHeight + spacing)
+        // Add extra padding to ensure last item is fully visible
+        return baseHeight + 16
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
@@ -25,33 +46,63 @@ struct ListsSection: View {
                     .foregroundStyle(.secondary)
 
                 Spacer()
-
-                Button(action: {
-                    Haptics.light()
-                    withAnimation(.snappy) {
-                        isEditMode.toggle()
-                    }
-                }) {
-                    Text(isEditMode ? "Done" : "Edit")
-                        .font(Theme.Typography.subheadline)
-                        .foregroundStyle(Color.accentColor)
-                }
             }
 
-            // List items as individual cards
-            VStack(spacing: Theme.Spacing.sm) {
+            // List items with swipe actions
+            List {
                 ForEach(lists) { list in
-                    ListCard(
-                        list: list,
-                        count: reminderCountForList(list),
-                        isEditMode: isEditMode,
-                        namespace: namespace,
-                        onTap: {
-                            cancelCreation()
-                            onListTap(list)
-                        },
-                        onDelete: { onDeleteList(list) }
-                    )
+                    if listBeingEdited?.id == list.id {
+                        // Show inline editor for this list
+                        InlineListEditor(
+                            name: $editName,
+                            colorHex: $editColorHex,
+                            iconName: $editIconName,
+                            isFocused: $isEditFieldFocused,
+                            isSubmitting: isSubmittingEdit,
+                            onSave: { submitEdit() },
+                            onCancel: cancelEditing
+                        )
+                        .id("listRow-\(list.id.uuidString)")
+                        .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: 0, bottom: Theme.Spacing.xs, trailing: 0))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                    } else {
+                        // Show normal list card
+                        ListCard(
+                            list: list,
+                            count: reminderCountForList(list),
+                            namespace: namespace,
+                            onTap: {
+                                onListTap(list)
+                            }
+                        )
+                        .id("listRow-\(list.id.uuidString)")
+                        .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: 0, bottom: Theme.Spacing.xs, trailing: 0))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            if !list.isDefault {
+                                Button(role: .destructive) {
+                                    Haptics.medium()
+                                    onDeleteList(list)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            if !list.isDefault {
+                                Button {
+                                    Haptics.light()
+                                    startEditing(list)
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
+                                .tint(.blue)
+                            }
+                        }
+                    }
                 }
 
                 // New List creation row or button
@@ -64,34 +115,53 @@ struct ListsSection: View {
                         onSubmit: submitNewList,
                         onCancel: cancelCreation
                     )
+                    .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: 0, bottom: Theme.Spacing.xs, trailing: 0))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
                     .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 } else {
                     NewListCard(namespace: namespace) {
                         startCreation()
                     }
+                    .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: 0, bottom: Theme.Spacing.xs, trailing: 0))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                }
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .scrollDisabled(true)
+            .frame(minHeight: listMinHeight)
+            .environment(\.defaultMinListRowHeight, 10)
+            .onChange(of: isNameFieldFocused) { _, isFocused in
+                if !isFocused && isCreatingList {
+                    cancelCreation()
+                }
+            }
+            .onChange(of: isEditFieldFocused) { _, isFocused in
+                if !isFocused && listBeingEdited != nil && !isSubmittingEdit {
+                    cancelEditing()
                 }
             }
         }
     }
 
+    // MARK: - Create New List
+
     private func startCreation() {
-        withAnimation(.snappy) {
-            isCreatingList = true
-        }
-        // Delay focus to allow animation to complete
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isNameFieldFocused = true
-        }
+        // Cancel any editing in progress
+        cancelEditing()
+
+        isCreatingList = true
+        isNameFieldFocused = true
     }
 
     private func cancelCreation() {
-        withAnimation(.snappy) {
-            isCreatingList = false
-            newListName = ""
-            newListColorHex = ReminderList.presetColors[0]
-            newListIconName = ReminderList.presetIcons[0]
-            isNameFieldFocused = false
-        }
+        isCreatingList = false
+        newListName = ""
+        newListColorHex = ReminderList.presetColors[0]
+        newListIconName = ReminderList.presetIcons[0]
+        isNameFieldFocused = false
     }
 
     private func submitNewList() {
@@ -104,6 +174,198 @@ struct ListsSection: View {
         Haptics.success()
         onCreateList(trimmedName, newListColorHex, newListIconName)
         cancelCreation()
+    }
+
+    // MARK: - Edit List
+
+    private func startEditing(_ list: ReminderList) {
+        // Cancel any creation in progress
+        cancelCreation()
+
+        listBeingEdited = list
+        editName = list.name
+        editColorHex = list.colorHex
+        editIconName = list.iconName
+        isEditingList = true
+        isEditFieldFocused = true
+    }
+
+    private func cancelEditing() {
+        listBeingEdited = nil
+        editName = ""
+        editColorHex = ""
+        editIconName = ""
+        isEditFieldFocused = false
+        isSubmittingEdit = false
+        isEditingList = false
+    }
+
+    private func submitEdit() {
+        guard let list = listBeingEdited else { return }
+        let trimmedName = editName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            cancelEditing()
+            return
+        }
+
+        // Check if anything actually changed
+        let hasChanges = trimmedName != list.name ||
+                        editColorHex != list.colorHex ||
+                        editIconName != list.iconName
+
+        guard hasChanges else {
+            cancelEditing()
+            return
+        }
+
+        isSubmittingEdit = true
+        isEditFieldFocused = false
+
+        Task {
+            do {
+                _ = try await SyncEngine.shared.updateList(
+                    id: list.id,
+                    name: trimmedName,
+                    colorHex: editColorHex,
+                    iconName: editIconName
+                )
+                await MainActor.run {
+                    Haptics.success()
+                    cancelEditing()
+                }
+            } catch {
+                await MainActor.run {
+                    Haptics.error()
+                    isSubmittingEdit = false
+                    // Keep the editor open on error so user can retry
+                }
+                print("Failed to update list: \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - Inline List Editor
+
+private struct InlineListEditor: View {
+    @Binding var name: String
+    @Binding var colorHex: String
+    @Binding var iconName: String
+    var isFocused: FocusState<Bool>.Binding
+    let isSubmitting: Bool
+    let onSave: () -> Void
+    let onCancel: () -> Void
+
+    @State private var showColorPicker = false
+    @State private var showIconPicker = false
+
+    private var selectedColor: Color {
+        Color(hex: colorHex) ?? .blue
+    }
+
+    private var isValid: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var body: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            // Icon preview
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [selectedColor, selectedColor.opacity(0.7)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 36, height: 36)
+
+                Image(systemName: iconName.isEmpty ? "list.bullet" : iconName)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
+
+            // Name text field
+            TextField("List name", text: $name)
+                .font(.system(size: 17, weight: .medium))
+                .focused(isFocused)
+                .submitLabel(.done)
+                .onSubmit(onSave)
+                .tint(selectedColor)
+                .disabled(isSubmitting)
+
+            // Color picker button
+            Button(action: {
+                Haptics.light()
+                showColorPicker = true
+            }) {
+                Circle()
+                    .fill(selectedColor)
+                    .frame(width: 28, height: 28)
+                    .overlay(
+                        Circle()
+                            .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(isSubmitting)
+            .popover(isPresented: $showColorPicker) {
+                ColorPickerPopover(selectedColorHex: $colorHex)
+                    .presentationCompactAdaptation(.popover)
+            }
+
+            // Icon picker button
+            Button(action: {
+                Haptics.light()
+                showIconPicker = true
+            }) {
+                Image(systemName: iconName.isEmpty ? "list.bullet" : iconName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(selectedColor)
+                    .frame(width: 28, height: 28)
+                    .background(selectedColor.opacity(0.15))
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(isSubmitting)
+            .popover(isPresented: $showIconPicker) {
+                IconPickerPopover(selectedIconName: $iconName, selectedColor: selectedColor)
+                    .presentationCompactAdaptation(.popover)
+            }
+
+            // Save button
+            if isSubmitting {
+                ProgressView()
+                    .frame(width: 28, height: 28)
+            } else {
+                Button(action: onSave) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(isValid ? selectedColor : Color.secondary.opacity(0.3))
+                }
+                .buttonStyle(.plain)
+                .disabled(!isValid)
+            }
+        }
+        .padding(Theme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            selectedColor.opacity(0.12),
+                            selectedColor.opacity(0.05)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous)
+                .strokeBorder(selectedColor.opacity(0.2), lineWidth: 1)
+        )
     }
 }
 
@@ -222,124 +484,20 @@ private struct InlineListCreator: View {
     }
 }
 
-// MARK: - Color Picker Popover
-
-private struct ColorPickerPopover: View {
-    @Binding var selectedColorHex: String
-    @Environment(\.dismiss) private var dismiss
-
-    private let columns = [
-        GridItem(.adaptive(minimum: 40), spacing: Theme.Spacing.sm)
-    ]
-
-    var body: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            Text("Color")
-                .font(Theme.Typography.caption)
-                .foregroundStyle(.secondary)
-
-            LazyVGrid(columns: columns, spacing: Theme.Spacing.sm) {
-                ForEach(ReminderList.presetColors, id: \.self) { colorHex in
-                    Button(action: {
-                        Haptics.selection()
-                        selectedColorHex = colorHex
-                        dismiss()
-                    }) {
-                        Circle()
-                            .fill(Color(hex: colorHex) ?? .blue)
-                            .frame(width: 40, height: 40)
-                            .overlay {
-                                if selectedColorHex == colorHex {
-                                    Image(systemName: "checkmark")
-                                        .font(.caption.weight(.bold))
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-        .padding(Theme.Spacing.md)
-        .frame(width: 220)
-    }
-}
-
-// MARK: - Icon Picker Popover
-
-private struct IconPickerPopover: View {
-    @Binding var selectedIconName: String
-    let selectedColor: Color
-    @Environment(\.dismiss) private var dismiss
-
-    private let columns = [
-        GridItem(.adaptive(minimum: 40), spacing: Theme.Spacing.sm)
-    ]
-
-    var body: some View {
-        VStack(spacing: Theme.Spacing.sm) {
-            Text("Icon")
-                .font(Theme.Typography.caption)
-                .foregroundStyle(.secondary)
-
-            LazyVGrid(columns: columns, spacing: Theme.Spacing.sm) {
-                ForEach(ReminderList.presetIcons, id: \.self) { iconName in
-                    Button(action: {
-                        Haptics.selection()
-                        selectedIconName = iconName
-                        dismiss()
-                    }) {
-                        Image(systemName: iconName)
-                            .font(.body)
-                            .foregroundStyle(selectedIconName == iconName ? .white : selectedColor)
-                            .frame(width: 40, height: 40)
-                            .background(
-                                selectedIconName == iconName
-                                    ? selectedColor
-                                    : selectedColor.opacity(0.15)
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.sm, style: .continuous))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-        .padding(Theme.Spacing.md)
-        .frame(width: 220)
-    }
-}
-
 // MARK: - List Card
 
 private struct ListCard: View {
     let list: ReminderList
     let count: Int
-    let isEditMode: Bool
     let namespace: Namespace.ID
     let onTap: () -> Void
-    let onDelete: () -> Void
 
     var body: some View {
         Button(action: {
-            guard !isEditMode else { return }
             Haptics.light()
             onTap()
         }) {
             HStack(spacing: Theme.Spacing.md) {
-                // Delete button (edit mode)
-                if isEditMode && !list.isDefault {
-                    Button(action: {
-                        Haptics.medium()
-                        onDelete()
-                    }) {
-                        Image(systemName: "minus.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(.red)
-                    }
-                    .buttonStyle(.plain)
-                    .transition(.scale.combined(with: .opacity))
-                }
-
                 // List icon with colored background
                 ZStack {
                     Circle()
@@ -377,11 +535,9 @@ private struct ListCard: View {
                     .clipShape(Capsule())
 
                 // Chevron
-                if !isEditMode {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.tertiary)
-                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.tertiary)
             }
             .padding(Theme.Spacing.md)
             .background(
@@ -455,6 +611,7 @@ private struct NewListCard: View {
 #Preview {
     @Previewable @Namespace var namespace
     @Previewable @State var isCreating = false
+    @Previewable @State var isEditing = false
     ScrollView {
         ListsSection(
             lists: [
@@ -471,7 +628,8 @@ private struct NewListCard: View {
                 print("Create list: \(name), \(color), \(icon)")
             },
             onDeleteList: { _ in },
-            isCreatingList: $isCreating
+            isCreatingList: $isCreating,
+            isEditingList: $isEditing
         )
         .padding()
     }

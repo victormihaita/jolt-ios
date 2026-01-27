@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */; };
 		1168AF46FAAED3D9736888BC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3C02E69BB0B658D8F04731 /* NotificationService.swift */; };
+		13B8F7E43D075236AA4F1722 /* ListPickerComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D32317F05CFF7CBA17A8B4 /* ListPickerComponents.swift */; };
 		1912ABEC033BFE0B8ED20E7A /* GoogleAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */; };
 		1F169AFE6A45CA1C1CF46C68 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F918149692F135910BD94AB /* AuthViewModel.swift */; };
 		24A512E9476BC5BF7876E039 /* QuickCaptureBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */; };
@@ -137,6 +138,7 @@
 		9CEA86B1AF5C09A4894F5206 /* PRProducts.storekit */ = {isa = PBXFileReference; path = PRProducts.storekit; sourceTree = "<group>"; };
 		9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerRemindersWidget.entitlements; sourceTree = "<group>"; };
+		A3D32317F05CFF7CBA17A8B4 /* ListPickerComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPickerComponents.swift; sourceTree = "<group>"; };
 		A4A543048D81C6ADCCA5D83C /* PRSync */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRSync; path = Packages/PRSync; sourceTree = SOURCE_ROOT; };
 		A8D72B166E978E380B9365F3 /* PRWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRWidget.swift; sourceTree = "<group>"; };
 		A91AF486732A1131B753BFD7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -196,6 +198,7 @@
 		048F205440A24E283640995E /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				A3D32317F05CFF7CBA17A8B4 /* ListPickerComponents.swift */,
 				8B53F9E7984A441EB3F45A63 /* ListsSection.swift */,
 				5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */,
 				2B8C45B8934068CC2E246263 /* SmartFilterCard.swift */,
@@ -712,6 +715,7 @@
 				3775D94B26951272BAAD38EB /* InAppNotificationManager.swift in Sources */,
 				E39B2DB8E1F1712CC2C0743A /* InlineReminderInput.swift in Sources */,
 				61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */,
+				13B8F7E43D075236AA4F1722 /* ListPickerComponents.swift in Sources */,
 				83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */,
 				10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */,
 				64FAC1E9CBA28001727D83EA /* NewHomeView.swift in Sources */,
