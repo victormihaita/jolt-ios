@@ -123,13 +123,6 @@ struct SettingsView: View {
                             title: "Appearance"
                         )
                     }
-
-                    SettingsRow(
-                        icon: "globe",
-                        iconColor: .blue,
-                        title: "Time Zone",
-                        value: timezoneDisplayText
-                    )
                 } header: {
                     Text("Preferences")
                 }
@@ -268,20 +261,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Computed Properties
-
-    private var timezoneDisplayText: String {
-        guard let userTimezone = authViewModel.currentUser?.timezone else {
-            return "Auto"
-        }
-        if userTimezone == TimeZone.current.identifier {
-            return "Auto"
-        }
-        if let tz = TimeZone(identifier: userTimezone) {
-            return tz.abbreviation() ?? userTimezone
-        }
-        return userTimezone
-    }
 }
 
 // MARK: - Settings Row Components
