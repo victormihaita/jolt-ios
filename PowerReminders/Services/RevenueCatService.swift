@@ -32,7 +32,7 @@ class RevenueCatService: NSObject, ObservableObject {
 
     /// Configure RevenueCat with your API key
     /// Note: RevenueCat automatically detects sandbox vs production based on the receipt
-    /// - Debug builds on simulator/device: Sandbox
+    /// - Debug builds with StoreKit Configuration: Uses .storekit file for local testing
     /// - TestFlight builds: Sandbox
     /// - App Store builds: Production
     func configure() {
@@ -41,13 +41,11 @@ class RevenueCatService: NSObject, ObservableObject {
         #endif
 
         // RevenueCat Public SDK API key
-        // DEBUG: Test Store key - uses RevenueCat's mock store (no Apple account needed)
-        // RELEASE: Production key - uses Apple Sandbox (TestFlight) / Production (App Store)
-        #if DEBUG
-        let apiKey = "test_jNGAilWTnvFoTboAQDJfjmxqnOJ"
-        #else
+        // Using appl_ key for all environments:
+        // - Simulator with StoreKit Config: Local testing (receipts won't validate, but flow works)
+        // - TestFlight: Apple Sandbox (receipts validate)
+        // - App Store: Apple Production (receipts validate)
         let apiKey = "appl_VDoLpZavpbDHGhXyXqNwiOJFDLF"
-        #endif
 
         Purchases.configure(withAPIKey: apiKey)
         isConfigured = true
