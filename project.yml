@@ -153,10 +153,8 @@ schemes:
         PowerRemindersWidget: all
     run:
       config: Debug
-      storeKitConfiguration: PowerReminders/Configuration/PRProducts.storekit
     test:
       config: Debug
-      storeKitConfiguration: PowerReminders/Configuration/PRProducts.storekit
     profile:
       config: Release
     analyze:

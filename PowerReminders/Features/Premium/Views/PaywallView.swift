@@ -24,7 +24,7 @@ struct PaywallView: View {
                 dismiss()
             }
             .onPurchaseFailure { error in
-                errorMessage = "Purchase Error:\n\nCode: \(error.errorCode)\n\nDescription: \(error.localizedDescription)\n\nUnderlying: \(String(describing: error.errorUserInfo))"
+                errorMessage = "Purchase Error:\n\nCode: \(error.code)\n\nDescription: \(error.localizedDescription)\n\nUnderlying: \(String(describing: error.userInfo))"
                 showErrorAlert = true
             }
             .alert("Purchase Error", isPresented: $showErrorAlert) {
