@@ -75,8 +75,32 @@ struct WelcomeView: View {
 
                 Spacer()
 
-                // Sign in button
+                // Sign in buttons
                 VStack(spacing: Theme.Spacing.md) {
+                    // Sign in with Apple
+                    Button(action: signInWithApple) {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            if authViewModel.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "apple.logo")
+                                    .font(.title2)
+                            }
+                            Text("Continue with Apple")
+                                .font(Theme.Typography.headline)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(authViewModel.isLoading ? Color.black.opacity(0.7) : Color.black)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
+                    }
+                    .disabled(authViewModel.isLoading)
+                    .opacity(isAnimating ? 1.0 : 0.0)
+
+                    // Sign in with Google
                     Button(action: signInWithGoogle) {
                         HStack(spacing: Theme.Spacing.sm) {
                             if authViewModel.isLoading {
@@ -143,6 +167,13 @@ struct WelcomeView: View {
         Haptics.medium()
         Task {
             await authViewModel.signInWithGoogle()
+        }
+    }
+
+    private func signInWithApple() {
+        Haptics.medium()
+        Task {
+            await authViewModel.signInWithApple()
         }
     }
 }

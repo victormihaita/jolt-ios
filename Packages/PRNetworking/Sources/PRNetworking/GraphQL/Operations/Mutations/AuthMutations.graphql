@@ -15,6 +15,23 @@ mutation AuthenticateWithGoogle($idToken: String!) {
   }
 }
 
+mutation AuthenticateWithApple($input: AuthenticateWithAppleInput!) {
+  authenticateWithApple(input: $input) {
+    accessToken
+    refreshToken
+    expiresIn
+    user {
+      id
+      email
+      displayName
+      avatarUrl
+      timezone
+      isPremium
+      premiumUntil
+    }
+  }
+}
+
 mutation RefreshToken($refreshToken: String!) {
   refreshToken(refreshToken: $refreshToken) {
     accessToken

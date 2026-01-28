@@ -47,6 +47,7 @@
 		89507EB65597205462A98F17 /* PRCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD8A0B386B2FE5FA0297EC2B /* PRCore */; };
 		925900AE804AABDAC5622F03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */; };
 		9917D184EEA4D85DFFDC0D6B /* ambient2.wav in Resources */ = {isa = PBXBuildFile; fileRef = E89CBD390CB4EC8B9CE384CE /* ambient2.wav */; };
+		9D154D88E269CBED4AB3F031 /* AppleAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9C2AD3BF70A4221F13AF9E /* AppleAuthService.swift */; };
 		A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */; };
 		A230E0F7962B0111547E1F68 /* SyncStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEE25D944D6F41B9DCC6E89 /* SyncStatusView.swift */; };
 		A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58AC312793DB5E028CC8AED8 /* SmartFiltersGrid.swift */; };
@@ -121,6 +122,7 @@
 		523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatService.swift; sourceTree = "<group>"; };
 		57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		58AC312793DB5E028CC8AED8 /* SmartFiltersGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFiltersGrid.swift; sourceTree = "<group>"; };
+		5A9C2AD3BF70A4221F13AF9E /* AppleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuthService.swift; sourceTree = "<group>"; };
 		5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureBar.swift; sourceTree = "<group>"; };
 		5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotificationBanner.swift; sourceTree = "<group>"; };
 		6532F69821AB59352C602FBD /* PowerReminders.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerReminders.entitlements; sourceTree = "<group>"; };
@@ -508,6 +510,7 @@
 			isa = PBXGroup;
 			children = (
 				1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */,
+				5A9C2AD3BF70A4221F13AF9E /* AppleAuthService.swift */,
 				F40040A29924D279DDFB2C95 /* DeviceService.swift */,
 				22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */,
 				4A554546CC40FADF132372E7 /* InAppNotificationManager.swift */,
@@ -703,6 +706,7 @@
 			files = (
 				DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */,
 				540AD41D196F4AED38FC35CB /* AppDelegate.swift in Sources */,
+				9D154D88E269CBED4AB3F031 /* AppleAuthService.swift in Sources */,
 				1F169AFE6A45CA1C1CF46C68 /* AuthViewModel.swift in Sources */,
 				34E656F61F8F20E7BBF3740F /* CreateListView.swift in Sources */,
 				28A491F3F078E519C34900F7 /* CreateReminderView.swift in Sources */,

@@ -5,6 +5,7 @@ import PRNetworking
 import PRSync
 import PRModels
 import PRKeychain
+import ApolloAPI
 
 @MainActor
 class AuthViewModel: ObservableObject {
@@ -102,6 +103,70 @@ class AuthViewModel: ObservableObject {
             print("❌ Auth error: \(error)")
             print("❌ Auth error type: \(type(of: error))")
             print("❌ Auth error description: \(error.localizedDescription)")
+            errorMessage = error.localizedDescription
+            isLoading = false
+            Haptics.error()
+        }
+    }
+
+    func signInWithApple() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let appleAuth = try await AppleAuthService.shared.signIn()
+
+            let input = PRAPI.AuthenticateWithAppleInput(
+                identityToken: appleAuth.identityToken,
+                userIdentifier: appleAuth.userIdentifier,
+                email: appleAuth.email.map { .some($0) } ?? .null,
+                displayName: appleAuth.displayName.map { .some($0) } ?? .null
+            )
+            let mutation = PRAPI.AuthenticateWithAppleMutation(input: input)
+            let result = try await graphQL.perform(mutation: mutation)
+
+            let authData = result.authenticateWithApple
+
+            // Store tokens
+            keychain.saveToken(authData.accessToken)
+            keychain.saveRefreshToken(authData.refreshToken)
+            keychain.saveUserId(authData.user.id)
+
+            // Update GraphQL client with new token
+            graphQL.updateAuthToken(authData.accessToken)
+
+            // Update current user
+            currentUser = PRModels.User(
+                id: UUID(uuidString: authData.user.id) ?? UUID(),
+                email: authData.user.email,
+                displayName: authData.user.displayName,
+                avatarUrl: authData.user.avatarUrl,
+                timezone: authData.user.timezone,
+                isPremium: authData.user.isPremium,
+                premiumUntil: authData.user.premiumUntil?.toDate()
+            )
+
+            // Set RevenueCat user ID to sync subscription status
+            await RevenueCatService.shared.setUserID(authData.user.id)
+
+            // Connect SyncEngine to start watching data
+            SyncEngine.shared.connect()
+
+            isAuthenticated = true
+            isLoading = false
+
+            // Request push token and register device for push notifications
+            await NotificationService.shared.registerForRemoteNotificationsIfAuthorized()
+            await DeviceService.shared.onUserAuthenticated()
+
+            Haptics.success()
+        } catch let error as AppleAuthError where error == .cancelled {
+            // User cancelled - don't show error
+            isLoading = false
+        } catch {
+            print("❌ Apple Auth error: \(error)")
+            print("❌ Apple Auth error type: \(type(of: error))")
+            print("❌ Apple Auth error description: \(error.localizedDescription)")
             errorMessage = error.localizedDescription
             isLoading = false
             Haptics.error()

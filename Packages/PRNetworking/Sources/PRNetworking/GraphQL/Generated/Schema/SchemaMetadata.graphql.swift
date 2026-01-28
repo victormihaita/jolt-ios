@@ -32,6 +32,7 @@ public extension PRAPI {
       case "AuthPayload": return PRAPI.Objects.AuthPayload
       case "Device": return PRAPI.Objects.Device
       case "Mutation": return PRAPI.Objects.Mutation
+      case "NotificationSound": return PRAPI.Objects.NotificationSound
       case "PageInfo": return PRAPI.Objects.PageInfo
       case "Query": return PRAPI.Objects.Query
       case "RecurrenceRule": return PRAPI.Objects.RecurrenceRule
