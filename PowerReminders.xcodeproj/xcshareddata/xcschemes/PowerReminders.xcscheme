@@ -79,9 +79,6 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
       </CommandLineArguments>
-      <StoreKitConfigurationFileReference
-         identifier = "../../PowerReminders/Configuration/PRProducts.storekit">
-      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

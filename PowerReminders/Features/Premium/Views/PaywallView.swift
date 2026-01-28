@@ -4,6 +4,8 @@ import PRSubscriptions
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var errorMessage: String?
+    @State private var showErrorAlert = false
 
     var body: some View {
         PaywallViewRC()
@@ -20,6 +22,15 @@ struct PaywallView: View {
                     await RevenueCatService.shared.verifySubscriptionWithBackend()
                 }
                 dismiss()
+            }
+            .onPurchaseFailure { error in
+                errorMessage = "Purchase Error:\n\nCode: \(error.errorCode)\n\nDescription: \(error.localizedDescription)\n\nUnderlying: \(String(describing: error.errorUserInfo))"
+                showErrorAlert = true
+            }
+            .alert("Purchase Error", isPresented: $showErrorAlert) {
+                Button("OK") { }
+            } message: {
+                Text(errorMessage ?? "Unknown error")
             }
     }
 }
