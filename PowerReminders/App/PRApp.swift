@@ -32,6 +32,7 @@ struct ContentView: View {
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
     @ObservedObject private var syncEngine = SyncEngine.shared
     @StateObject private var notificationManager = InAppNotificationManager.shared
+    @AppStorage("onboarding_completed") private var onboardingCompleted = false
 
     // State for notification-triggered navigation
     @State private var notificationReminder: PRModels.Reminder?
@@ -45,7 +46,16 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             // Main app content
             Group {
-                if authViewModel.isAuthenticated {
+                if !onboardingCompleted {
+                    // Existing authenticated user who never started onboarding (app upgrade) → skip
+                    if authViewModel.isAuthenticated
+                        && UserDefaults.standard.integer(forKey: "onboarding_current_step") == OnboardingStep.welcome.rawValue {
+                        Color.clear
+                            .onAppear { onboardingCompleted = true }
+                    } else {
+                        OnboardingContainerView()
+                    }
+                } else if authViewModel.isAuthenticated {
                     NewHomeView()
                 } else {
                     WelcomeView()

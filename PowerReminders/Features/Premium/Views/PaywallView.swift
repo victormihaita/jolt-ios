@@ -6,6 +6,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var errorMessage: String?
     @State private var showErrorAlert = false
+    var onDismiss: (() -> Void)?
 
     var body: some View {
         PaywallViewRC()
@@ -14,14 +15,22 @@ struct PaywallView: View {
                 Task {
                     await RevenueCatService.shared.verifySubscriptionWithBackend()
                 }
-                dismiss()
+                if let onDismiss {
+                    onDismiss()
+                } else {
+                    dismiss()
+                }
             }
             .onRestoreCompleted { _ in
                 // Verify subscription with backend after restore
                 Task {
                     await RevenueCatService.shared.verifySubscriptionWithBackend()
                 }
-                dismiss()
+                if let onDismiss {
+                    onDismiss()
+                } else {
+                    dismiss()
+                }
             }
             .onPurchaseFailure { error in
                 errorMessage = "Purchase Error:\n\nCode: \(error.code)\n\nDescription: \(error.localizedDescription)\n\nUnderlying: \(String(describing: error.userInfo))"

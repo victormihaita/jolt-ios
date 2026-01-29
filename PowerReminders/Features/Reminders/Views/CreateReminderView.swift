@@ -21,7 +21,6 @@ struct CreateReminderView: View {
     @State private var recurrenceRule: PRModels.RecurrenceRule?
     @State private var selectedListId: UUID?
     @State private var showRecurrencePicker = false
-    @State private var showListPicker = false
     @State private var showPremiumPaywall = false
     @State private var isLoading = false
     @State private var errorMessage: String?
@@ -38,10 +37,6 @@ struct CreateReminderView: View {
 
     private let graphQL = GraphQLClient.shared
     private var isEditing: Bool { editingReminder != nil }
-
-    private var selectedList: ReminderList? {
-        availableLists.first { $0.id == selectedListId }
-    }
 
     var body: some View {
         NavigationStack {
@@ -60,11 +55,11 @@ struct CreateReminderView: View {
                     Toggle(isOn: $hasDate) {
                         HStack {
                             Image(systemName: "calendar")
-                                .foregroundStyle(Theme.Colors.primary)
+                                .foregroundStyle(.secondary)
                             Text("Schedule Date & Time")
                         }
                     }
-                    .tint(Theme.Colors.primary)
+
 
                     if hasDate {
                         Toggle("All day", isOn: $allDay)
@@ -162,7 +157,7 @@ struct CreateReminderView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "speaker.wave.2.fill")
-                                    .foregroundStyle(Theme.Colors.primary)
+                                    .foregroundStyle(.secondary)
                                 Text("Notification Sound")
                                     .foregroundStyle(.primary)
                                 Spacer()
@@ -209,25 +204,18 @@ struct CreateReminderView: View {
 
                 // List section
                 Section("List") {
-                    Button {
-                        showListPicker = true
-                    } label: {
-                        HStack {
-                            if let list = selectedList {
+                    Picker(selection: $selectedListId) {
+                        ForEach(availableLists) { list in
+                            HStack {
                                 Image(systemName: list.iconName.isEmpty ? "list.bullet" : list.iconName)
-                                    .foregroundStyle(list.color)
                                 Text(list.name)
-                                    .foregroundStyle(.primary)
-                            } else {
-                                Text("Select List")
-                                    .foregroundStyle(.secondary)
                             }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            .tag(Optional(list.id))
                         }
+                    } label: {
+                        Text("List")
                     }
+                    .pickerStyle(.menu)
                 }
 
                 if let errorMessage {
@@ -270,17 +258,11 @@ struct CreateReminderView: View {
             .sheet(isPresented: $showPremiumPaywall) {
                 PaywallView()
             }
-            .sheet(isPresented: $showListPicker) {
-                ListPickerSheet(
-                    lists: availableLists,
-                    selectedListId: $selectedListId
-                )
-                .presentationDetents([.medium])
-            }
             .sheet(isPresented: $showSoundPicker) {
                 SoundPickerSheet(
                     selectedSoundId: $selectedSoundId,
-                    isPremium: subscriptionViewModel.isPremium
+                    isPremium: subscriptionViewModel.isPremium,
+                    onShowPaywall: { showPremiumPaywall = true }
                 )
                 .presentationDetents([.medium])
             }
@@ -624,62 +606,13 @@ struct RecurrencePickerView: View {
     }
 }
 
-// MARK: - List Picker Sheet
-
-struct ListPickerSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    let lists: [ReminderList]
-    @Binding var selectedListId: UUID?
-
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(lists) { list in
-                    Button {
-                        Haptics.selection()
-                        selectedListId = list.id
-                        dismiss()
-                    } label: {
-                        HStack(spacing: Theme.Spacing.md) {
-                            Image(systemName: list.iconName.isEmpty ? "list.bullet" : list.iconName)
-                                .font(.title3)
-                                .foregroundStyle(list.color)
-                                .frame(width: 28, height: 28)
-                                .background(list.color.opacity(0.15))
-                                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-
-                            Text(list.name)
-                                .foregroundStyle(.primary)
-
-                            Spacer()
-
-                            if selectedListId == list.id {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(Color.accentColor)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Select List")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
 // MARK: - Sound Picker Sheet
 
 struct SoundPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedSoundId: String
     let isPremium: Bool
+    var onShowPaywall: () -> Void
 
     @ObservedObject private var soundSettings = NotificationSoundSettings.shared
 
@@ -728,6 +661,11 @@ struct SoundPickerSheet: View {
 
     private func selectSound(_ filename: String) {
         if !soundSettings.selectSound(filename, isPremium: isPremium) {
+            // User tried to select a premium sound without subscription — show paywall
+            dismiss()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                onShowPaywall()
+            }
             return
         }
         Haptics.selection()
@@ -751,7 +689,7 @@ private struct SoundOptionRow: View {
             HStack(spacing: Theme.Spacing.md) {
                 // Sound name
                 Text(sound.name)
-                    .foregroundStyle(isLocked ? .secondary : .primary)
+                    .foregroundStyle(.primary)
 
                 if isLocked {
                     Image(systemName: "crown.fill")
@@ -767,18 +705,17 @@ private struct SoundOptionRow: View {
                 } label: {
                     Image(systemName: "speaker.wave.2.fill")
                         .font(.body)
-                        .foregroundStyle(Theme.Colors.primary)
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
 
                 // Checkmark
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(.blue)
                 }
             }
         }
-        .disabled(isLocked)
     }
 }
 
