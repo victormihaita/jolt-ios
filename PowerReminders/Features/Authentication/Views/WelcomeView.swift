@@ -80,7 +80,7 @@ struct WelcomeView: View {
                     // Sign in with Apple
                     Button(action: signInWithApple) {
                         HStack(spacing: Theme.Spacing.sm) {
-                            if authViewModel.isLoading {
+                            if authViewModel.authenticatingProvider == .apple {
                                 ProgressView()
                                     .progressViewStyle(.circular)
                                     .tint(.white)
@@ -103,7 +103,7 @@ struct WelcomeView: View {
                     // Sign in with Google
                     Button(action: signInWithGoogle) {
                         HStack(spacing: Theme.Spacing.sm) {
-                            if authViewModel.isLoading {
+                            if authViewModel.authenticatingProvider == .google {
                                 ProgressView()
                                     .progressViewStyle(.circular)
                                     .tint(.black)
@@ -160,6 +160,20 @@ struct WelcomeView: View {
             withAnimation(.easeOut(duration: 0.8)) {
                 isAnimating = true
             }
+        }
+        .alert("Account Pending Deletion", isPresented: $authViewModel.showRestoreAccountPrompt) {
+            Button("Restore Account") {
+                Task {
+                    await authViewModel.restoreAccount()
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                Task {
+                    await authViewModel.declineRestore()
+                }
+            }
+        } message: {
+            Text("Your account was scheduled for deletion. Would you like to restore your account and all your data?")
         }
     }
 

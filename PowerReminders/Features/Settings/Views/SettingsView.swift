@@ -11,6 +11,9 @@ struct SettingsView: View {
     @State private var showPremiumSheet = false
     @State private var showSoundPicker = false
     @State private var showSignOutConfirmation = false
+    @State private var showDeleteAccountConfirmation = false
+    @State private var showSubscriptionWarning = false
+    @State private var isDeletingAccount = false
 
     var body: some View {
         NavigationStack {
@@ -239,6 +242,45 @@ struct SettingsView: View {
                         Text("Are you sure you want to sign out?")
                     }
                 }
+
+                // Delete Account Section
+                Section {
+                    Button(action: { showDeleteAccountConfirmation = true }) {
+                        HStack {
+                            SettingsIconView(icon: "trash", color: .red)
+                            Text("Delete Account")
+                                .foregroundStyle(.red)
+                            Spacer()
+                            if isDeletingAccount {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            }
+                        }
+                    }
+                    .disabled(isDeletingAccount)
+                    .confirmationDialog("Delete Account", isPresented: $showDeleteAccountConfirmation, titleVisibility: .visible) {
+                        Button("Delete Account", role: .destructive) {
+                            if subscriptionViewModel.isPremium {
+                                showSubscriptionWarning = true
+                            } else {
+                                performDeleteAccount()
+                            }
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("Your account will be deactivated immediately and permanently deleted after 30 days. During this period, you can contact us at support@powerreminders.app to restore your account.\n\nAll your data (reminders, lists, and devices) will be removed.")
+                    }
+                    .alert("Active Subscription", isPresented: $showSubscriptionWarning) {
+                        Button("Delete Anyway", role: .destructive) {
+                            performDeleteAccount()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("You have an active premium subscription. Deleting your account will NOT automatically cancel your subscription. You must cancel it manually in your App Store settings (Settings > Apple ID > Subscriptions) to stop being charged.\n\nDo you still want to delete your account?")
+                    }
+                } footer: {
+                    Text("Permanently delete your account and all associated data.")
+                }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -261,6 +303,16 @@ struct SettingsView: View {
         }
     }
 
+    private func performDeleteAccount() {
+        isDeletingAccount = true
+        Task {
+            let success = await authViewModel.deleteAccount()
+            isDeletingAccount = false
+            if success {
+                dismiss()
+            }
+        }
+    }
 }
 
 // MARK: - Settings Row Components

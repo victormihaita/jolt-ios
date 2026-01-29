@@ -12,6 +12,7 @@ mutation AuthenticateWithGoogle($idToken: String!) {
       isPremium
       premiumUntil
     }
+    accountPendingDeletion
   }
 }
 
@@ -29,6 +30,7 @@ mutation AuthenticateWithApple($input: AuthenticateWithAppleInput!) {
       isPremium
       premiumUntil
     }
+    accountPendingDeletion
   }
 }
 
@@ -62,4 +64,12 @@ mutation VerifySubscription {
     isPremium
     premiumUntil
   }
+}
+
+mutation DeleteAccount {
+  deleteAccount
+}
+
+mutation RestoreAccount {
+  restoreAccount
 }

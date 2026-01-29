@@ -8,7 +8,7 @@ public extension PRAPI {
     public static let operationName: String = "AuthenticateWithGoogle"
     public static let operationDocument: ApolloAPI.OperationDocument = .init(
       definition: .init(
-        #"mutation AuthenticateWithGoogle($idToken: String!) { authenticateWithGoogle(idToken: $idToken) { __typename accessToken refreshToken expiresIn user { __typename id email displayName avatarUrl timezone isPremium premiumUntil } } }"#
+        #"mutation AuthenticateWithGoogle($idToken: String!) { authenticateWithGoogle(idToken: $idToken) { __typename accessToken refreshToken expiresIn user { __typename id email displayName avatarUrl timezone isPremium premiumUntil } accountPendingDeletion } }"#
       ))
 
     public var idToken: String
@@ -47,6 +47,7 @@ public extension PRAPI {
           .field("refreshToken", String.self),
           .field("expiresIn", Int.self),
           .field("user", User.self),
+          .field("accountPendingDeletion", Bool.self),
         ] }
         public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
           AuthenticateWithGoogleMutation.Data.AuthenticateWithGoogle.self
@@ -56,6 +57,7 @@ public extension PRAPI {
         public var refreshToken: String { __data["refreshToken"] }
         public var expiresIn: Int { __data["expiresIn"] }
         public var user: User { __data["user"] }
+        public var accountPendingDeletion: Bool { __data["accountPendingDeletion"] }
 
         /// AuthenticateWithGoogle.User
         ///
