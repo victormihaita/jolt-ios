@@ -397,6 +397,10 @@ public final class SyncEngine: ObservableObject {
             remindersWatcher?.refetch()
             // Also refetch lists to update reminder counts
             listsWatcher?.refetch()
+            // Defense-in-depth: update widget immediately
+            DispatchQueue.main.async {
+                self.updateWidgetData()
+            }
 
         case .some(.updated):
             guard let reminderData = event.reminder else {
@@ -411,6 +415,10 @@ public final class SyncEngine: ObservableObject {
             remindersWatcher?.refetch()
             // Also refetch lists to update reminder counts (in case list changed)
             listsWatcher?.refetch()
+            // Defense-in-depth: update widget immediately
+            DispatchQueue.main.async {
+                self.updateWidgetData()
+            }
 
         case .some(.deleted):
             guard let uuid = UUID(uuidString: reminderId) else {
@@ -425,6 +433,10 @@ public final class SyncEngine: ObservableObject {
             remindersWatcher?.refetch()
             // Also refetch lists to update reminder counts
             listsWatcher?.refetch()
+            // Defense-in-depth: update widget immediately
+            DispatchQueue.main.async {
+                self.updateWidgetData()
+            }
 
         case .none:
             PRLogger.warning("Unknown change action received", category: .sync)

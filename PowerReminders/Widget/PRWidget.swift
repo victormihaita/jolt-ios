@@ -1,3 +1,4 @@
+import AppIntents
 import WidgetKit
 import SwiftUI
 import PRCore
@@ -71,11 +72,11 @@ struct PRWidgetProvider: TimelineProvider {
     private func widgetLimit(for family: WidgetFamily) -> Int {
         switch family {
         case .systemSmall: return 1
-        case .systemMedium: return 3
-        case .systemLarge: return 6
+        case .systemMedium: return 2
+        case .systemLarge: return 5
         case .accessoryCircular, .accessoryRectangular, .accessoryInline: return 1
-        case .systemExtraLarge: return 8
-        @unknown default: return 3
+        case .systemExtraLarge: return 7
+        @unknown default: return 2
         }
     }
 }
@@ -101,42 +102,71 @@ struct PRWidgetSmallView: View {
         entry.totalUpcomingCount + entry.overdueCount
     }
 
+    private var extraCount: Int {
+        max(0, totalCount - 1)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
+            // Header
             HStack {
                 Image(systemName: entry.overdueCount > 0 ? "bell.badge.fill" : "bell.fill")
                     .foregroundStyle(entry.overdueCount > 0 ? .red : .blue)
-                Text("PR")
-                    .font(.caption.weight(.semibold))
+                Text("Upcoming")
+                    .font(.headline)
                 Spacer()
-                if totalCount > 1 {
-                    Text("+\(totalCount - 1)")
-                        .font(.caption2)
+                if extraCount > 0 {
+                    Text("+\(extraCount)")
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
+            .padding(.bottom, 4)
 
             if let reminder = entry.reminders.first {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(reminder.title)
-                        .font(.subheadline.weight(.medium))
+                        .font(.headline)
                         .lineLimit(2)
 
                     Text(formatTime(reminder.dueAt, isOverdue: reminder.isOverdue))
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(reminder.isOverdue ? .red : .secondary)
                 }
+
+                Spacer(minLength: 0)
+
+                // Action buttons underneath
+                HStack(spacing: 16) {
+                    Spacer()
+
+                    Button(intent: CompleteReminderIntent(reminderID: reminder.id.uuidString)) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title)
+                            .foregroundStyle(.green)
+                    }
+                    .buttonBorderShape(.circle)
+                    .tint(.green.opacity(0.15))
+
+                    Button(intent: SnoozeReminderIntent(reminderID: reminder.id.uuidString)) {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.title)
+                            .foregroundStyle(.orange)
+                    }
+                    .buttonBorderShape(.circle)
+                    .tint(.orange.opacity(0.15))
+
+                    Spacer()
+                }
             } else {
-                Spacer()
+                Spacer(minLength: 0)
                 Text("All clear!")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Spacer()
+                Spacer(minLength: 0)
             }
-
-            Spacer()
         }
-        .padding()
+        .padding(14)
     }
 }
 
@@ -157,22 +187,32 @@ struct PRWidgetMediumView: View {
         entry.totalUpcomingCount + entry.overdueCount
     }
 
+    private var displayedCount: Int {
+        min(entry.reminders.count, 2)
+    }
+
+    private var extraCount: Int {
+        max(0, totalCount - displayedCount)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Image(systemName: entry.overdueCount > 0 ? "bell.badge.fill" : "bell.fill")
                     .foregroundStyle(entry.overdueCount > 0 ? .red : .blue)
                 Text(headerText)
-                    .font(.caption.weight(.semibold))
+                    .font(.headline)
                 Spacer()
-                if totalCount > 0 {
-                    Text("\(totalCount)")
+                if extraCount > 0 {
+                    Text("+\(extraCount)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
+            .padding(.bottom, 4)
 
             if entry.reminders.isEmpty {
+                Spacer(minLength: 0)
                 HStack {
                     Spacer()
                     VStack {
@@ -185,15 +225,19 @@ struct PRWidgetMediumView: View {
                     }
                     Spacer()
                 }
+                Spacer(minLength: 0)
             } else {
-                ForEach(entry.reminders) { reminder in
-                    ReminderRow(reminder: reminder)
+                ForEach(entry.reminders.prefix(2)) { reminder in
+                    ReminderRow(reminder: reminder, largeTitle: true)
+                    if reminder.id != entry.reminders.prefix(2).last?.id {
+                        Divider()
+                    }
                 }
             }
 
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .padding()
+        .padding(14)
     }
 }
 
@@ -212,25 +256,34 @@ struct PRWidgetLargeView: View {
         entry.totalUpcomingCount + entry.overdueCount
     }
 
+    private var displayedCount: Int {
+        min(entry.reminders.count, 5)
+    }
+
+    private var extraCount: Int {
+        max(0, totalCount - displayedCount)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Image(systemName: entry.overdueCount > 0 ? "bell.badge.fill" : "bell.fill")
                     .foregroundStyle(entry.overdueCount > 0 ? .red : .blue)
                 Text(headerText)
                     .font(.headline)
                 Spacer()
-                if totalCount > entry.reminders.count {
-                    Text("+\(totalCount - entry.reminders.count) more")
+                if extraCount > 0 {
+                    Text("+\(extraCount)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
+            .padding(.bottom, 4)
 
             Divider()
 
             if entry.reminders.isEmpty {
-                Spacer()
+                Spacer(minLength: 0)
                 HStack {
                     Spacer()
                     VStack(spacing: 8) {
@@ -245,23 +298,26 @@ struct PRWidgetLargeView: View {
                     }
                     Spacer()
                 }
-                Spacer()
+                Spacer(minLength: 0)
             } else {
-                ForEach(entry.reminders) { reminder in
+                ForEach(entry.reminders.prefix(5)) { reminder in
                     ReminderRow(reminder: reminder)
-                    if reminder.id != entry.reminders.last?.id {
+                    if reminder.id != entry.reminders.prefix(5).last?.id {
                         Divider()
                     }
                 }
-                Spacer()
             }
+
+            Spacer(minLength: 0)
         }
-        .padding()
+        .padding(14)
     }
 }
 
 struct ReminderRow: View {
     let reminder: WidgetReminder
+    var showActions: Bool = true
+    var largeTitle: Bool = false
 
     var body: some View {
         HStack(spacing: 8) {
@@ -271,7 +327,7 @@ struct ReminderRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(reminder.title)
-                    .font(.subheadline)
+                    .font(largeTitle ? .subheadline.weight(.medium) : .subheadline)
                     .lineLimit(1)
 
                 Text(formatTime(reminder.dueAt, isOverdue: reminder.isOverdue))
@@ -280,6 +336,24 @@ struct ReminderRow: View {
             }
 
             Spacer()
+
+            if showActions {
+                Button(intent: CompleteReminderIntent(reminderID: reminder.id.uuidString)) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.green)
+                }
+                .buttonBorderShape(.circle)
+                .tint(.green.opacity(0.15))
+
+                Button(intent: SnoozeReminderIntent(reminderID: reminder.id.uuidString)) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.title3)
+                        .foregroundStyle(.orange)
+                }
+                .buttonBorderShape(.circle)
+                .tint(.orange.opacity(0.15))
+            }
         }
         .padding(.vertical, 2)
     }
@@ -395,6 +469,7 @@ struct PRWidget: Widget {
         }
         .configurationDisplayName("PR Reminders")
         .description("View your upcoming reminders at a glance.")
+        .contentMarginsDisabled()
         .supportedFamilies([
             .systemSmall,
             .systemMedium,
@@ -412,6 +487,7 @@ struct PRWidget: Widget {
 struct PRWidgetBundle: WidgetBundle {
     var body: some Widget {
         PRWidget()
+        ReminderLiveActivity()
     }
 }
 

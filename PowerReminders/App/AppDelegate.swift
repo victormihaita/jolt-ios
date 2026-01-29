@@ -3,6 +3,7 @@ import UserNotifications
 import GoogleSignIn
 import PRSync
 import PRKeychain
+import WidgetKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
@@ -98,6 +99,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             // Silent sync notification
             Task {
                 await SyncEngine.shared.performSync()
+                WidgetCenter.shared.reloadAllTimelines()
                 completionHandler(.newData)
             }
 
@@ -148,6 +150,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             // Sync to get latest data
             Task {
                 await SyncEngine.shared.performSync()
+                WidgetCenter.shared.reloadAllTimelines()
                 completionHandler(.newData)
             }
 

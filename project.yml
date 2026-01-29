@@ -117,6 +117,8 @@ targets:
     dependencies:
       - package: PRCore
       - package: PRModels
+      - package: PRNetworking
+      - package: PRKeychain
       - sdk: WidgetKit.framework
       - sdk: SwiftUI.framework
     settings:
@@ -144,6 +146,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
+        NSSupportsLiveActivities: true
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
