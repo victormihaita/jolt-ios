@@ -268,7 +268,7 @@ struct SettingsView: View {
                         }
                         Button("Cancel", role: .cancel) {}
                     } message: {
-                        Text("Your account will be deactivated immediately and permanently deleted after 30 days. During this period, you can contact us at support@powerreminders.app to restore your account.\n\nAll your data (reminders, lists, and devices) will be removed.")
+                        Text("Your account will be deactivated immediately and permanently deleted after 30 days. During this period, you can contact us at support@zalt.app to restore your account.\n\nAll your data (reminders, lists, and devices) will be removed.")
                     }
                     .alert("Active Subscription", isPresented: $showSubscriptionWarning) {
                         Button("Delete Anyway", role: .destructive) {
