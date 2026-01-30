@@ -1,4 +1,4 @@
-// PRCore - Core utilities, extensions, and protocols for Power Reminders app
+// PRCore - Core utilities, extensions, and protocols for Zolt app
 
 @_exported import Foundation
 

@@ -32,10 +32,6 @@ struct OnboardingWelcomeView: View {
                         .scaleEffect(isAnimating ? 1.0 : 0.8)
                         .opacity(isAnimating ? 1.0 : 0.0)
 
-                    Text("Power Reminders")
-                        .font(Theme.Typography.largeTitle)
-                        .opacity(isAnimating ? 1.0 : 0.0)
-
                     Text("Never forget what matters.")
                         .font(Theme.Typography.title3)
                         .foregroundStyle(.secondary)

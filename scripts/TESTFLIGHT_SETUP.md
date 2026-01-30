@@ -8,7 +8,7 @@ Before running the upload script, ensure you have:
 - [ ] Apple Developer Program membership (paid)
 - [ ] App created in [App Store Connect](https://appstoreconnect.apple.com)
   - Bundle ID: `com.vm.power.reminders`
-  - App name: Power Reminders
+  - App name: Zolt
 
 ### 2. Local Machine Setup
 - [ ] Xcode installed with Command Line Tools
@@ -63,7 +63,7 @@ Create the App ID in App Store Connect:
 ### "Upload failed" error
 Try manual upload:
 1. Install **Transporter** from the Mac App Store
-2. Find the IPA at `ios/build/export/PowerReminders.ipa`
+2. Find the IPA at `ios/build/export/Zolt.ipa`
 3. Drag the IPA into Transporter
 
 ### Build number conflicts

@@ -1,4 +1,4 @@
-# Power Reminders App Icon Design Specification
+# Zolt App Icon Design Specification
 
 ## Brand Identity
 Designed for Sam Beckman's tech-savvy audience (18-35 year-old content creators)

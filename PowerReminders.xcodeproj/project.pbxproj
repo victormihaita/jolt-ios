@@ -985,7 +985,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JL84E9GK95;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Reminders";
+				INFOPLIST_KEY_CFBundleDisplayName = Zolt;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1008,7 +1008,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JL84E9GK95;
 				INFOPLIST_FILE = PowerReminders/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Reminders";
+				INFOPLIST_KEY_CFBundleDisplayName = Zolt;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1028,7 +1028,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JL84E9GK95;
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Reminders Widget";
+				INFOPLIST_KEY_CFBundleDisplayName = "Zolt Widget";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
@@ -1112,7 +1112,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JL84E9GK95;
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Reminders Widget";
+				INFOPLIST_KEY_CFBundleDisplayName = "Zolt Widget";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;

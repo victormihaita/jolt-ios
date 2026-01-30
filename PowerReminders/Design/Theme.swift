@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Power Reminders Theme
+// MARK: - Zolt Theme
 // Designed for Sam Beckman's tech-savvy audience
 // Electric Cyan accent with true black dark mode
 

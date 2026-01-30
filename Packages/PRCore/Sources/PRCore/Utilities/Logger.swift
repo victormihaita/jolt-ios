@@ -1,7 +1,7 @@
 import Foundation
 import OSLog
 
-/// A simple logging utility for Power Reminders app
+/// A simple logging utility for Zolt app
 public enum PRLogger {
     private static let subsystem = "com.vm.power.reminders"
 

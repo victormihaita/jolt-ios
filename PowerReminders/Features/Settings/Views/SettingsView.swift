@@ -187,7 +187,7 @@ struct SettingsView: View {
                         SettingsRow(
                             icon: "info.circle",
                             iconColor: .gray,
-                            title: "About Power Reminders"
+                            title: "About Zolt"
                         )
                     }
 
@@ -481,7 +481,7 @@ struct AppearanceSettingsView: View {
                 .pickerStyle(.inline)
                 .labelsHidden()
             } footer: {
-                Text("Choose how Power Reminders appears on your device.")
+                Text("Choose how Zolt appears on your device.")
             }
         }
         .navigationTitle("Appearance")
@@ -501,9 +501,6 @@ struct AboutView: View {
                         .frame(width: 80, height: 80)
                         .clipShape(RoundedRectangle(cornerRadius: 18))
 
-                    Text("Power Reminders")
-                        .font(Theme.Typography.title)
-
                     Text("Version 1.0.0")
                         .font(Theme.Typography.caption)
                         .foregroundStyle(.secondary)
@@ -513,7 +510,7 @@ struct AboutView: View {
             }
 
             Section {
-                Text("Power Reminders helps you remember what matters with custom snoozing, powerful recurring reminders, and seamless cross-device sync.")
+                Text("Zolt helps you remember what matters with custom snoozing, powerful recurring reminders, and seamless cross-device sync.")
                     .font(Theme.Typography.body)
                     .foregroundStyle(.secondary)
             }

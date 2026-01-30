@@ -3,7 +3,7 @@ import PRNetworking
 import PRSync
 import PRModels
 
-/// App Intent that marks a reminder as completed in Power Reminders.
+/// App Intent that marks a reminder as completed in Zolt.
 ///
 /// Users can pick from their active reminders via the entity query,
 /// then complete them through Siri or Shortcuts.
@@ -12,7 +12,7 @@ struct CompleteReminderIntent: AppIntent {
     static var title: LocalizedStringResource = "Complete Reminder"
 
     static var description = IntentDescription(
-        "Marks a reminder as completed in Power Reminders.",
+        "Marks a reminder as completed in Zolt.",
         categoryName: "Reminders"
     )
 
@@ -45,7 +45,7 @@ struct SnoozeReminderIntent: AppIntent {
     static var title: LocalizedStringResource = "Snooze Reminder"
 
     static var description = IntentDescription(
-        "Snoozes a reminder for a specified duration in Power Reminders.",
+        "Snoozes a reminder for a specified duration in Zolt.",
         categoryName: "Reminders"
     )
 
