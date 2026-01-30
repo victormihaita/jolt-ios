@@ -187,7 +187,7 @@ struct SettingsView: View {
                         SettingsRow(
                             icon: "info.circle",
                             iconColor: .gray,
-                            title: "About Zolt"
+                            title: "About Zalt"
                         )
                     }
 
@@ -481,7 +481,7 @@ struct AppearanceSettingsView: View {
                 .pickerStyle(.inline)
                 .labelsHidden()
             } footer: {
-                Text("Choose how Zolt appears on your device.")
+                Text("Choose how Zalt appears on your device.")
             }
         }
         .navigationTitle("Appearance")
@@ -510,7 +510,7 @@ struct AboutView: View {
             }
 
             Section {
-                Text("Zolt helps you remember what matters with custom snoozing, powerful recurring reminders, and seamless cross-device sync.")
+                Text("Zalt helps you remember what matters with custom snoozing, powerful recurring reminders, and seamless cross-device sync.")
                     .font(Theme.Typography.body)
                     .foregroundStyle(.secondary)
             }

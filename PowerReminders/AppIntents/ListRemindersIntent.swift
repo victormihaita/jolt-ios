@@ -2,7 +2,7 @@ import AppIntents
 import PRSync
 import PRModels
 
-/// App Intent that lists upcoming reminders from Zolt.
+/// App Intent that lists upcoming reminders from Zalt.
 ///
 /// Returns active and snoozed reminders sorted by due date, presented
 /// as a dialog message suitable for Siri voice output and Shortcuts display.
@@ -11,7 +11,7 @@ struct ListRemindersIntent: AppIntent {
     static var title: LocalizedStringResource = "List Reminders"
 
     static var description = IntentDescription(
-        "Shows your upcoming reminders from Zolt.",
+        "Shows your upcoming reminders from Zalt.",
         categoryName: "Reminders"
     )
 

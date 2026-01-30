@@ -16,7 +16,7 @@
         }
       ],
       "productID" : "lifetime",
-      "referenceName" : "Zolt Premium Lifetime",
+      "referenceName" : "Zalt Premium Lifetime",
       "type" : "NonConsumable"
     }
   ],
@@ -81,7 +81,7 @@
       "localizations" : [
 
       ],
-      "name" : "Zolt Premium",
+      "name" : "Zalt Premium",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -104,7 +104,7 @@
           ],
           "productID" : "monthly",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Zolt Premium Monthly",
+          "referenceName" : "Zalt Premium Monthly",
           "subscriptionGroupID" : "F5D5F5D5-0001-F5D5-F5D5-F5D5F5D5F5D5",
           "type" : "RecurringSubscription"
         },
@@ -135,7 +135,7 @@
           ],
           "productID" : "yearly",
           "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Zolt Premium Yearly",
+          "referenceName" : "Zalt Premium Yearly",
           "subscriptionGroupID" : "F5D5F5D5-0001-F5D5-F5D5-F5D5F5D5F5D5",
           "type" : "RecurringSubscription"
         }

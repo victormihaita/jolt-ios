@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Zolt Theme
+// MARK: - Zalt Theme
 // Designed for Sam Beckman's tech-savvy audience
 // Electric Cyan accent with true black dark mode
 

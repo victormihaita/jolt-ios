@@ -3,16 +3,16 @@ import PRNetworking
 import PRSync
 import PRModels
 
-/// App Intent that creates a new reminder in Zolt via the GraphQL API.
+/// App Intent that creates a new reminder in Zalt via the GraphQL API.
 ///
-/// Supports Siri phrases like "Create a reminder in Zolt" and
+/// Supports Siri phrases like "Create a reminder in Zalt" and
 /// can be added to Shortcuts for automation workflows.
 struct CreateReminderIntent: AppIntent {
 
     static var title: LocalizedStringResource = "Create Reminder"
 
     static var description = IntentDescription(
-        "Creates a new reminder in Zolt.",
+        "Creates a new reminder in Zalt.",
         categoryName: "Reminders"
     )
 
@@ -86,7 +86,7 @@ struct CreateReminderIntent: AppIntent {
 
 // MARK: - Priority App Enum
 
-/// Maps Zolt priority levels to an AppIntents-compatible enum.
+/// Maps Zalt priority levels to an AppIntents-compatible enum.
 enum ReminderPriorityAppEnum: String, AppEnum {
 
     case none

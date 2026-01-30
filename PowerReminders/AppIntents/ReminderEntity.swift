@@ -2,7 +2,7 @@ import AppIntents
 import PRModels
 import PRSync
 
-/// An AppIntents entity that represents a Zolt reminder.
+/// An AppIntents entity that represents a Zalt reminder.
 ///
 /// This entity bridges the `PRModels.Reminder` type into the App Intents
 /// framework so that Siri and Shortcuts can present reminders as selectable

@@ -1,4 +1,4 @@
-// PRCore - Core utilities, extensions, and protocols for Zolt app
+// PRCore - Core utilities, extensions, and protocols for Zalt app
 
 @_exported import Foundation
 
