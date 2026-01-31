@@ -44,6 +44,7 @@ public extension PRAPI {
       case "ReminderListChangeEvent": return PRAPI.Objects.ReminderListChangeEvent
       case "Subscription": return PRAPI.Objects.Subscription
       case "User": return PRAPI.Objects.User
+      case "UserChangeEvent": return PRAPI.Objects.UserChangeEvent
       default: return nil
       }
     }

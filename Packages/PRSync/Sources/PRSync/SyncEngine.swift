@@ -48,6 +48,7 @@ public final class SyncEngine: ObservableObject {
     private var listsWatcher: GraphQLWatcher?
     private var subscriptionCancellable: Apollo.Cancellable?
     private var listSubscriptionCancellable: Apollo.Cancellable?
+    private var userSubscriptionCancellable: Apollo.Cancellable?
 
     // Refetch listener
     private var refetchCancellable: AnyCancellable?
@@ -220,6 +221,7 @@ public final class SyncEngine: ObservableObject {
         // Cancel subscriptions
         subscriptionCancellable = nil
         listSubscriptionCancellable = nil
+        userSubscriptionCancellable = nil
 
         // Disconnect WebSocket
         GraphQLClient.shared.disconnect()
@@ -342,8 +344,9 @@ public final class SyncEngine: ObservableObject {
             }
         }
 
-        // Also subscribe to list changes
+        // Also subscribe to list changes and user changes
         subscribeToListChanges()
+        subscribeToUserChanges()
     }
 
     private func subscribeToListChanges() {
@@ -360,6 +363,32 @@ public final class SyncEngine: ObservableObject {
                 PRLogger.error("List subscription error: \(error)", category: .sync)
             }
         }
+    }
+
+    private func subscribeToUserChanges() {
+        PRLogger.debug("Subscribing to user changes", category: .sync)
+
+        let subscription = PRAPI.OnUserChangedSubscription()
+        userSubscriptionCancellable = GraphQLClient.shared.subscribe(subscription: subscription) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let data):
+                self.handleUserChange(data.userChanged)
+            case .failure(let error):
+                PRLogger.error("User subscription error: \(error)", category: .sync)
+            }
+        }
+    }
+
+    private func handleUserChange(_ event: PRAPI.OnUserChangedSubscription.Data.UserChanged) {
+        let action = event.action
+        let userId = event.userId
+
+        PRLogger.info("Received user change: \(action.rawValue) for \(userId)", category: .sync)
+
+        // Refetch user to update the watcher's cache
+        userWatcher?.refetch()
     }
 
     private func handleListChange(_ event: PRAPI.ReminderListChangedSubscription.Data.ReminderListChanged) {

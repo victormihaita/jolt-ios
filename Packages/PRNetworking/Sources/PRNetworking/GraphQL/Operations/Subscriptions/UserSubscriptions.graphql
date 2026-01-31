@@ -1,0 +1,17 @@
+subscription OnUserChanged {
+  userChanged {
+    action
+    userId
+    user {
+      id
+      email
+      displayName
+      avatarUrl
+      timezone
+      isPremium
+      premiumUntil
+      createdAt
+    }
+    timestamp
+  }
+}
