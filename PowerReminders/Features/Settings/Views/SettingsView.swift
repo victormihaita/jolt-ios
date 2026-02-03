@@ -386,7 +386,16 @@ struct NotificationPermissionRow: View {
             if isChecking {
                 ProgressView()
                     .scaleEffect(0.8)
-            } else if status == .denied || status == .notDetermined {
+            } else if status == .notDetermined {
+                Button("Enable") {
+                    Task {
+                        _ = await NotificationService.shared.requestAuthorizationIfNeeded()
+                        await checkPermissionStatus()
+                    }
+                }
+                .font(Theme.Typography.subheadline)
+                .foregroundStyle(Color.accentColor)
+            } else if status == .denied {
                 Button("Enable") {
                     openAppSettings()
                 }
