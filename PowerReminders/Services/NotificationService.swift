@@ -200,24 +200,20 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         // Set thread identifier for grouping
         content.threadIdentifier = "reminders"
 
-        // Configure based on alarm vs regular reminder
+        // Configure sound and category based on alarm vs regular reminder
+        // Custom notification sounds must be ≤30 seconds and in app bundle (.caf, .wav, .aiff, .m4a)
         if reminder.isAlarm {
-            // Alarm-style notification with time-sensitive priority
             content.categoryIdentifier = "ALARM_ACTIONS"
-            // Try custom alarm sound first, fall back to default if not in bundle
-            // Custom sound must be ≤30 seconds and in app bundle (.caf, .wav, .aiff, .m4a)
-            if Bundle.main.url(forResource: "alarm_default", withExtension: "caf") != nil {
-                content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm_default.caf"))
-            } else {
-                // Fall back to default sound if custom sound not found
-                content.sound = .default
-            }
-            // Time-sensitive notifications can break through Focus modes (except DND)
+            content.sound = notificationSound(for: reminder.soundId, isAlarm: true)
             content.interruptionLevel = .timeSensitive
         } else {
-            // Regular reminder notification
             content.categoryIdentifier = "REMINDER_ACTIONS"
-            content.sound = .default
+            content.sound = notificationSound(for: reminder.soundId, isAlarm: false)
+        }
+
+        // Include sound_id in userInfo so foreground handler can use it
+        if let soundId = reminder.soundId, !soundId.isEmpty {
+            content.userInfo["sound_id"] = soundId
         }
 
         // Create trigger
@@ -256,16 +252,28 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         // Cancel existing
         cancelNotification(for: reminder.id)
 
-        // Create new content
+        // Create new content preserving alarm settings
         let content = UNMutableNotificationContent()
-        content.title = "Reminder (Snoozed)"
+        content.title = reminder.isAlarm ? "Alarm (Snoozed)" : "Reminder (Snoozed)"
         content.body = reminder.title
-        content.sound = .default
-        content.categoryIdentifier = "REMINDER_ACTIONS"
         content.userInfo = [
             "reminder_id": reminder.id.uuidString,
-            "snoozed": true
+            "snoozed": true,
+            "is_alarm": reminder.isAlarm
         ]
+
+        if reminder.isAlarm {
+            content.categoryIdentifier = "ALARM_ACTIONS"
+            content.sound = notificationSound(for: reminder.soundId, isAlarm: true)
+            content.interruptionLevel = .timeSensitive
+        } else {
+            content.categoryIdentifier = "REMINDER_ACTIONS"
+            content.sound = notificationSound(for: reminder.soundId, isAlarm: false)
+        }
+
+        if let soundId = reminder.soundId, !soundId.isEmpty {
+            content.userInfo["sound_id"] = soundId
+        }
 
         // Create trigger for snooze time
         let components = Calendar.current.dateComponents(
@@ -316,13 +324,14 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         let isAlarm = (userInfo["is_alarm"] as? Bool) ??
                       (userInfo["is_alarm"] as? String == "true")
 
-        // Start alarm sound if this is an alarm notification
-        if isAlarm {
-            AlarmManager.shared.startAlarm(for: reminderID)
-        }
-
         // Extract sound_id for custom sound playback
         let soundID = userInfo["sound_id"] as? String
+
+        // Start alarm sound if this is an alarm notification
+        if isAlarm {
+            let soundName = soundID.map { ($0 as NSString).deletingPathExtension } ?? "alarm_default"
+            AlarmManager.shared.startAlarm(for: reminderID, soundName: soundName)
+        }
 
         // Parse due date
         var dueAt: Date?
@@ -342,8 +351,13 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             )
         }
 
-        // Suppress system notification - we handle it with our custom UI
-        completionHandler([])
+        if isAlarm {
+            // Alarm: suppress system sound entirely, AlarmManager handles looping audio
+            completionHandler([])
+        } else {
+            // Non-alarm: let iOS play the notification sound natively alongside our in-app banner
+            completionHandler([.sound])
+        }
     }
 
     func userNotificationCenter(
@@ -421,6 +435,31 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
         // Always call completion handler immediately - don't wait for async work
         completionHandler()
+    }
+
+    // MARK: - Sound Helpers
+
+    /// Returns the appropriate UNNotificationSound for a given soundId.
+    /// Checks that the sound file exists in the app bundle before referencing it.
+    private func notificationSound(for soundId: String?, isAlarm: Bool) -> UNNotificationSound {
+        if let soundId = soundId, !soundId.isEmpty {
+            let name = (soundId as NSString).deletingPathExtension
+            let ext = (soundId as NSString).pathExtension.isEmpty ? "wav" : (soundId as NSString).pathExtension
+            if Bundle.main.url(forResource: name, withExtension: ext) != nil {
+                #if DEBUG
+                print("🔔 notificationSound: Using custom sound '\(soundId)' (isAlarm: \(isAlarm))")
+                #endif
+                return UNNotificationSound(named: UNNotificationSoundName(soundId))
+            }
+            #if DEBUG
+            print("🔔 notificationSound: Sound file '\(soundId)' NOT found in bundle, using default")
+            #endif
+        } else {
+            #if DEBUG
+            print("🔔 notificationSound: No soundId provided (isAlarm: \(isAlarm)), using default")
+            #endif
+        }
+        return .default
     }
 
     // MARK: - Action Handlers

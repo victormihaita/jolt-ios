@@ -10,6 +10,8 @@ actor DeviceService {
 
     private var currentDeviceID: UUID?
     private var currentPushToken: String?
+    private var registrationRetryCount = 0
+    private let maxRegistrationRetries = 3
 
     // Persist device ID across app launches
     private let deviceIDKey = "registeredDeviceID"
@@ -87,12 +89,26 @@ actor DeviceService {
             let result = try await GraphQLClient.shared.perform(mutation: mutation)
             if let id = UUID(uuidString: result.registerDevice.id) {
                 currentDeviceID = id
+                registrationRetryCount = 0
                 // Persist device ID to UserDefaults
                 UserDefaults.standard.set(id.uuidString, forKey: deviceIDKey)
                 print("📱 DeviceService: ✅ Device registered successfully: \(id)")
             }
         } catch {
             print("📱 DeviceService: ❌ Failed to register device: \(error)")
+            // Retry with exponential backoff
+            if registrationRetryCount < maxRegistrationRetries {
+                registrationRetryCount += 1
+                let delay = UInt64(pow(2.0, Double(registrationRetryCount))) * 1_000_000_000
+                print("📱 DeviceService: Retrying in \(registrationRetryCount * 2)s (attempt \(registrationRetryCount)/\(maxRegistrationRetries))")
+                Task {
+                    try? await Task.sleep(nanoseconds: delay)
+                    await registerDevice()
+                }
+            } else {
+                print("📱 DeviceService: ❌ Max retries reached, giving up")
+                registrationRetryCount = 0
+            }
         }
     }
 

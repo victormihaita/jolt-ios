@@ -31,7 +31,7 @@ struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
     @ObservedObject private var syncEngine = SyncEngine.shared
-    @StateObject private var notificationManager = InAppNotificationManager.shared
+    @ObservedObject private var notificationManager = InAppNotificationManager.shared
     @AppStorage("onboarding_completed") private var onboardingCompleted = false
 
     // State for notification-triggered navigation

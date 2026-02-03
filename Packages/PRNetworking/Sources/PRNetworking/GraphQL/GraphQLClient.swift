@@ -551,11 +551,12 @@ private class RequestLoggingInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
-        // Log the outgoing request BEFORE network fetch
+        #if DEBUG
         print("📤 OUTGOING REQUEST for \(Operation.operationName):")
         print("📤 URL: \(request.graphQLEndpoint)")
         print("📤 Operation: \(request.operation)")
         print("📤 Headers: \(request.additionalHeaders)")
+        #endif
 
         chain.proceedAsync(
             request: request,
@@ -577,6 +578,7 @@ private class ResponseLoggingInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
+        #if DEBUG
         if let httpResponse = response {
             let rawData = httpResponse.rawData
             let responseString = String(data: rawData, encoding: .utf8) ?? "<binary data>"
@@ -585,6 +587,7 @@ private class ResponseLoggingInterceptor: ApolloInterceptor {
         } else {
             print("📥 NO RESPONSE yet for \(Operation.operationName)")
         }
+        #endif
 
         chain.proceedAsync(
             request: request,
@@ -607,10 +610,14 @@ private class AuthInterceptor: ApolloInterceptor {
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
         if let token = KeychainService.shared.getToken() {
+            #if DEBUG
             print("🔐 AuthInterceptor: Adding token (length=\(token.count)) for \(Operation.operationName)")
+            #endif
             request.addHeader(name: "Authorization", value: "Bearer \(token)")
         } else {
+            #if DEBUG
             print("🔐 AuthInterceptor: No token found for \(Operation.operationName)")
+            #endif
         }
 
         chain.proceedAsync(
@@ -632,6 +639,7 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
     // Track if a refresh is in progress to prevent concurrent refreshes
     private static var isRefreshing = false
     private static let lock = NSLock()
+    private static var pendingCompletions: [(Bool) -> Void] = []
 
     func interceptAsync<Operation: GraphQLOperation>(
         chain: any RequestChain,
@@ -639,49 +647,37 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
+        #if DEBUG
         print("🔄 TokenRefreshInterceptor: interceptAsync called for \(Operation.operationName)")
 
-        // Debug: Log the response details
         if let httpResponse = response?.httpResponse {
             print("🔄 TokenRefreshInterceptor: HTTP status: \(httpResponse.statusCode)")
         }
 
         if let parsedResponse = response?.parsedResponse {
-            print("🔄 TokenRefreshInterceptor: Checking parsed response for \(Operation.operationName)")
-            if let data = parsedResponse.data {
-                print("🔄 TokenRefreshInterceptor: Has data: \(data)")
-            } else {
-                print("🔄 TokenRefreshInterceptor: No data in response")
-            }
             if let errors = parsedResponse.errors {
                 print("🔄 TokenRefreshInterceptor: Found \(errors.count) errors")
                 for error in errors {
-                    print("🔄 TokenRefreshInterceptor: Error message: \(error.message ?? "nil")")
-                    print("🔄 TokenRefreshInterceptor: Error extensions: \(String(describing: error.extensions))")
-                    let isAuthError = isAuthorizationError(error)
-                    print("🔄 TokenRefreshInterceptor: Is auth error: \(isAuthError)")
+                    print("🔄 TokenRefreshInterceptor: Error: \(error.message ?? "nil"), isAuth: \(isAuthorizationError(error))")
                 }
-            } else {
-                print("🔄 TokenRefreshInterceptor: No errors in parsed response")
             }
-        } else {
-            print("🔄 TokenRefreshInterceptor: No parsed response yet")
         }
+        #endif
 
         // Check if the response contains an authorization error
         guard let errors = response?.parsedResponse?.errors,
               errors.contains(where: { isAuthorizationError($0) }) else {
             // No auth error, proceed normally
-            print("🔄 TokenRefreshInterceptor: No auth error detected, proceeding")
             chain.proceedAsync(request: request, response: response, interceptor: self, completion: completion)
             return
         }
 
+        #if DEBUG
         print("🔄 TokenRefreshInterceptor: Authorization error detected, attempting refresh")
+        #endif
 
         // Check if this is a refresh token mutation itself - don't refresh if refresh fails
         if Operation.operationName == "RefreshToken" {
-            print("🔄 TokenRefreshInterceptor: Refresh token mutation failed, not retrying")
             chain.proceedAsync(request: request, response: response, interceptor: self, completion: completion)
             return
         }
@@ -691,7 +687,9 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
             guard let self = self else { return }
 
             if success {
+                #if DEBUG
                 print("🔄 TokenRefreshInterceptor: Token refreshed, retrying request")
+                #endif
                 // Update the authorization header with new token
                 if let newToken = KeychainService.shared.getToken() {
                     request.addHeader(name: "Authorization", value: "Bearer \(newToken)")
@@ -699,7 +697,9 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
                 // Retry the request
                 chain.retry(request: request, completion: completion)
             } else {
+                #if DEBUG
                 print("🔄 TokenRefreshInterceptor: Token refresh failed")
+                #endif
                 // Proceed with the original error response
                 chain.proceedAsync(request: request, response: response, interceptor: self, completion: completion)
             }
@@ -722,14 +722,10 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
     private func refreshToken(completion: @escaping (Bool) -> Void) {
         Self.lock.lock()
 
-        // If already refreshing, wait for the result
+        // If already refreshing, queue this completion to be notified when done
         if Self.isRefreshing {
+            Self.pendingCompletions.append(completion)
             Self.lock.unlock()
-            // Queue this completion to be called when refresh completes
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                // Check if token was refreshed
-                completion(KeychainService.shared.getToken() != nil)
-            }
             return
         }
 
@@ -737,32 +733,48 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
         Self.lock.unlock()
 
         guard let refreshToken = KeychainService.shared.getRefreshToken() else {
+            #if DEBUG
             print("🔄 TokenRefreshInterceptor: No refresh token available")
+            #endif
             Self.lock.lock()
             Self.isRefreshing = false
+            let pending = Self.pendingCompletions
+            Self.pendingCompletions.removeAll()
             Self.lock.unlock()
             completion(false)
+            pending.forEach { $0(false) }
             return
         }
 
         // Call the refresh token mutation directly using URLSession
         // to avoid circular dependency with the interceptor chain
         performRefreshTokenRequest(refreshToken: refreshToken) { result in
-            Self.lock.lock()
-            Self.isRefreshing = false
-            Self.lock.unlock()
-
+            let success: Bool
             switch result {
             case .success(let tokens):
                 // Save new tokens
                 KeychainService.shared.saveToken(tokens.accessToken)
                 KeychainService.shared.saveRefreshToken(tokens.refreshToken)
+                #if DEBUG
                 print("🔄 TokenRefreshInterceptor: New tokens saved")
-                completion(true)
+                #endif
+                success = true
             case .failure(let error):
+                #if DEBUG
                 print("🔄 TokenRefreshInterceptor: Refresh failed: \(error)")
-                completion(false)
+                #endif
+                success = false
             }
+
+            // Notify all waiting callers
+            Self.lock.lock()
+            Self.isRefreshing = false
+            let pending = Self.pendingCompletions
+            Self.pendingCompletions.removeAll()
+            Self.lock.unlock()
+
+            completion(success)
+            pending.forEach { $0(success) }
         }
     }
 
@@ -796,21 +808,36 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
+                    #if DEBUG
                     print("🔄 RefreshToken request error: \(error)")
+                    #endif
                     completion(.failure(error))
                     return
                 }
 
-                guard let data = data else {
-                    print("🔄 RefreshToken: no data in response")
+                // Check HTTP status code
+                if let httpResponse = response as? HTTPURLResponse,
+                   !(200...299).contains(httpResponse.statusCode) {
+                    #if DEBUG
+                    print("🔄 RefreshToken: HTTP error \(httpResponse.statusCode)")
+                    #endif
                     completion(.failure(NetworkError.invalidResponse))
                     return
                 }
 
-                // Debug: print raw response
+                guard let data = data else {
+                    #if DEBUG
+                    print("🔄 RefreshToken: no data in response")
+                    #endif
+                    completion(.failure(NetworkError.invalidResponse))
+                    return
+                }
+
+                #if DEBUG
                 if let responseStr = String(data: data, encoding: .utf8) {
                     print("🔄 RefreshToken raw response: \(responseStr)")
                 }
+                #endif
 
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -818,22 +845,30 @@ private class TokenRefreshInterceptor: ApolloInterceptor {
                        let refreshTokenDict = dataDict["refreshToken"] as? [String: Any],
                        let accessToken = refreshTokenDict["accessToken"] as? String,
                        let newRefreshToken = refreshTokenDict["refreshToken"] as? String {
+                        #if DEBUG
                         print("🔄 RefreshToken success: got new tokens")
+                        #endif
                         completion(.success(RefreshTokens(accessToken: accessToken, refreshToken: newRefreshToken)))
                     } else {
                         // Check for errors
                         if let errorsArray = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["errors"] as? [[String: Any]],
                            let firstError = errorsArray.first,
                            let message = firstError["message"] as? String {
+                            #if DEBUG
                             print("🔄 RefreshToken GraphQL error: \(message)")
+                            #endif
                             completion(.failure(NetworkError.graphQLErrors([message])))
                         } else {
+                            #if DEBUG
                             print("🔄 RefreshToken: invalid response structure")
+                            #endif
                             completion(.failure(NetworkError.invalidResponse))
                         }
                     }
                 } catch {
+                    #if DEBUG
                     print("🔄 RefreshToken parse error: \(error)")
+                    #endif
                     completion(.failure(error))
                 }
             }

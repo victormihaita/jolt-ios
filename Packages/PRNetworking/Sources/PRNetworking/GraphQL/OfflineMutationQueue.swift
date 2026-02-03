@@ -1,6 +1,17 @@
 import Foundation
 import PRCore
 
+// MARK: - Sync Conflict Error
+
+/// Error surfaced to UI when an offline mutation conflicts with server data
+public struct SyncConflictError: LocalizedError {
+    public let operation: String
+
+    public var errorDescription: String? {
+        "Your changes to \(operation) conflicted with a newer version. The latest version has been kept."
+    }
+}
+
 // MARK: - Queued Mutation
 
 /// Represents a mutation queued for offline sync
@@ -174,11 +185,12 @@ public final class OfflineMutationQueue: ObservableObject {
                 PRLogger.debug("Successfully synced: \(mutation.operationName)", category: .sync)
 
             case .conflict(let serverVersion, let localVersion):
-                // Server wins - remove from queue
+                // Server wins - remove from queue and surface to UI
                 PRLogger.warning(
                     "Conflict for \(mutation.operationName): server v\(serverVersion) vs local v\(localVersion)",
                     category: .sync
                 )
+                lastSyncError = SyncConflictError(operation: mutation.operationName)
                 remove(mutation.id)
 
             case .permanentFailure(let error):

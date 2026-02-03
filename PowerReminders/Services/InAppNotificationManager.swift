@@ -155,6 +155,8 @@ class InAppNotificationManager: ObservableObject {
 
         if let url = Bundle.main.url(forResource: baseName, withExtension: "wav") {
             do {
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+                try AVAudioSession.sharedInstance().setActive(true)
                 audioPlayer = try AVAudioPlayer(contentsOf: url)
                 audioPlayer?.play()
                 print("InAppNotificationManager: Playing custom sound '\(filename)'")

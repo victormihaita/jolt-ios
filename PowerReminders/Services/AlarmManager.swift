@@ -53,12 +53,13 @@ class AlarmManager {
 
         currentReminderID = reminderID
         _isPlaying = true
-        lock.unlock()
 
-        // Try to play custom sound, fall back to system sound
-        if !playCustomSound(named: soundName) {
+        // Play sound while holding lock to protect audioPlayer/systemSoundTask
+        let didPlayCustom = playCustomSound(named: soundName)
+        if !didPlayCustom {
             playSystemAlarmSound()
         }
+        lock.unlock()
 
         // Start vibration on main thread (Timer requires main thread)
         if vibrate {
