@@ -65,27 +65,29 @@ struct OnboardingSignInView: View {
                     }
                     .disabled(authViewModel.isLoading)
 
-                    // Sign in with Google
-                    Button(action: signInWithGoogle) {
-                        HStack(spacing: Theme.Spacing.sm) {
-                            if authViewModel.authenticatingProvider == .google {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                    .tint(.black)
-                            } else {
-                                Image(systemName: "g.circle.fill")
-                                    .font(.title2)
+                    // Sign in with Google (hidden for now)
+                    if false {
+                        Button(action: signInWithGoogle) {
+                            HStack(spacing: Theme.Spacing.sm) {
+                                if authViewModel.authenticatingProvider == .google {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .tint(.black)
+                                } else {
+                                    Image(systemName: "g.circle.fill")
+                                        .font(.title2)
+                                }
+                                Text("Continue with Google")
+                                    .font(Theme.Typography.headline)
                             }
-                            Text("Continue with Google")
-                                .font(Theme.Typography.headline)
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(authViewModel.isLoading ? Color.accentColor.opacity(0.7) : Color.accentColor)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
                         }
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 52)
-                        .background(authViewModel.isLoading ? Color.accentColor.opacity(0.7) : Color.accentColor)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
+                        .disabled(authViewModel.isLoading)
                     }
-                    .disabled(authViewModel.isLoading)
 
                     // Error message
                     Group {

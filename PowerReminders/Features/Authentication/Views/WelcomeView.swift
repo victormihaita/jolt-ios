@@ -96,28 +96,30 @@ struct WelcomeView: View {
                     .disabled(authViewModel.isLoading)
                     .opacity(isAnimating ? 1.0 : 0.0)
 
-                    // Sign in with Google
-                    Button(action: signInWithGoogle) {
-                        HStack(spacing: Theme.Spacing.sm) {
-                            if authViewModel.authenticatingProvider == .google {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                    .tint(.black)
-                            } else {
-                                Image(systemName: "g.circle.fill")
-                                    .font(.title2)
+                    // Sign in with Google (hidden for now)
+                    if false {
+                        Button(action: signInWithGoogle) {
+                            HStack(spacing: Theme.Spacing.sm) {
+                                if authViewModel.authenticatingProvider == .google {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .tint(.black)
+                                } else {
+                                    Image(systemName: "g.circle.fill")
+                                        .font(.title2)
+                                }
+                                Text("Continue with Google")
+                                    .font(Theme.Typography.headline)
                             }
-                            Text("Continue with Google")
-                                .font(Theme.Typography.headline)
+                            .foregroundColor(.black)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(authViewModel.isLoading ? Theme.Colors.primary.opacity(0.7) : Theme.Colors.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
                         }
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 52)
-                        .background(authViewModel.isLoading ? Theme.Colors.primary.opacity(0.7) : Theme.Colors.primary)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
+                        .disabled(authViewModel.isLoading)
+                        .opacity(isAnimating ? 1.0 : 0.0)
                     }
-                    .disabled(authViewModel.isLoading)
-                    .opacity(isAnimating ? 1.0 : 0.0)
 
                     // Fixed height container for error message to prevent layout jumps
                     Group {

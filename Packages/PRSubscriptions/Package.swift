@@ -11,14 +11,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../PRCore"),
         .package(url: "https://github.com/RevenueCat/purchases-ios.git", from: "4.0.0"),
     ],
     targets: [
         .target(
             name: "PRSubscriptions",
             dependencies: [
-                "PRCore",
                 .product(name: "RevenueCat", package: "purchases-ios"),
                 .product(name: "RevenueCatUI", package: "purchases-ios"),
             ],
