@@ -35,9 +35,7 @@ struct InlineReminderInput: View {
         .onAppear {
             if autoFocus {
                 // Auto-focus when in autoFocus mode (empty list)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    isFocused = true
-                }
+                isFocused = true
             }
         }
     }

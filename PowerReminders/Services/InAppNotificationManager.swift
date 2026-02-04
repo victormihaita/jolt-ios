@@ -74,6 +74,11 @@ class InAppNotificationManager: ObservableObject {
     func dismiss() {
         dismissTask?.cancel()
 
+        // Stop any playing sounds
+        audioPlayer?.stop()
+        audioPlayer = nil
+        AlarmManager.shared.stopAlarm()
+
         withAnimation(.snappy) {
             isVisible = false
         }

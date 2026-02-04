@@ -534,6 +534,7 @@ struct NotificationSoundPickerView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
     @ObservedObject private var soundSettings = NotificationSoundSettings.shared
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -545,11 +546,8 @@ struct NotificationSoundPickerView: View {
                             name: sound.name,
                             isSelected: soundSettings.selectedSound == sound.filename,
                             isLocked: false,
-                            onSelect: {
-                                // Select the sound (preview is handled separately)
+                            onTap: {
                                 _ = soundSettings.selectSound(sound.filename, isPremium: subscriptionViewModel.isPremium)
-                            },
-                            onPreview: {
                                 soundSettings.playPreview(sound.filename)
                             }
                         )
@@ -565,12 +563,12 @@ struct NotificationSoundPickerView: View {
                             name: sound.name,
                             isSelected: soundSettings.selectedSound == sound.filename,
                             isLocked: !subscriptionViewModel.isPremium,
-                            onSelect: {
-                                // Select the sound (preview is handled separately)
-                                _ = soundSettings.selectSound(sound.filename, isPremium: subscriptionViewModel.isPremium)
-                            },
-                            onPreview: {
+                            onTap: {
                                 soundSettings.playPreview(sound.filename)
+                                let selected = soundSettings.selectSound(sound.filename, isPremium: subscriptionViewModel.isPremium)
+                                if !selected {
+                                    showPaywall = true
+                                }
                             }
                         )
                     }
@@ -596,6 +594,12 @@ struct NotificationSoundPickerView: View {
             .task {
                 await soundSettings.fetchSounds()
             }
+            .onDisappear {
+                soundSettings.stopPreview()
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
+            }
         }
     }
 }
@@ -605,53 +609,27 @@ struct SoundRow: View {
     let name: String
     let isSelected: Bool
     let isLocked: Bool
-    let onSelect: () -> Void
-    let onPreview: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
-        if isLocked {
-            // Premium sounds: separate preview button, no row selection
+        Button(action: onTap) {
             HStack {
-                HStack {
-                    Text(name)
-                        .foregroundColor(.secondary)
+                Text(name)
+                    .foregroundColor(isLocked ? .secondary : .primary)
 
-                    Spacer()
+                Spacer()
 
+                if isLocked {
                     Image(systemName: "lock.fill")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                }
-
-                // Preview button for locked sounds
-                Button(action: onPreview) {
-                    Image(systemName: "speaker.wave.2.fill")
-                        .font(.body)
+                } else if isSelected {
+                    Image(systemName: "checkmark")
                         .foregroundStyle(Color.accentColor)
-                        .padding(.leading, 8)
-                }
-                .buttonStyle(.plain)
-            }
-        } else {
-            // Free sounds: tap anywhere to select AND play
-            Button(action: {
-                onSelect()
-                onPreview()
-            }) {
-                HStack {
-                    Text(name)
-                        .foregroundColor(.primary)
-
-                    Spacer()
-
-                    if isSelected {
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(Color.accentColor)
-                    }
                 }
             }
-            .buttonStyle(.plain)
         }
+        .buttonStyle(.plain)
     }
 }
 #Preview {

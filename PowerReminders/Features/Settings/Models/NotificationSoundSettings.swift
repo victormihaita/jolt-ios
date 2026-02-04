@@ -112,6 +112,11 @@ class NotificationSoundSettings: ObservableObject {
         Haptics.medium()
     }
 
+    func stopPreview() {
+        audioPlayer?.stop()
+        audioPlayer = nil
+    }
+
     func selectSound(_ filename: String, isPremium: Bool) -> Bool {
         // Check if this is a premium sound and user doesn't have premium
         if let sound = sounds.first(where: { $0.filename == filename }) {

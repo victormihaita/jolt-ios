@@ -384,12 +384,8 @@ struct MatchedTransitionSourceModifier<ID: Hashable>: ViewModifier {
     let namespace: Namespace.ID
 
     func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
-            content.matchedTransitionSource(id: id, in: namespace) { source in
-                source.clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
-            }
-        } else {
-            content
+        content.matchedTransitionSource(id: id, in: namespace) { source in
+            source.clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.md, style: .continuous))
         }
     }
 }

@@ -138,49 +138,65 @@ struct NewHomeView: View {
     // MARK: - Home Content View
 
     private var homeContentView: some View {
-        ScrollView {
-            VStack(spacing: Theme.Spacing.lg) {
-                // Smart Filters Grid
-                SmartFiltersGrid(
-                    todayCount: viewModel.todayCount,
-                    allCount: viewModel.allCount,
-                    scheduledCount: viewModel.scheduledCount,
-                    completedCount: viewModel.completedCount,
-                    namespace: namespace
-                ) { filter in
-                    selectedFilter = filter
-                }
-                .padding(.horizontal, Theme.Spacing.md)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: Theme.Spacing.lg) {
+                    // Smart Filters Grid
+                    SmartFiltersGrid(
+                        todayCount: viewModel.todayCount,
+                        allCount: viewModel.allCount,
+                        scheduledCount: viewModel.scheduledCount,
+                        completedCount: viewModel.completedCount,
+                        namespace: namespace
+                    ) { filter in
+                        selectedFilter = filter
+                    }
+                    .padding(.horizontal, Theme.Spacing.md)
 
-                // Lists Section
-                ListsSection(
-                    lists: syncEngine.reminderLists,
-                    reminderCountForList: { list in
-                        list.reminderCount
-                    },
-                    namespace: namespace,
-                    onListTap: { list in
-                        selectedList = list
-                    },
-                    onCreateList: { name, colorHex, iconName in
-                        Task {
-                            await viewModel.createList(name: name, colorHex: colorHex, iconName: iconName)
-                        }
-                    },
-                    onDeleteList: { list in
-                        Task {
-                            await viewModel.deleteList(list)
-                        }
-                    },
-                    isCreatingList: $isCreatingList,
-                    isEditingList: $isEditingList
-                )
-                .padding(.horizontal, Theme.Spacing.md)
+                    // Lists Section
+                    ListsSection(
+                        lists: syncEngine.reminderLists,
+                        reminderCountForList: { list in
+                            list.reminderCount
+                        },
+                        namespace: namespace,
+                        onListTap: { list in
+                            selectedList = list
+                        },
+                        onCreateList: { name, colorHex, iconName in
+                            Task {
+                                await viewModel.createList(name: name, colorHex: colorHex, iconName: iconName)
+                            }
+                        },
+                        onDeleteList: { list in
+                            Task {
+                                await viewModel.deleteList(list)
+                            }
+                        },
+                        isCreatingList: $isCreatingList,
+                        isEditingList: $isEditingList
+                    )
+                    .padding(.horizontal, Theme.Spacing.md)
+
+                    // Scroll anchor
+                    Color.clear
+                        .frame(height: 1)
+                        .id("bottom")
+                }
+                .padding(.top, Theme.Spacing.md)
+                .padding(.bottom, 100)
             }
-            .padding(.top, Theme.Spacing.md)
-            .padding(.bottom, 100)
+            .scrollDismissesKeyboard(.interactively)
+            .onChange(of: isCreatingList) { _, isCreating in
+                if isCreating {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation(.snappy) {
+                            proxy.scrollTo("bottom", anchor: .bottom)
+                        }
+                    }
+                }
+            }
         }
-        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Search Results View

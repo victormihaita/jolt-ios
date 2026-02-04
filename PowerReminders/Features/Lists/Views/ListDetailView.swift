@@ -195,7 +195,7 @@ struct ListDetailView: View {
             }
             .padding(.horizontal, Theme.Spacing.md)
             .padding(.top, Theme.Spacing.sm)
-            .padding(.bottom, Theme.Spacing.xl)
+            .padding(.bottom, Theme.Spacing.sm)
         }
     }
 
@@ -220,7 +220,7 @@ struct ListDetailView: View {
             // Inline reminder creation at bottom of empty state - auto-focus for fast input
             InlineReminderInput(listId: list.id, isCreating: $isCreatingReminder, autoFocus: true, themeColor: list.color)
                 .padding(.horizontal, Theme.Spacing.md)
-                .padding(.bottom, Theme.Spacing.xl)
+                .padding(.bottom, Theme.Spacing.sm)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
