@@ -9,10 +9,12 @@ struct SmartFiltersGrid: View {
 
     let onFilterTap: (SmartFilterType) -> Void
 
-    private let columns = [
-        GridItem(.flexible(), spacing: Theme.Spacing.sm),
-        GridItem(.flexible(), spacing: Theme.Spacing.sm)
-    ]
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var columns: [GridItem] {
+        let count = horizontalSizeClass == .regular ? 4 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: Theme.Spacing.sm), count: count)
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: Theme.Spacing.sm) {

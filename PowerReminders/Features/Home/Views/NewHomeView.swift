@@ -16,7 +16,10 @@ struct NewHomeView: View {
     @State private var isCreatingList = false
     @State private var isEditingList = false
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Namespace private var namespace
+
+    private var isRegularWidth: Bool { horizontalSizeClass == .regular }
 
     /// Default list ID for creating reminders from home
     private var defaultListId: UUID {
@@ -95,11 +98,11 @@ struct NewHomeView: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.title2.weight(.semibold))
-                            .foregroundStyle(.background)
+                            .foregroundStyle(.white)
                             .frame(width: 56, height: 56)
-                            .background(Color.primary)
+                            .background(Color.accentColor)
                             .clipShape(Circle())
-                            .shadow(color: .primary.opacity(0.3), radius: 8, x: 0, y: 4)
+                            .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
                     }
                     .contentShape(Circle())
                     .buttonStyle(.plain)
@@ -107,25 +110,25 @@ struct NewHomeView: View {
                     .padding(.bottom, Theme.Spacing.lg)
                 }
             }
-            .fullScreenCover(isPresented: $showCreateReminder) {
+            .modifier(AdaptivePresentation(isPresented: $showCreateReminder, isRegularWidth: isRegularWidth) {
                 CreateReminderView(preselectedListId: defaultListId)
-                    .modifier(ZoomTransitionModifier(sourceID: "createReminder", namespace: namespace))
-            }
-            .fullScreenCover(item: $selectedReminder) { reminder in
+                    .navigationTransition(.zoom(sourceID: "createReminder", in: namespace))
+            })
+            .modifier(AdaptiveItemPresentation(item: $selectedReminder, isRegularWidth: isRegularWidth) { reminder in
                 CreateReminderView(editingReminder: reminder)
-            }
-            .fullScreenCover(isPresented: $showSettingsSheet) {
+            })
+            .modifier(AdaptivePresentation(isPresented: $showSettingsSheet, isRegularWidth: isRegularWidth) {
                 SettingsView()
-                    .modifier(ZoomTransitionModifier(sourceID: "settings", namespace: namespace))
-            }
-            .fullScreenCover(item: $selectedFilter) { filter in
+                    .navigationTransition(.zoom(sourceID: "settings", in: namespace))
+            })
+            .modifier(AdaptiveItemPresentation(item: $selectedFilter, isRegularWidth: isRegularWidth) { filter in
                 FilteredRemindersView(filterType: filter)
-                    .modifier(ZoomTransitionModifier(sourceID: "filter-\(filter.title)", namespace: namespace))
-            }
-            .fullScreenCover(item: $selectedList) { list in
+                    .navigationTransition(.zoom(sourceID: "filter-\(filter.title)", in: namespace))
+            })
+            .modifier(AdaptiveItemPresentation(item: $selectedList, isRegularWidth: isRegularWidth) { list in
                 ListDetailView(list: list)
-                    .modifier(ZoomTransitionModifier(sourceID: "list-\(list.id.uuidString)", namespace: namespace))
-            }
+                    .navigationTransition(.zoom(sourceID: "list-\(list.id.uuidString)", in: namespace))
+            })
             .onAppear {
                 syncEngine.connect()
             }
@@ -290,6 +293,46 @@ private struct SearchResultRow: View {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: reminder.effectiveDueDate, relativeTo: Date())
+    }
+}
+
+// MARK: - Adaptive Presentation Modifiers (iPad sheet / iPhone fullScreenCover)
+
+/// Presents content as a sheet on iPad (regular width) or fullScreenCover on iPhone.
+struct AdaptivePresentation<PresentedContent: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    let isRegularWidth: Bool
+    @ViewBuilder let presentedContent: () -> PresentedContent
+
+    func body(content: Content) -> some View {
+        if isRegularWidth {
+            content.sheet(isPresented: $isPresented) {
+                presentedContent()
+            }
+        } else {
+            content.fullScreenCover(isPresented: $isPresented) {
+                presentedContent()
+            }
+        }
+    }
+}
+
+/// Item-based adaptive presentation: sheet on iPad, fullScreenCover on iPhone.
+struct AdaptiveItemPresentation<Item: Identifiable, PresentedContent: View>: ViewModifier {
+    @Binding var item: Item?
+    let isRegularWidth: Bool
+    @ViewBuilder let presentedContent: (Item) -> PresentedContent
+
+    func body(content: Content) -> some View {
+        if isRegularWidth {
+            content.sheet(item: $item) { item in
+                presentedContent(item)
+            }
+        } else {
+            content.fullScreenCover(item: $item) { item in
+                presentedContent(item)
+            }
+        }
     }
 }
 

@@ -10,6 +10,7 @@ struct ListDetailView: View {
     @ObservedObject private var syncEngine = SyncEngine.shared
 
     @State private var selectedReminder: Reminder?
+    @State private var reminderToDelete: Reminder?
     @State private var showCreateReminder = false
     @State private var isCreatingReminder = false
     @State private var searchText = ""
@@ -136,6 +137,26 @@ struct ListDetailView: View {
             .fullScreenCover(item: $selectedReminder) { reminder in
                 CreateReminderView(editingReminder: reminder)
             }
+            .confirmationDialog(
+                "Delete Reminder?",
+                isPresented: Binding(
+                    get: { reminderToDelete != nil },
+                    set: { if !$0 { reminderToDelete = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    if let reminder = reminderToDelete {
+                        deleteReminder(reminder)
+                        reminderToDelete = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    reminderToDelete = nil
+                }
+            } message: {
+                Text("Are you sure you want to delete \"\(reminderToDelete?.title ?? "")\"? This action cannot be undone.")
+            }
         }
     }
 
@@ -162,7 +183,7 @@ struct ListDetailView: View {
                             }
 
                             Button(role: .destructive) {
-                                deleteReminder(reminder)
+                                reminderToDelete = reminder
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }

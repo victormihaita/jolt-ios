@@ -61,7 +61,7 @@ struct ContentView: View {
                     WelcomeView()
                 }
             }
-            .animation(.easeInOut, value: authViewModel.isAuthenticated)
+            .animation(.iOSTransition, value: authViewModel.isAuthenticated)
             // Handle tap on notification → open reminder detail
             .onReceive(NotificationCenter.default.publisher(for: .openReminderDetail)) { notification in
                 handleOpenReminderDetail(notification)
@@ -118,8 +118,8 @@ struct ContentView: View {
                     )
                     .padding(.horizontal, Theme.Spacing.md)
                     .transition(.asymmetric(
-                        insertion: .move(edge: .top).combined(with: .opacity),
-                        removal: .move(edge: .top).combined(with: .opacity)
+                        insertion: .move(edge: .top).combined(with: .opacity).animation(.easeOut(duration: 0.3)),
+                        removal: .move(edge: .top).combined(with: .opacity).animation(.easeIn(duration: 0.2))
                     ))
 
                     Spacer()

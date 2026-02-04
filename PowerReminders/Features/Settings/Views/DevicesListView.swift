@@ -67,9 +67,12 @@ struct DevicesListView: View {
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if !isCurrentDevice {
                                 Button(role: .destructive) {
-                                    viewModel.confirmDelete(device)
+                                    Task {
+                                        viewModel.deviceToDelete = device
+                                        await viewModel.deleteDevice()
+                                    }
                                 } label: {
-                                    Label("Remove", systemImage: "trash")
+                                    Image(systemName: "trash")
                                 }
                             }
                         }
@@ -102,22 +105,6 @@ struct DevicesListView: View {
         .task {
             viewModel.isPremium = subscriptionViewModel.isPremium
             await viewModel.fetchDevices()
-        }
-        .confirmationDialog(
-            "Remove Device?",
-            isPresented: $viewModel.showDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Remove", role: .destructive) {
-                Task {
-                    await viewModel.deleteDevice()
-                }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            if let device = viewModel.deviceToDelete {
-                Text("Remove \"\(device.displayName)\"? This device will no longer receive push notifications.")
-            }
         }
         .sheet(isPresented: $viewModel.showUpgradePrompt) {
             PaywallView()

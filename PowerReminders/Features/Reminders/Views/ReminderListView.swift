@@ -19,6 +19,7 @@ struct HomeView: View {
     @State private var selectedReminder: JReminder?
     @State private var searchText = ""
 
+    @FocusState private var searchIsFocused: Bool
     @Namespace private var namespace
 
     /// Filtered active reminders from the sync engine (GraphQL cache is source of truth)
@@ -68,6 +69,7 @@ struct HomeView: View {
             }
             .navigationTitle("Reminders")
             .searchable(text: $searchText, prompt: "Search reminders")
+            .focused($searchIsFocused)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
@@ -82,18 +84,20 @@ struct HomeView: View {
             }
             .fullScreenCover(isPresented: $showCreateSheet) {
                 CreateReminderView()
-                    .modifier(ZoomTransitionModifier(sourceID: "createReminder", namespace: namespace))
+                    .navigationTransition(.zoom(sourceID: "createReminder", in: namespace))
             }
             .fullScreenCover(isPresented: $showSettingsSheet) {
                 SettingsView()
-                    .modifier(ZoomTransitionModifier(sourceID: "settings", namespace: namespace))
+                    .navigationTransition(.zoom(sourceID: "settings", in: namespace))
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
                 CreateReminderView(editingReminder: reminder)
-                    .modifier(ZoomTransitionModifier(sourceID: reminder.id, namespace: namespace))
+                    .navigationTransition(.zoom(sourceID: reminder.id, in: namespace))
             }
-            .refreshable {
-                syncEngine.refetch()
+            .enhancedRefreshable {
+                await Task {
+                    syncEngine.refetch()
+                }.value
             }
             .onAppear {
                 print("📋 HomeView.onAppear - reminders count: \(syncEngine.reminders.count)")
@@ -102,6 +106,12 @@ struct HomeView: View {
             }
             .onChange(of: syncEngine.reminders.count) { oldCount, newCount in
                 print("📋 HomeView.onChange - reminders count changed: \(oldCount) -> \(newCount)")
+            }
+            // MARK: - Keyboard & UX Handling
+            .dismissKeyboardOnTap()
+            .onAppear {
+                // Dismiss keyboard when returning to list
+                searchIsFocused = false
             }
         }
     }
@@ -129,13 +139,13 @@ struct HomeView: View {
                         Button(role: .destructive) {
                             deleteReminder(reminder)
                         } label: {
-                            Label("Delete", systemImage: "trash")
+                            Image(systemName: "trash")
                         }
 
                         Button {
                             completeReminder(reminder)
                         } label: {
-                            Label("Done", systemImage: "checkmark")
+                            Image(systemName: "checkmark")
                         }
                         .tint(.green)
                     }
@@ -143,7 +153,7 @@ struct HomeView: View {
                         Button {
                             showSnoozeOptions(for: reminder)
                         } label: {
-                            Label("Snooze", systemImage: "clock.arrow.circlepath")
+                            Image(systemName: "clock.arrow.circlepath")
                         }
                         .tint(.orange)
                     }

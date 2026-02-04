@@ -12,6 +12,11 @@ struct CreateReminderView: View {
 
     @State private var title = ""
     @State private var notes = ""
+    
+    // MARK: - Focus Management
+    @FocusState private var focusedField: FormField?
+    
+    // MARK: - Date & Time
     @State private var hasDate = true
     @State private var dueDate = Date()
     @State private var dueTime = Date()
@@ -45,9 +50,19 @@ struct CreateReminderView: View {
                 Section {
                     TextField("Reminder title", text: $title)
                         .font(Theme.Typography.headline)
+                        .focused($focusedField, equals: .title)
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .notes
+                        }
 
                     TextField("Notes (optional)", text: $notes, axis: .vertical)
                         .lineLimit(3...6)
+                        .focused($focusedField, equals: .notes)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            focusedField = nil
+                        }
                 }
 
                 // Date & Time section
@@ -226,11 +241,15 @@ struct CreateReminderView: View {
                     }
                 }
             }
+            .animation(.snappy, value: hasDate)
+            .animation(.snappy, value: allDay)
+            .animation(.snappy, value: recurrenceEnabled)
             .navigationTitle(isEditing ? "Edit Reminder" : "New Reminder")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
+                        focusedField = nil // Dismiss keyboard
                         dismiss()
                     }
                     .disabled(isLoading)
@@ -241,6 +260,7 @@ struct CreateReminderView: View {
                         ProgressView()
                     } else {
                         Button(isEditing ? "Save" : "Add") {
+                            focusedField = nil // Dismiss keyboard before saving
                             if isEditing {
                                 updateReminder()
                             } else {
@@ -264,7 +284,8 @@ struct CreateReminderView: View {
                     isPremium: subscriptionViewModel.isPremium,
                     onShowPaywall: { showPremiumPaywall = true }
                 )
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
             .onAppear {
                 loadExistingReminder()
@@ -286,6 +307,19 @@ struct CreateReminderView: View {
                     // Set a default recurrence rule when toggle is enabled
                     recurrenceRule = PRModels.RecurrenceRule(frequency: .daily, interval: 1)
                 }
+            }
+            .scrollDismissesKeyboard(.interactively)
+            .onAppear {
+                // Auto-focus title field for new reminders
+                if !isEditing {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        focusedField = .title
+                    }
+                }
+            }
+            .onDisappear {
+                // Ensure keyboard is dismissed when leaving
+                focusedField = nil
             }
         }
     }

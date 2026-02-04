@@ -1,5 +1,7 @@
 import SwiftUI
 
+import SwiftUI
+
 struct OnboardingContainerView: View {
     @StateObject private var viewModel = OnboardingViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -31,7 +33,7 @@ struct OnboardingContainerView: View {
                 insertion: .move(edge: .trailing).combined(with: .opacity),
                 removal: .move(edge: .leading).combined(with: .opacity)
             ))
-            .animation(.smooth(duration: 0.35), value: viewModel.currentStep)
+            .animation(.easeInOut(duration: 0.4), value: viewModel.currentStep)
 
             // Page indicator overlayed at bottom
             if viewModel.currentStep != .paywall && viewModel.currentStep != .completed {
@@ -43,6 +45,7 @@ struct OnboardingContainerView: View {
             }
         }
         .ignoresSafeArea(.keyboard)
+        .dismissKeyboardOnTap() // Allow dismissing keyboard by tapping
         .environmentObject(viewModel)
         .onChange(of: authViewModel.isAuthenticated) { _, isAuthenticated in
             if isAuthenticated && viewModel.currentStep == .signIn {

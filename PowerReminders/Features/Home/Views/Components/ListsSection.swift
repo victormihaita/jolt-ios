@@ -18,6 +18,9 @@ struct ListsSection: View {
     @State private var newListIconName = ReminderList.presetIcons[0]
     @FocusState private var isNameFieldFocused: Bool
 
+    // Delete confirmation state
+    @State private var listToDelete: ReminderList?
+
     // Edit list state
     @State private var listBeingEdited: ReminderList?
     @State private var editName = ""
@@ -81,13 +84,13 @@ struct ListsSection: View {
                         .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: 0, bottom: Theme.Spacing.xs, trailing: 0))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if !list.isDefault {
                                 Button(role: .destructive) {
                                     Haptics.medium()
-                                    onDeleteList(list)
+                                    listToDelete = list
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Image(systemName: "trash")
                                 }
                             }
                         }
@@ -97,7 +100,7 @@ struct ListsSection: View {
                                     Haptics.light()
                                     startEditing(list)
                                 } label: {
-                                    Label("Edit", systemImage: "pencil")
+                                    Image(systemName: "pencil")
                                 }
                                 .tint(.blue)
                             }
@@ -143,6 +146,26 @@ struct ListsSection: View {
                     cancelEditing()
                 }
             }
+            .confirmationDialog(
+                "Delete \"\(listToDelete?.name ?? "")\"?",
+                isPresented: Binding(
+                    get: { listToDelete != nil },
+                    set: { if !$0 { listToDelete = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button("Delete List", role: .destructive) {
+                    if let list = listToDelete {
+                        onDeleteList(list)
+                        listToDelete = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    listToDelete = nil
+                }
+            } message: {
+                Text("All reminders in this list will also be deleted. This action cannot be undone.")
+            }
         }
     }
 
@@ -152,12 +175,16 @@ struct ListsSection: View {
         // Cancel any editing in progress
         cancelEditing()
 
-        isCreatingList = true
+        withAnimation(.snappy) {
+            isCreatingList = true
+        }
         isNameFieldFocused = true
     }
 
     private func cancelCreation() {
-        isCreatingList = false
+        withAnimation(.snappy) {
+            isCreatingList = false
+        }
         newListName = ""
         newListColorHex = ReminderList.presetColors[0]
         newListIconName = ReminderList.presetIcons[0]
@@ -182,22 +209,26 @@ struct ListsSection: View {
         // Cancel any creation in progress
         cancelCreation()
 
-        listBeingEdited = list
         editName = list.name
         editColorHex = list.colorHex
         editIconName = list.iconName
-        isEditingList = true
+        withAnimation(.snappy) {
+            listBeingEdited = list
+            isEditingList = true
+        }
         isEditFieldFocused = true
     }
 
     private func cancelEditing() {
-        listBeingEdited = nil
+        withAnimation(.snappy) {
+            listBeingEdited = nil
+            isEditingList = false
+        }
         editName = ""
         editColorHex = ""
         editIconName = ""
         isEditFieldFocused = false
         isSubmittingEdit = false
-        isEditingList = false
     }
 
     private func submitEdit() {

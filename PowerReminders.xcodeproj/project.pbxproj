@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -58,6 +58,8 @@
 		89507EB65597205462A98F17 /* PRCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD8A0B386B2FE5FA0297EC2B /* PRCore */; };
 		8BD13AE347EBCFAD12450E15 /* PRNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = 39D59518CE48D182E4071DCB /* PRNetworking */; };
 		925900AE804AABDAC5622F03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */; };
+		94AB4C472F3325EC00DE4CF4 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */; };
+		94AB4C492F3326CC00DE4CF4 /* UXEnhancements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AB4C482F3326CC00DE4CF4 /* UXEnhancements.swift */; };
 		95529D006BB5F1A31DDF5ECB /* CreateReminderIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83871FB6B35D52F7EED5BEE /* CreateReminderIntent.swift */; };
 		9733653C0D869F4D6B3A9DEB /* CompleteReminderIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70CDB2794D660B9D3E44C771 /* CompleteReminderIntent.swift */; };
 		9917D184EEA4D85DFFDC0D6B /* ambient2.wav in Resources */ = {isa = PBXBuildFile; fileRef = E89CBD390CB4EC8B9CE384CE /* ambient2.wav */; };
@@ -167,6 +169,8 @@
 		82B257AEEB305C713995D264 /* ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ambient.wav; sourceTree = "<group>"; };
 		862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredRemindersView.swift; sourceTree = "<group>"; };
 		8B53F9E7984A441EB3F45A63 /* ListsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsSection.swift; sourceTree = "<group>"; };
+		94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
+		94AB4C482F3326CC00DE4CF4 /* UXEnhancements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UXEnhancements.swift; sourceTree = "<group>"; };
 		9A7AB6DB19CA095194DCF145 /* NotificationSnoozePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSnoozePickerView.swift; sourceTree = "<group>"; };
 		9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerRemindersWidget.entitlements; sourceTree = "<group>"; };
@@ -612,6 +616,8 @@
 				FF3C02E69BB0B658D8F04731 /* NotificationService.swift */,
 				0A232085EA2D7C1223BD725E /* ReminderActivityAttributes.swift */,
 				523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */,
+				94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */,
+				94AB4C482F3326CC00DE4CF4 /* UXEnhancements.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -786,7 +792,6 @@
 				29527FC4EEA46122949EDF6E /* XCLocalSwiftPackageReference "Packages/PRSubscriptions" */,
 				C4ABA8A0BFE479757A3B0477 /* XCLocalSwiftPackageReference "Packages/PRSync" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -842,6 +847,7 @@
 				61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */,
 				13B8F7E43D075236AA4F1722 /* ListPickerComponents.swift in Sources */,
 				1D8D09100A7582BF9D3A1F6B /* ListRemindersIntent.swift in Sources */,
+				94AB4C492F3326CC00DE4CF4 /* UXEnhancements.swift in Sources */,
 				83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */,
 				E7693E4CA74A84280684B99A /* LiveActivityManager.swift in Sources */,
 				10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */,
@@ -870,6 +876,7 @@
 				56CA364C9B8ACEC3291D0F70 /* SmartFilterCard.swift in Sources */,
 				A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */,
 				CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */,
+				94AB4C472F3325EC00DE4CF4 /* KeyboardUtils.swift in Sources */,
 				A230E0F7962B0111547E1F68 /* SyncStatusView.swift in Sources */,
 				CADC5A683E02B6D92267325D /* Theme.swift in Sources */,
 				331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */,
@@ -1026,7 +1033,11 @@
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Zalt Widget";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1110,7 +1121,11 @@
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Zalt Widget";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

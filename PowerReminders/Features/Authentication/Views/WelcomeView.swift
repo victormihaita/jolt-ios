@@ -155,10 +155,12 @@ struct WelcomeView: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.8)) {
+            // Use smoother animation timing that matches iOS standards
+            withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
                 isAnimating = true
             }
         }
+        .dismissKeyboardOnTap() // Dismiss any stray keyboards
         .alert("Account Pending Deletion", isPresented: $authViewModel.showRestoreAccountPrompt) {
             Button("Restore Account") {
                 Task {

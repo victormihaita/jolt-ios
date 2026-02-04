@@ -10,6 +10,7 @@ struct FilteredRemindersView: View {
     @ObservedObject private var syncEngine = SyncEngine.shared
 
     @State private var selectedReminder: Reminder?
+    @State private var reminderToDelete: Reminder?
     @State private var searchText = ""
 
     @Namespace private var namespace
@@ -83,7 +84,27 @@ struct FilteredRemindersView: View {
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
                 CreateReminderView(editingReminder: reminder)
-                    .modifier(ZoomTransitionModifier(sourceID: reminder.id, namespace: namespace))
+                    .navigationTransition(.zoom(sourceID: reminder.id, in: namespace))
+            }
+            .confirmationDialog(
+                "Delete Reminder?",
+                isPresented: Binding(
+                    get: { reminderToDelete != nil },
+                    set: { if !$0 { reminderToDelete = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    if let reminder = reminderToDelete {
+                        deleteReminder(reminder)
+                        reminderToDelete = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    reminderToDelete = nil
+                }
+            } message: {
+                Text("Are you sure you want to delete \"\(reminderToDelete?.title ?? "")\"? This action cannot be undone.")
             }
         }
     }
@@ -118,7 +139,7 @@ struct FilteredRemindersView: View {
                             }
 
                             Button(role: .destructive) {
-                                deleteReminder(reminder)
+                                reminderToDelete = reminder
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
