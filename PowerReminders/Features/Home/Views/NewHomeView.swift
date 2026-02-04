@@ -191,7 +191,7 @@ struct NewHomeView: View {
                 if isCreating {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         withAnimation(.snappy) {
-                            proxy.scrollTo("bottom", anchor: .bottom)
+                            proxy.scrollTo("bottom", anchor: .center)
                         }
                     }
                 }
