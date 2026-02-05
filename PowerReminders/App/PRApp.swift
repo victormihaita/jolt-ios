@@ -65,9 +65,16 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .showCustomSnooze)) { notification in
             handleShowCustomSnooze(notification)
         }
-        // When reminders change, check for pending actions
+        // When reminders change, check for pending actions and clean up stale notifications
         .onChange(of: syncEngine.reminders) { _, newReminders in
             processPendingActions(reminders: newReminders)
+
+            // Clean up stale notifications (e.g., when app was terminated and
+            // cross-device silent push wasn't delivered)
+            Task {
+                let activeIDs = Set(newReminders.filter { $0.status == .active || $0.status == .snoozed }.map { $0.id })
+                await NotificationService.shared.cleanupStaleNotifications(activeReminderIDs: activeIDs)
+            }
         }
         // Schedule local notifications for exact timing (server push is backup)
         .onAppear {

@@ -620,6 +620,14 @@ private class AuthInterceptor: ApolloInterceptor {
             #endif
         }
 
+        // Add device ID header so backend can exclude this device from cross-device notifications
+        if let deviceID = UserDefaults.standard.string(forKey: "registeredDeviceID") {
+            request.addHeader(name: "X-Device-ID", value: deviceID)
+            #if DEBUG
+            print("🔐 AuthInterceptor: Adding X-Device-ID: \(deviceID)")
+            #endif
+        }
+
         chain.proceedAsync(
             request: request,
             response: response,

@@ -239,6 +239,33 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         )
     }
 
+    /// Removes delivered notifications for reminders that are no longer active.
+    /// Call this after sync to clean up stale notifications (e.g., when app was terminated
+    /// and cross-device silent push wasn't delivered).
+    func cleanupStaleNotifications(activeReminderIDs: Set<UUID>) async {
+        let center = UNUserNotificationCenter.current()
+
+        // Get all delivered notifications
+        let delivered = await center.deliveredNotifications()
+
+        // Find notifications for reminders that are no longer active
+        var staleIDs: [String] = []
+        for notification in delivered {
+            if let reminderIDString = notification.request.content.userInfo["reminder_id"] as? String,
+               let reminderID = UUID(uuidString: reminderIDString) {
+                if !activeReminderIDs.contains(reminderID) {
+                    staleIDs.append(reminderIDString)
+                }
+            }
+        }
+
+        // Remove stale notifications
+        if !staleIDs.isEmpty {
+            print("🧹 NotificationService: Removing \(staleIDs.count) stale notification(s)")
+            center.removeDeliveredNotifications(withIdentifiers: staleIDs)
+        }
+    }
+
     func rescheduleNotification(for reminder: PRModels.Reminder, snoozedUntil: Date) async {
         // Cancel existing
         cancelNotification(for: reminder.id)

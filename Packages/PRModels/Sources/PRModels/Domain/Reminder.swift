@@ -80,19 +80,15 @@ public struct Reminder: Identifiable, Hashable, Sendable {
         recurrenceRule != nil
     }
 
+    /// Simplified: check snoozeCount to see if reminder was snoozed
     public var isSnoozed: Bool {
-        if let snoozedUntil = snoozedUntil {
-            return status == .snoozed && snoozedUntil > Date()
-        }
-        return false
+        return snoozeCount > 0 && status == .active
     }
 
-    /// The effective due date, accounting for snooze
+    /// The effective due date for notifications
+    /// Simplified: snooze now just updates dueAt directly
     /// Returns Date.distantFuture if no due date is set
     public var effectiveDueDate: Date {
-        if let snoozedUntil = snoozedUntil, status == .snoozed {
-            return snoozedUntil
-        }
         return dueAt ?? Date.distantFuture
     }
 }

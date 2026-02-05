@@ -439,6 +439,20 @@ public final class SyncEngine: ObservableObject {
             let reminder = convertSubscriptionReminder(reminderData)
             DispatchQueue.main.async {
                 self.onReminderUpdated?(reminder)
+
+                // Post cross-device notification for status changes
+                // This dismisses in-app banner and stops alarm on this device
+                if reminder.status == .dismissed || reminder.status == .completed || reminder.status == .snoozed {
+                    NotificationCenter.default.post(
+                        name: Notification.Name("crossDeviceActionReceived"),
+                        object: nil,
+                        userInfo: [
+                            "action": reminder.status.rawValue,
+                            "reminder_id": reminder.id
+                        ]
+                    )
+                    PRLogger.info("Posted cross-device notification for \(reminder.status.rawValue) reminder: \(reminder.id)", category: .sync)
+                }
             }
             // Refetch to update the watcher's cache
             remindersWatcher?.refetch()
@@ -456,6 +470,18 @@ public final class SyncEngine: ObservableObject {
             }
             DispatchQueue.main.async {
                 self.onReminderDeleted?(uuid)
+
+                // Post cross-device notification for deleted reminder
+                // This dismisses in-app banner and stops alarm on this device
+                NotificationCenter.default.post(
+                    name: Notification.Name("crossDeviceActionReceived"),
+                    object: nil,
+                    userInfo: [
+                        "action": "delete",
+                        "reminder_id": uuid
+                    ]
+                )
+                PRLogger.info("Posted cross-device notification for deleted reminder: \(uuid)", category: .sync)
             }
             // Evict from cache and refetch
             GraphQLClient.shared.evictCachedObject(for: reminderId)
