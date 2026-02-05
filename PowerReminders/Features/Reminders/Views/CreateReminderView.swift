@@ -351,7 +351,6 @@ struct CreateReminderView: View {
         case .high: return Theme.Colors.priorityHigh
         case .normal: return Theme.Colors.priorityNormal
         case .low: return Theme.Colors.priorityLow
-        case .none: return Theme.Colors.priorityNone
         }
     }
 
@@ -501,7 +500,6 @@ struct CreateReminderView: View {
 
     private func graphQLPriority(from priority: PRModels.Priority) -> PRAPI.Priority {
         switch priority {
-        case .none: return .none
         case .low: return .low
         case .normal: return .normal
         case .high: return .high

@@ -137,16 +137,10 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             options: [.destructive]
         )
 
-        let stopAlarm = UNNotificationAction(
-            identifier: "STOP_ALARM",
-            title: "Stop",
-            options: []
-        )
-
-        // Main reminder category with all actions
+        // Main reminder category — Done first, then custom snooze, then quick options
         let reminderCategory = UNNotificationCategory(
             identifier: "REMINDER_ACTIONS",
-            actions: [snooze5, snooze15, snoozeCustom, complete, dismiss],
+            actions: [complete, snoozeCustom, snooze5, snooze15],
             intentIdentifiers: [],
             options: .customDismissAction
         )
@@ -159,10 +153,10 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             options: []
         )
 
-        // Alarm category with stop action - uses Critical Alert to bypass DND
+        // Alarm category — Complete first, then custom snooze, then quick options
         let alarmCategory = UNNotificationCategory(
             identifier: "ALARM_ACTIONS",
-            actions: [stopAlarm, snooze5, snooze15, complete],
+            actions: [complete, snoozeCustom, snooze5, snooze15],
             intentIdentifiers: [],
             options: .customDismissAction
         )
@@ -184,18 +178,15 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
 
         let content = UNMutableNotificationContent()
-        content.title = reminder.isAlarm ? "Alarm" : "Reminder"
-        content.body = reminder.title
+        content.title = reminder.title
+        if let notes = reminder.notes, !notes.isEmpty {
+            content.body = notes
+        }
         content.userInfo = [
             "reminder_id": reminder.id.uuidString,
             "due_at": dueAt.ISO8601Format(),
             "is_alarm": reminder.isAlarm
         ]
-
-        // Add notes as subtitle if present
-        if let notes = reminder.notes, !notes.isEmpty {
-            content.subtitle = notes
-        }
 
         // Set thread identifier for grouping
         content.threadIdentifier = "reminders"
@@ -351,13 +342,11 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             )
         }
 
-        if isAlarm {
-            // Alarm: suppress system sound entirely, AlarmManager handles looping audio
-            completionHandler([])
-        } else {
-            // Non-alarm: let iOS play the notification sound natively alongside our in-app banner
-            completionHandler([.sound])
-        }
+        // Suppress system sound for all foreground notifications.
+        // Alarms: AlarmManager handles looping audio.
+        // Non-alarm reminders: vibrate only (no default sound); custom sounds
+        // are played by InAppNotificationManager if a soundID is set.
+        completionHandler([])
     }
 
     func userNotificationCenter(
@@ -410,11 +399,6 @@ class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             }
 
         case "DISMISS":
-            Task.detached { [weak self] in
-                await self?.handleDismiss(reminderID: reminderID)
-            }
-
-        case "STOP_ALARM":
             Task.detached { [weak self] in
                 await self?.handleDismiss(reminderID: reminderID)
             }

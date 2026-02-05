@@ -26,7 +26,7 @@ public struct Reminder: Identifiable, Hashable, Sendable {
         id: UUID = UUID(),
         title: String,
         notes: String? = nil,
-        priority: Priority = .none,
+        priority: Priority = .low,
         dueAt: Date? = nil,
         allDay: Bool = false,
         isAlarm: Bool = false,
@@ -98,14 +98,12 @@ public struct Reminder: Identifiable, Hashable, Sendable {
 }
 
 public enum Priority: Int, Codable, Hashable, Sendable, CaseIterable {
-    case none = 0
     case low = 1
     case normal = 2
     case high = 3
 
     public var displayName: String {
         switch self {
-        case .none: return "None"
         case .low: return "Low"
         case .normal: return "Normal"
         case .high: return "High"

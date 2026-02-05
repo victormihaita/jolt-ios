@@ -34,99 +34,44 @@ struct ContentView: View {
     @ObservedObject private var notificationManager = InAppNotificationManager.shared
     @AppStorage("onboarding_completed") private var onboardingCompleted = false
 
-    // State for notification-triggered navigation
-    @State private var notificationReminder: PRModels.Reminder?
-    @State private var showCustomSnoozeForReminder: PRModels.Reminder?
-
     // Pending notification actions (stored until reminders are loaded)
     @State private var pendingOpenReminderID: UUID?
     @State private var pendingSnoozeReminderID: UUID?
 
     var body: some View {
-        ZStack(alignment: .top) {
-            // Main app content
-            Group {
-                if !onboardingCompleted {
-                    // Existing authenticated user who never started onboarding (app upgrade) → skip
-                    if authViewModel.isAuthenticated
-                        && UserDefaults.standard.integer(forKey: "onboarding_current_step") == OnboardingStep.welcome.rawValue {
-                        Color.clear
-                            .onAppear { onboardingCompleted = true }
-                    } else {
-                        OnboardingContainerView()
-                    }
-                } else if authViewModel.isAuthenticated {
-                    NewHomeView()
+        // Main app content
+        Group {
+            if !onboardingCompleted {
+                // Existing authenticated user who never started onboarding (app upgrade) → skip
+                if authViewModel.isAuthenticated
+                    && UserDefaults.standard.integer(forKey: "onboarding_current_step") == OnboardingStep.welcome.rawValue {
+                    Color.clear
+                        .onAppear { onboardingCompleted = true }
                 } else {
-                    WelcomeView()
+                    OnboardingContainerView()
                 }
+            } else if authViewModel.isAuthenticated {
+                NewHomeView()
+            } else {
+                WelcomeView()
             }
-            .animation(.iOSTransition, value: authViewModel.isAuthenticated)
-            // Handle tap on notification → open reminder detail
-            .onReceive(NotificationCenter.default.publisher(for: .openReminderDetail)) { notification in
-                handleOpenReminderDetail(notification)
-            }
-            // Handle custom snooze action from notification
-            .onReceive(NotificationCenter.default.publisher(for: .showCustomSnooze)) { notification in
-                handleShowCustomSnooze(notification)
-            }
-            // When reminders change, check for pending actions
-            .onChange(of: syncEngine.reminders) { _, newReminders in
-                processPendingActions(reminders: newReminders)
-            }
-            // Present reminder edit when triggered by notification
-            .fullScreenCover(item: $notificationReminder) { reminder in
-                CreateReminderView(editingReminder: reminder)
-                    .environmentObject(subscriptionViewModel)
-            }
-            // Present snooze picker when triggered by notification
-            .sheet(item: $showCustomSnoozeForReminder) { reminder in
-                NotificationSnoozePickerView(reminder: reminder)
-                    .environmentObject(subscriptionViewModel)
-            }
-            // Schedule local notifications for exact timing (server push is backup)
-            .onAppear {
-                setupLocalNotificationScheduling()
-            }
-
-            // In-app notification banner overlay
-            if notificationManager.isVisible, let notification = notificationManager.currentNotification {
-                VStack {
-                    InAppNotificationBanner(
-                        title: notification.title,
-                        subtitle: notification.subtitle,
-                        reminderID: notification.reminderID,
-                        dueAt: notification.dueAt,
-                        soundID: notification.soundID,
-                        isAlarm: notification.isAlarm,
-                        onComplete: {
-                            notificationManager.handleComplete()
-                        },
-                        onSnooze: { minutes in
-                            notificationManager.handleSnooze(minutes: minutes)
-                        },
-                        onDismiss: {
-                            notificationManager.dismiss()
-                        },
-                        onTap: {
-                            // Open reminder detail if found
-                            if let reminder = syncEngine.reminders.first(where: { $0.id == notification.reminderID }) {
-                                notificationReminder = reminder
-                            }
-                            notificationManager.dismiss()
-                        }
-                    )
-                    .padding(.horizontal, Theme.Spacing.md)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .top).combined(with: .opacity).animation(.easeOut(duration: 0.3)),
-                        removal: .move(edge: .top).combined(with: .opacity).animation(.easeIn(duration: 0.2))
-                    ))
-
-                    Spacer()
-                }
-                .padding(.top, 60) // Safe area + extra spacing
-                .zIndex(1000) // Ensure banner is above all content
-            }
+        }
+        .animation(.iOSTransition, value: authViewModel.isAuthenticated)
+        // Handle tap on notification → show in-app banner
+        .onReceive(NotificationCenter.default.publisher(for: .openReminderDetail)) { notification in
+            handleOpenReminderDetail(notification)
+        }
+        // Handle custom snooze action from notification
+        .onReceive(NotificationCenter.default.publisher(for: .showCustomSnooze)) { notification in
+            handleShowCustomSnooze(notification)
+        }
+        // When reminders change, check for pending actions
+        .onChange(of: syncEngine.reminders) { _, newReminders in
+            processPendingActions(reminders: newReminders)
+        }
+        // Schedule local notifications for exact timing (server push is backup)
+        .onAppear {
+            setupLocalNotificationScheduling()
         }
     }
 
@@ -153,9 +98,9 @@ struct ContentView: View {
 
     private func handleOpenReminderDetail(_ notification: Notification) {
         guard let reminderID = notification.userInfo?["reminder_id"] as? UUID else { return }
-        // Look up reminder from sync engine
+        // Show in-app banner instead of opening edit page
         if let reminder = syncEngine.reminders.first(where: { $0.id == reminderID }) {
-            notificationReminder = reminder
+            showBannerForReminder(reminder)
         } else {
             // Store pending action - will be processed when reminders load
             pendingOpenReminderID = reminderID
@@ -165,7 +110,7 @@ struct ContentView: View {
     private func handleShowCustomSnooze(_ notification: Notification) {
         guard let reminderID = notification.userInfo?["reminder_id"] as? UUID else { return }
         if let reminder = syncEngine.reminders.first(where: { $0.id == reminderID }) {
-            showCustomSnoozeForReminder = reminder
+            showBannerForReminder(reminder, snoozeExpanded: true)
         } else {
             // Store pending action - will be processed when reminders load
             pendingSnoozeReminderID = reminderID
@@ -173,18 +118,30 @@ struct ContentView: View {
     }
 
     private func processPendingActions(reminders: [PRModels.Reminder]) {
-        // Process pending open reminder action
+        // Process pending open reminder action — show banner
         if let pendingID = pendingOpenReminderID,
            let reminder = reminders.first(where: { $0.id == pendingID }) {
             pendingOpenReminderID = nil
-            notificationReminder = reminder
+            showBannerForReminder(reminder)
         }
 
-        // Process pending snooze action
+        // Process pending snooze action — show banner with snooze expanded
         if let pendingID = pendingSnoozeReminderID,
            let reminder = reminders.first(where: { $0.id == pendingID }) {
             pendingSnoozeReminderID = nil
-            showCustomSnoozeForReminder = reminder
+            showBannerForReminder(reminder, snoozeExpanded: true)
         }
+    }
+
+    private func showBannerForReminder(_ reminder: PRModels.Reminder, snoozeExpanded: Bool = false) {
+        InAppNotificationManager.shared.show(
+            title: reminder.title,
+            subtitle: reminder.notes ?? "",
+            reminderID: reminder.id,
+            dueAt: reminder.dueAt,
+            soundID: reminder.soundId,
+            isAlarm: reminder.isAlarm,
+            snoozeExpanded: snoozeExpanded
+        )
     }
 }

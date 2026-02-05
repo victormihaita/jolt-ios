@@ -10,7 +10,6 @@ struct FilteredRemindersView: View {
     @ObservedObject private var syncEngine = SyncEngine.shared
 
     @State private var selectedReminder: Reminder?
-    @State private var reminderToDelete: Reminder?
     @State private var searchText = ""
 
     @Namespace private var namespace
@@ -70,7 +69,6 @@ struct FilteredRemindersView: View {
             }
             .navigationTitle(filterType.title)
             .navigationBarTitleDisplayMode(.large)
-            .tint(filterType.color)
             .searchable(text: $searchText, prompt: "Search reminders")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -80,31 +78,12 @@ struct FilteredRemindersView: View {
                         Image(systemName: "chevron.left")
                             .font(.body.weight(.medium))
                     }
+                    .tint(filterType.color)
                 }
             }
             .fullScreenCover(item: $selectedReminder) { reminder in
                 CreateReminderView(editingReminder: reminder)
                     .navigationTransition(.zoom(sourceID: reminder.id, in: namespace))
-            }
-            .confirmationDialog(
-                "Delete Reminder?",
-                isPresented: Binding(
-                    get: { reminderToDelete != nil },
-                    set: { if !$0 { reminderToDelete = nil } }
-                ),
-                titleVisibility: .visible
-            ) {
-                Button("Delete", role: .destructive) {
-                    if let reminder = reminderToDelete {
-                        deleteReminder(reminder)
-                        reminderToDelete = nil
-                    }
-                }
-                Button("Cancel", role: .cancel) {
-                    reminderToDelete = nil
-                }
-            } message: {
-                Text("Are you sure you want to delete \"\(reminderToDelete?.title ?? "")\"? This action cannot be undone.")
             }
         }
     }
@@ -120,36 +99,80 @@ struct FilteredRemindersView: View {
     }
 
     private var reminderList: some View {
-        ScrollView {
-            LazyVStack(spacing: Theme.Spacing.sm) {
-                ForEach(reminders) { reminder in
-                    ReminderRowView(reminder: reminder, listColor: listColor(for: reminder))
-                        .contentShape(Rectangle())
-                        .modifier(MatchedTransitionSourceModifier(id: reminder.id, namespace: namespace))
-                        .onTapGesture {
-                            selectedReminder = reminder
+        List {
+            ForEach(reminders) { reminder in
+                ReminderRowView(reminder: reminder, listColor: listColor(for: reminder))
+                    .contentShape(Rectangle())
+                    .modifier(MatchedTransitionSourceModifier(id: reminder.id, namespace: namespace))
+                    .onTapGesture {
+                        selectedReminder = reminder
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            deleteReminder(reminder)
+                        } label: {
+                            Image(systemName: "trash")
                         }
-                        .contextMenu {
-                            if filterType != .completed {
-                                Button {
-                                    completeReminder(reminder)
-                                } label: {
-                                    Label("Done", systemImage: "checkmark.circle")
-                                }
-                            }
+                        .tint(.red)
 
-                            Button(role: .destructive) {
-                                reminderToDelete = reminder
+                        if filterType != .completed {
+                            Button {
+                                completeReminder(reminder)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Image(systemName: "checkmark")
+                            }
+                            .tint(.green)
+                        }
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        if filterType != .completed {
+                            Button {
+                                snoozeReminder(reminder, minutes: 15)
+                            } label: {
+                                Image(systemName: "clock.arrow.circlepath")
+                            }
+                            .tint(.orange)
+                        }
+                    }
+                    .contextMenu {
+                        Button {
+                            selectedReminder = reminder
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+
+                        if filterType != .completed {
+                            Button {
+                                completeReminder(reminder)
+                            } label: {
+                                Label("Complete", systemImage: "checkmark.circle")
                             }
                         }
-                }
+
+                        if filterType != .completed {
+                            Menu {
+                                Button { snoozeReminder(reminder, minutes: 5) } label: { Text("5 minutes") }
+                                Button { snoozeReminder(reminder, minutes: 15) } label: { Text("15 minutes") }
+                                Button { snoozeReminder(reminder, minutes: 30) } label: { Text("30 minutes") }
+                                Button { snoozeReminder(reminder, minutes: 60) } label: { Text("1 hour") }
+                            } label: {
+                                Label("Snooze", systemImage: "clock.arrow.circlepath")
+                            }
+                        }
+
+                        Divider()
+
+                        Button(role: .destructive) {
+                            deleteReminder(reminder)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
             }
-            .padding(.horizontal, Theme.Spacing.md)
-            .padding(.top, Theme.Spacing.sm)
-            .padding(.bottom, Theme.Spacing.xl)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: Theme.Spacing.md, bottom: Theme.Spacing.xs, trailing: Theme.Spacing.md))
         }
+        .listStyle(.plain)
     }
 
     private var emptyState: some View {
@@ -224,10 +247,22 @@ struct FilteredRemindersView: View {
             do {
                 let mutation = PRAPI.CompleteReminderMutation(id: reminder.id.uuidString.lowercased())
                 _ = try await graphQL.perform(mutation: mutation)
-                // Trigger refetch to update UI immediately
                 SyncEngine.shared.refetch()
             } catch {
                 print("Failed to complete reminder: \(error)")
+            }
+        }
+    }
+
+    private func snoozeReminder(_ reminder: Reminder, minutes: Int) {
+        Haptics.medium()
+        Task {
+            do {
+                let mutation = PRAPI.SnoozeReminderMutation(id: reminder.id.uuidString.lowercased(), minutes: minutes)
+                _ = try await graphQL.perform(mutation: mutation)
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to snooze reminder: \(error)")
             }
         }
     }

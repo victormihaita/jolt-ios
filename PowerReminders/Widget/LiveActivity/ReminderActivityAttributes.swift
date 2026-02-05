@@ -14,7 +14,7 @@ struct ReminderActivityAttributes: ActivityAttributes {
         var dueAt: Date
         /// Whether the reminder has passed its due time.
         var isOverdue: Bool
-        /// Priority raw value (0 = none, 1 = low, 2 = normal, 3 = high).
+        /// Priority raw value (1 = low, 2 = normal, 3 = high).
         var priority: Int
     }
 

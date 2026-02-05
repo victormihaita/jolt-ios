@@ -141,6 +141,7 @@ struct HomeView: View {
                         } label: {
                             Image(systemName: "trash")
                         }
+                        .tint(.red)
 
                         Button {
                             completeReminder(reminder)
@@ -151,11 +152,41 @@ struct HomeView: View {
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button {
-                            showSnoozeOptions(for: reminder)
+                            snoozeReminder(reminder, minutes: 15)
                         } label: {
                             Image(systemName: "clock.arrow.circlepath")
                         }
                         .tint(.orange)
+                    }
+                    .contextMenu {
+                        Button {
+                            selectedReminder = reminder
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+
+                        Button {
+                            completeReminder(reminder)
+                        } label: {
+                            Label("Complete", systemImage: "checkmark.circle")
+                        }
+
+                        Menu {
+                            Button { snoozeReminder(reminder, minutes: 5) } label: { Text("5 minutes") }
+                            Button { snoozeReminder(reminder, minutes: 15) } label: { Text("15 minutes") }
+                            Button { snoozeReminder(reminder, minutes: 30) } label: { Text("30 minutes") }
+                            Button { snoozeReminder(reminder, minutes: 60) } label: { Text("1 hour") }
+                        } label: {
+                            Label("Snooze", systemImage: "clock.arrow.circlepath")
+                        }
+
+                        Divider()
+
+                        Button(role: .destructive) {
+                            deleteReminder(reminder)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
                     }
             }
         }
@@ -212,9 +243,11 @@ struct HomeView: View {
         }
     }
 
-    private func showSnoozeOptions(for reminder: JReminder) {
-        selectedReminder = reminder
-        // The detail view will show snooze options
+    private func snoozeReminder(_ reminder: JReminder, minutes: Int) {
+        Haptics.medium()
+        Task {
+            await viewModel.snoozeReminder(reminder.id, minutes: minutes)
+        }
     }
 }
 
@@ -252,9 +285,13 @@ struct ReminderRowView: View {
                 HStack(spacing: Theme.Spacing.sm) {
                     // Due date (only show if set)
                     if reminder.dueAt != nil {
-                        Label(formattedDueDate, systemImage: reminder.isOverdue ? "exclamationmark.circle" : "clock")
-                            .font(Theme.Typography.caption)
-                            .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
+                        Label {
+                            Text(reminder.effectiveDueDate, style: .relative)
+                        } icon: {
+                            Image(systemName: reminder.isOverdue ? "exclamationmark.circle" : "clock")
+                        }
+                        .font(Theme.Typography.caption)
+                        .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
                     } else {
                         Label("No date", systemImage: "calendar.badge.minus")
                             .font(Theme.Typography.caption)
@@ -327,16 +364,9 @@ struct ReminderRowView: View {
         case .high: return "exclamationmark"
         case .normal: return "minus"
         case .low: return "arrow.down"
-        case .none: return "circle"
         }
     }
 
-    private var formattedDueDate: String {
-        guard reminder.dueAt != nil else { return "No date" }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: reminder.effectiveDueDate, relativeTo: Date())
-    }
 }
 
 // MARK: - Empty State

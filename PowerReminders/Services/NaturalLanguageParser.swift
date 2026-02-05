@@ -14,7 +14,7 @@ struct ParsedReminder {
     init(
         title: String,
         dueDate: Date? = nil,
-        priority: Priority = .none,
+        priority: Priority = .low,
         recurrence: RecurrenceRule? = nil,
         listName: String? = nil,
         tags: [String] = [],
@@ -37,7 +37,7 @@ class NaturalLanguageParser {
         var text = input.trimmingCharacters(in: .whitespacesAndNewlines)
         var dueDate: Date?
         var dueTime: Date?
-        var priority: Priority = .none
+        var priority: Priority = .low
         var recurrence: RecurrenceRule?
         var tags: [String] = []
         let calendar = Calendar.current

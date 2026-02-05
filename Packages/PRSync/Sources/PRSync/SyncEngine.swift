@@ -641,7 +641,7 @@ public final class SyncEngine: ObservableObject {
         case .some(.low): return .low
         case .some(.normal): return .normal
         case .some(.high): return .high
-        default: return .none
+        default: return .low
         }
     }
 

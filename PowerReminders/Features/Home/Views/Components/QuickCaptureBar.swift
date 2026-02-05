@@ -96,7 +96,7 @@ struct ParsedPreviewCard: View {
                     }
 
                     // Priority
-                    if parsed.priority != .none {
+                    if parsed.priority != .low {
                         Label(parsed.priority.displayName, systemImage: "flag.fill")
                             .font(Theme.Typography.caption)
                             .foregroundStyle(priorityColor)
@@ -137,7 +137,6 @@ struct ParsedPreviewCard: View {
         case .high: return Theme.Colors.priorityHigh
         case .normal: return Theme.Colors.priorityNormal
         case .low: return Theme.Colors.priorityLow
-        case .none: return Theme.Colors.priorityNone
         }
     }
 

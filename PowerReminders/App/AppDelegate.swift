@@ -19,9 +19,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Register notification categories for actionable notifications
         NotificationService.shared.registerCategories()
 
-        // Note: We no longer request notification permissions here.
-        // Permissions are requested when the user creates their first reminder
-        // for a better user experience.
+        // Set up the overlay window for displaying notification banners above all content
+        OverlayWindowManager.shared.setup()
 
         return true
     }

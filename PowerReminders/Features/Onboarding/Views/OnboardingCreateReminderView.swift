@@ -164,7 +164,7 @@ private struct OnboardingParsedPreview: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if parsed.priority != .none {
+                if parsed.priority != .low {
                     Label(parsed.priority.displayName, systemImage: "flag.fill")
                         .font(Theme.Typography.caption)
                         .foregroundStyle(priorityColor)
@@ -195,7 +195,6 @@ private struct OnboardingParsedPreview: View {
         case .high: return Theme.Colors.priorityHigh
         case .normal: return Theme.Colors.priorityNormal
         case .low: return Theme.Colors.priorityLow
-        case .none: return Theme.Colors.priorityNone
         }
     }
 

@@ -211,7 +211,6 @@ struct InlineReminderInput: View {
 
     private func graphQLPriority(from priority: PRModels.Priority) -> PRAPI.Priority {
         switch priority {
-        case .none: return .none
         case .low: return .low
         case .normal: return .normal
         case .high: return .high

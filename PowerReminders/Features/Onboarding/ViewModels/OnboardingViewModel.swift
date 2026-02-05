@@ -148,7 +148,7 @@ class OnboardingViewModel: ObservableObject {
             case 3: gqlPriority = .init(.high)
             case 2: gqlPriority = .init(.normal)
             case 1: gqlPriority = .init(.low)
-            default: gqlPriority = .init(.none)
+            default: gqlPriority = .init(.low)
             }
 
             let title = pending.parsedTitle.isEmpty ? pending.rawInput : pending.parsedTitle

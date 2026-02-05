@@ -1,6 +1,7 @@
 import SwiftUI
 import PRModels
 import PRSync
+import PRNetworking
 
 struct NewHomeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -18,6 +19,8 @@ struct NewHomeView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Namespace private var namespace
+
+    private let graphQL = GraphQLClient.shared
 
     private var isRegularWidth: Bool { horizontalSizeClass == .regular }
 
@@ -228,6 +231,67 @@ struct NewHomeView: View {
                             .onTapGesture {
                                 selectedReminder = reminder
                             }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    deleteReminder(reminder)
+                                } label: {
+                                    Image(systemName: "trash")
+                                }
+                                .tint(.red)
+
+                                if reminder.status != .completed {
+                                    Button {
+                                        completeReminder(reminder)
+                                    } label: {
+                                        Image(systemName: "checkmark")
+                                    }
+                                    .tint(.green)
+                                }
+                            }
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                if reminder.status != .completed {
+                                    Button {
+                                        snoozeReminder(reminder, minutes: 15)
+                                    } label: {
+                                        Image(systemName: "clock.arrow.circlepath")
+                                    }
+                                    .tint(.orange)
+                                }
+                            }
+                            .contextMenu {
+                                Button {
+                                    selectedReminder = reminder
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
+
+                                if reminder.status != .completed {
+                                    Button {
+                                        completeReminder(reminder)
+                                    } label: {
+                                        Label("Complete", systemImage: "checkmark.circle")
+                                    }
+                                }
+
+                                if reminder.status != .completed {
+                                    Menu {
+                                        Button { snoozeReminder(reminder, minutes: 5) } label: { Text("5 minutes") }
+                                        Button { snoozeReminder(reminder, minutes: 15) } label: { Text("15 minutes") }
+                                        Button { snoozeReminder(reminder, minutes: 30) } label: { Text("30 minutes") }
+                                        Button { snoozeReminder(reminder, minutes: 60) } label: { Text("1 hour") }
+                                    } label: {
+                                        Label("Snooze", systemImage: "clock.arrow.circlepath")
+                                    }
+                                }
+
+                                Divider()
+
+                                Button(role: .destructive) {
+                                    deleteReminder(reminder)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -239,6 +303,45 @@ struct NewHomeView: View {
 
     private func listName(for reminder: PRModels.Reminder) -> String {
         syncEngine.reminderLists.first(where: { $0.id == reminder.listId })?.name ?? "Unknown"
+    }
+
+    private func deleteReminder(_ reminder: PRModels.Reminder) {
+        Haptics.medium()
+        Task {
+            do {
+                let mutation = PRAPI.DeleteReminderMutation(id: reminder.id.uuidString.lowercased())
+                _ = try await graphQL.perform(mutation: mutation)
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to delete reminder: \(error)")
+            }
+        }
+    }
+
+    private func completeReminder(_ reminder: PRModels.Reminder) {
+        Haptics.success()
+        Task {
+            do {
+                let mutation = PRAPI.CompleteReminderMutation(id: reminder.id.uuidString.lowercased())
+                _ = try await graphQL.perform(mutation: mutation)
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to complete reminder: \(error)")
+            }
+        }
+    }
+
+    private func snoozeReminder(_ reminder: PRModels.Reminder, minutes: Int) {
+        Haptics.medium()
+        Task {
+            do {
+                let mutation = PRAPI.SnoozeReminderMutation(id: reminder.id.uuidString.lowercased(), minutes: minutes)
+                _ = try await graphQL.perform(mutation: mutation)
+                SyncEngine.shared.refetch()
+            } catch {
+                print("Failed to snooze reminder: \(error)")
+            }
+        }
     }
 }
 
@@ -268,9 +371,13 @@ private struct SearchResultRow: View {
 
                     // Due date (only show if set)
                     if reminder.dueAt != nil {
-                        Label(formattedDueDate, systemImage: "clock")
-                            .font(Theme.Typography.caption)
-                            .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
+                        Label {
+                            Text(reminder.effectiveDueDate, style: .relative)
+                        } icon: {
+                            Image(systemName: "clock")
+                        }
+                        .font(Theme.Typography.caption)
+                        .foregroundStyle(reminder.isOverdue ? Theme.Colors.error : .secondary)
                     } else {
                         Label("No date", systemImage: "calendar.badge.minus")
                             .font(Theme.Typography.caption)
@@ -300,16 +407,9 @@ private struct SearchResultRow: View {
         case .high: return Theme.Colors.priorityHigh
         case .normal: return Theme.Colors.priorityNormal
         case .low: return Theme.Colors.priorityLow
-        case .none: return Theme.Colors.priorityNone
         }
     }
 
-    private var formattedDueDate: String {
-        guard reminder.dueAt != nil else { return "No date" }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: reminder.effectiveDueDate, relativeTo: Date())
-    }
 }
 
 // MARK: - Adaptive Presentation Modifiers (iPad sheet / iPhone fullScreenCover)

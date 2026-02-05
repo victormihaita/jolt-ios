@@ -5,7 +5,6 @@ import ApolloAPI
 
 public extension PRAPI {
   enum Priority: String, EnumType {
-    case none = "NONE"
     case low = "LOW"
     case normal = "NORMAL"
     case high = "HIGH"

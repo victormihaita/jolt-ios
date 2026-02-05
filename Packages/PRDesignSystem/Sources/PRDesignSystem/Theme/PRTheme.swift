@@ -12,14 +12,12 @@ public struct PRTheme {
         public static let priorityHigh = Color.red
         public static let priorityNormal = Color.orange
         public static let priorityLow = Color.blue
-        public static let priorityNone = Color.gray
 
         public static func priority(_ priority: Int) -> Color {
             switch priority {
             case 3: return priorityHigh
             case 2: return priorityNormal
-            case 1: return priorityLow
-            default: return priorityNone
+            default: return priorityLow
             }
         }
     }

@@ -51,7 +51,6 @@ struct CreateReminderIntent: AppIntent {
         }
 
         let graphQLPriority: PRAPI.Priority = switch priority {
-        case .none: .none
         case .low: .low
         case .normal: .normal
         case .high: .high
@@ -89,7 +88,6 @@ struct CreateReminderIntent: AppIntent {
 /// Maps Zalt priority levels to an AppIntents-compatible enum.
 enum ReminderPriorityAppEnum: String, AppEnum {
 
-    case none
     case low
     case normal
     case high
@@ -100,7 +98,6 @@ enum ReminderPriorityAppEnum: String, AppEnum {
 
     static var caseDisplayRepresentations: [ReminderPriorityAppEnum: DisplayRepresentation] {
         [
-            .none: "None",
             .low: "Low",
             .normal: "Normal",
             .high: "High"

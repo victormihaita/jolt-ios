@@ -9,6 +9,7 @@ class InAppNotificationManager: ObservableObject {
 
     @Published var currentNotification: InAppNotificationData?
     @Published var isVisible = false
+    @Published var snoozeExpanded = false
 
     private var audioPlayer: AVAudioPlayer?
     private var dismissTask: Task<Void, Never>?
@@ -36,7 +37,8 @@ class InAppNotificationManager: ObservableObject {
         reminderID: UUID,
         dueAt: Date?,
         soundID: String?,
-        isAlarm: Bool
+        isAlarm: Bool,
+        snoozeExpanded: Bool = false
     ) {
         // Cancel any pending dismiss
         dismissTask?.cancel()
@@ -60,15 +62,13 @@ class InAppNotificationManager: ObservableObject {
         Haptics.medium()
 
         // Show with animation
+        self.snoozeExpanded = snoozeExpanded
         withAnimation(.bouncy) {
             currentNotification = notification
             isVisible = true
         }
 
-        // Schedule auto-dismiss (not for alarms)
-        if !isAlarm {
-            scheduleAutoDismiss()
-        }
+        // No auto-dismiss — banner persists until user interacts with it
     }
 
     func dismiss() {
@@ -79,6 +79,7 @@ class InAppNotificationManager: ObservableObject {
         audioPlayer = nil
         AlarmManager.shared.stopAlarm()
 
+        snoozeExpanded = false
         withAnimation(.snappy) {
             isVisible = false
         }

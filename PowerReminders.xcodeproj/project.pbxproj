@@ -18,6 +18,7 @@
 		1F169AFE6A45CA1C1CF46C68 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F918149692F135910BD94AB /* AuthViewModel.swift */; };
 		24A512E9476BC5BF7876E039 /* QuickCaptureBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */; };
 		25FF71D49FB4E32EFAFB2360 /* InAppNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */; };
+		A1B2C3D4E5F60718293A4B5D /* NotificationBannerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* NotificationBannerOverlay.swift */; };
 		28A491F3F078E519C34900F7 /* CreateReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C0B18E79221FFC3C84E8C /* CreateReminderView.swift */; };
 		32C6C226ECCA2D7F6D139700 /* PRModels in Frameworks */ = {isa = PBXBuildFile; productRef = 8651F02EFD81B8DB58B4C8C1 /* PRModels */; };
 		331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */; };
@@ -78,6 +79,7 @@
 		CADC5A683E02B6D92267325D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7271C32CF7900ADB8FB63A6 /* Theme.swift */; };
 		CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F889CCC53B4374754F327825 /* SubscriptionViewModel.swift */; };
 		D1C6142AD9D6E1E80A824A5A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8AC33D38566C966D8028B4F8 /* GoogleSignInSwift */; };
+		B3C4D5E6F7081920A1B2C3D4 /* OverlayWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C4D5E6F7081920A1B2C3D5 /* OverlayWindowManager.swift */; };
 		DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */; };
 		E089489398C333FADC01ACDB /* ReminderEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3E7E5AA642234AB2FD20A /* ReminderEntity.swift */; };
 		E0FF58DDEE9CB746360D6DC6 /* PRKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 29BC7BEF6903889AAE4CFA22 /* PRKeychain */; };
@@ -129,6 +131,7 @@
 		1001073F48C5B6D683AB7C86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1058DCFF0D357278C1DC3BBE /* PRModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRModels; path = Packages/PRModels; sourceTree = SOURCE_ROOT; };
 		1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
+		B3C4D5E6F7081920A1B2C3D5 /* OverlayWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowManager.swift; sourceTree = "<group>"; };
 		12EC7CA5DE73E701DB25CCDE /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
 		138120992C6175B1602DD66B /* PRNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNotifications; path = Packages/PRNotifications; sourceTree = SOURCE_ROOT; };
 		1590130DB67217AA25A653F6 /* rock.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rock.wav; sourceTree = "<group>"; };
@@ -157,6 +160,7 @@
 		5A9C2AD3BF70A4221F13AF9E /* AppleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuthService.swift; sourceTree = "<group>"; };
 		5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureBar.swift; sourceTree = "<group>"; };
 		5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotificationBanner.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* NotificationBannerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBannerOverlay.swift; sourceTree = "<group>"; };
 		6532F69821AB59352C602FBD /* PowerReminders.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerReminders.entitlements; sourceTree = "<group>"; };
 		70CDB2794D660B9D3E44C771 /* CompleteReminderIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReminderIntent.swift; sourceTree = "<group>"; };
 		716084534FDA220381B66564 /* PRNetworking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNetworking; path = Packages/PRNetworking; sourceTree = SOURCE_ROOT; };
@@ -556,6 +560,7 @@
 			isa = PBXGroup;
 			children = (
 				5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */,
+				A1B2C3D4E5F60718293A4B5C /* NotificationBannerOverlay.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -614,6 +619,7 @@
 				593AD4696112B88B1D44510E /* LiveActivityManager.swift */,
 				CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */,
 				FF3C02E69BB0B658D8F04731 /* NotificationService.swift */,
+				B3C4D5E6F7081920A1B2C3D5 /* OverlayWindowManager.swift */,
 				0A232085EA2D7C1223BD725E /* ReminderActivityAttributes.swift */,
 				523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */,
 				94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */,
@@ -828,6 +834,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */,
+				B3C4D5E6F7081920A1B2C3D4 /* OverlayWindowManager.swift in Sources */,
 				540AD41D196F4AED38FC35CB /* AppDelegate.swift in Sources */,
 				F878B3F7AFBF00065832B615 /* AppShortcuts.swift in Sources */,
 				9D154D88E269CBED4AB3F031 /* AppleAuthService.swift in Sources */,
@@ -842,6 +849,7 @@
 				1912ABEC033BFE0B8ED20E7A /* GoogleAuthService.swift in Sources */,
 				A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */,
 				25FF71D49FB4E32EFAFB2360 /* InAppNotificationBanner.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5D /* NotificationBannerOverlay.swift in Sources */,
 				3775D94B26951272BAAD38EB /* InAppNotificationManager.swift in Sources */,
 				E39B2DB8E1F1712CC2C0743A /* InlineReminderInput.swift in Sources */,
 				61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */,

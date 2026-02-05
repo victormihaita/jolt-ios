@@ -31,7 +31,6 @@ struct Theme {
         static let priorityHigh = Color(hexString: "#FF4757")
         static let priorityNormal = Color(hexString: "#FFA502")
         static let priorityLow = Color(hexString: "#3742FA")
-        static let priorityNone = Color(hexString: "#636E72")
 
         // Semantic/Status colors
         static let success = Color(hexString: "#00D9A5")
