@@ -14,6 +14,7 @@ class InAppNotificationManager: ObservableObject {
     private var audioPlayer: AVAudioPlayer?
     private var dismissTask: Task<Void, Never>?
     private let autoDismissDelay: TimeInterval = 10.0
+    private var crossDeviceObserver: NSObjectProtocol?
 
     struct InAppNotificationData: Identifiable, Equatable {
         let id = UUID()
@@ -29,7 +30,35 @@ class InAppNotificationManager: ObservableObject {
         }
     }
 
-    private init() {}
+    private init() {
+        setupCrossDeviceObserver()
+    }
+
+    deinit {
+        if let observer = crossDeviceObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    private func setupCrossDeviceObserver() {
+        crossDeviceObserver = NotificationCenter.default.addObserver(
+            forName: .crossDeviceActionReceived,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            Task { @MainActor in
+                guard let self = self,
+                      let userInfo = notification.userInfo,
+                      let reminderID = userInfo["reminder_id"] as? UUID else { return }
+
+                // Dismiss banner if it's showing the same reminder
+                if let currentNotification = self.currentNotification,
+                   currentNotification.reminderID == reminderID {
+                    self.dismiss()
+                }
+            }
+        }
+    }
 
     func show(
         title: String,

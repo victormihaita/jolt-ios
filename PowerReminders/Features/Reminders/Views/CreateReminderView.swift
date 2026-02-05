@@ -276,7 +276,7 @@ struct CreateReminderView: View {
                 RecurrencePickerView(rule: $recurrenceRule)
             }
             .sheet(isPresented: $showPremiumPaywall) {
-                PaywallView()
+                PremiumValueView()
             }
             .sheet(isPresented: $showSoundPicker) {
                 SoundPickerSheet(

@@ -89,7 +89,7 @@ struct SettingsView: View {
                                         .font(Theme.Typography.headline)
                                         .foregroundColor(.primary)
 
-                                    Text("Custom snooze, unlimited devices & more")
+                                    Text("Sync iPhone + Android, custom snooze & more")
                                         .font(Theme.Typography.caption)
                                         .foregroundStyle(.secondary)
                                 }
@@ -292,7 +292,7 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $showPremiumSheet) {
-                PaywallView()
+                PremiumValueView()
             }
             .sheet(isPresented: $showSoundPicker) {
                 NotificationSoundPickerView()
@@ -598,7 +598,7 @@ struct NotificationSoundPickerView: View {
                 soundSettings.stopPreview()
             }
             .sheet(isPresented: $showPaywall) {
-                PaywallView()
+                PremiumValueView()
             }
         }
     }

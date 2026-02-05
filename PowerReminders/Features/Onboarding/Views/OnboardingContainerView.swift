@@ -21,6 +21,8 @@ struct OnboardingContainerView: View {
                     OnboardingNotificationView(viewModel: viewModel)
                 case .signIn:
                     OnboardingSignInView(viewModel: viewModel)
+                case .premiumValue:
+                    OnboardingPremiumValueWrapperView(viewModel: viewModel)
                 case .paywall:
                     OnboardingPaywallWrapperView(viewModel: viewModel)
                 case .completed:
@@ -36,10 +38,10 @@ struct OnboardingContainerView: View {
             .animation(.easeInOut(duration: 0.4), value: viewModel.currentStep)
 
             // Page indicator overlayed at bottom
-            if viewModel.currentStep != .paywall && viewModel.currentStep != .completed {
+            if viewModel.currentStep != .premiumValue && viewModel.currentStep != .paywall && viewModel.currentStep != .completed {
                 OnboardingPageIndicator(
-                    totalPages: 6,
-                    currentPage: viewModel.currentStep.rawValue
+                    totalPages: 5,
+                    currentPage: min(viewModel.currentStep.rawValue, 4)
                 )
                 .padding(.bottom, 12)
             }
@@ -51,10 +53,27 @@ struct OnboardingContainerView: View {
             if isAuthenticated && viewModel.currentStep == .signIn {
                 Task {
                     await viewModel.syncPendingReminderToBackend()
-                    viewModel.advanceToStep(.paywall)
+                    viewModel.advanceToStep(.premiumValue)
                 }
             }
         }
+    }
+}
+
+// MARK: - Premium Value Wrapper for Onboarding
+
+struct OnboardingPremiumValueWrapperView: View {
+    @ObservedObject var viewModel: OnboardingViewModel
+
+    var body: some View {
+        PremiumValueView(
+            onDismiss: {
+                viewModel.completeOnboarding()
+            },
+            onContinue: {
+                viewModel.advanceToStep(.paywall)
+            }
+        )
     }
 }
 

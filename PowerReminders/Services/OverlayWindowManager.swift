@@ -165,7 +165,7 @@ private struct OverlayRootView: View {
                 removal: .move(edge: .top).combined(with: .opacity).animation(.easeIn(duration: 0.2))
             ))
             .sheet(isPresented: $showPaywall) {
-                PaywallView()
+                PremiumValueView()
             }
         }
     }

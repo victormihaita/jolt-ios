@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,18 +18,20 @@
 		1F169AFE6A45CA1C1CF46C68 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F918149692F135910BD94AB /* AuthViewModel.swift */; };
 		24A512E9476BC5BF7876E039 /* QuickCaptureBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */; };
 		25FF71D49FB4E32EFAFB2360 /* InAppNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */; };
-		A1B2C3D4E5F60718293A4B5D /* NotificationBannerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* NotificationBannerOverlay.swift */; };
 		28A491F3F078E519C34900F7 /* CreateReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447C0B18E79221FFC3C84E8C /* CreateReminderView.swift */; };
 		32C6C226ECCA2D7F6D139700 /* PRModels in Frameworks */ = {isa = PBXBuildFile; productRef = 8651F02EFD81B8DB58B4C8C1 /* PRModels */; };
 		331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */; };
 		3321A8A713FA41D1B37D273A /* OnboardingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04896A8328E879B55C190DDE /* OnboardingState.swift */; };
+		33A4C63E2B49418D38D457DC /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C69A4A143F6F51CAAA91B5 /* KeyboardUtils.swift */; };
 		34D04E8E40A2727B6D4D48B2 /* SnoozeReminderIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297A55B42C31C7E03CFCDD6C /* SnoozeReminderIntent.swift */; };
 		34E656F61F8F20E7BBF3740F /* CreateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D9558E98C74EF9C0F6BFC7 /* CreateListView.swift */; };
+		35085EA0967F2A359EF4EF03 /* UXEnhancements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9410BD35E32F7AFBF6954660 /* UXEnhancements.swift */; };
 		3775D94B26951272BAAD38EB /* InAppNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A554546CC40FADF132372E7 /* InAppNotificationManager.swift */; };
 		37F18C1C3F219638A41476FC /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */; };
 		3C8C969E569CB496C52E28B3 /* OnboardingPersonalizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3AEF8FA6E1245F9E63AD8E4 /* OnboardingPersonalizationView.swift */; };
 		3CCABA0A4277B42E38E23215 /* PRWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D72B166E978E380B9365F3 /* PRWidget.swift */; };
 		535E60E504C0CE66C4E0784F /* PowerRemindersWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		53956AFF7C754792BC94F4E9 /* PremiumValueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7F2F75BA483B076D0E4108 /* PremiumValueView.swift */; };
 		540AD41D196F4AED38FC35CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC38D0E43EE21C58BEBA0 /* AppDelegate.swift */; };
 		5452CAE33F322034212FA7EA /* PRNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = 48A10F4BF1D0C5D337CC4BD5 /* PRNotifications */; };
 		551A36BBE39C493B26C0F59A /* ReminderLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF82F9FACEEFB962C02E500 /* ReminderLiveActivity.swift */; };
@@ -59,10 +61,9 @@
 		89507EB65597205462A98F17 /* PRCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD8A0B386B2FE5FA0297EC2B /* PRCore */; };
 		8BD13AE347EBCFAD12450E15 /* PRNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = 39D59518CE48D182E4071DCB /* PRNetworking */; };
 		925900AE804AABDAC5622F03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 57DE8D61A45C6E6A5503A4A1 /* Assets.xcassets */; };
-		94AB4C472F3325EC00DE4CF4 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */; };
-		94AB4C492F3326CC00DE4CF4 /* UXEnhancements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AB4C482F3326CC00DE4CF4 /* UXEnhancements.swift */; };
 		95529D006BB5F1A31DDF5ECB /* CreateReminderIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83871FB6B35D52F7EED5BEE /* CreateReminderIntent.swift */; };
 		9733653C0D869F4D6B3A9DEB /* CompleteReminderIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70CDB2794D660B9D3E44C771 /* CompleteReminderIntent.swift */; };
+		98498B48D5F0902E9C415FDA /* OverlayWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDF90B8EFE372C37B2228AD /* OverlayWindowManager.swift */; };
 		9917D184EEA4D85DFFDC0D6B /* ambient2.wav in Resources */ = {isa = PBXBuildFile; fileRef = E89CBD390CB4EC8B9CE384CE /* ambient2.wav */; };
 		9D154D88E269CBED4AB3F031 /* AppleAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9C2AD3BF70A4221F13AF9E /* AppleAuthService.swift */; };
 		9FB294360C34A648814DD6BE /* OnboardingNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5102854B3402DF74821AD75C /* OnboardingNotificationView.swift */; };
@@ -73,13 +74,14 @@
 		B2283CA11FE13AC40FE2013C /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129A48E0C5D9E19200E9E7E /* ReminderListView.swift */; };
 		B7B02FD01CC3D5D75A4473F5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 758BF0B629E2D874148A8CE2 /* SwiftUI.framework */; };
 		B7FA309D02BB6311CD91A9C9 /* DevicesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCBAEAB04A3AE0B1EB21AC8 /* DevicesListView.swift */; };
+		BA716A1C549C26153FA80D2F /* NotificationBannerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8225634E6381F0873960961 /* NotificationBannerOverlay.swift */; };
 		BACBBF947A7DA1121ED27428 /* DeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40040A29924D279DDFB2C95 /* DeviceService.swift */; };
 		C279166103F4925306097D79 /* PRSync in Frameworks */ = {isa = PBXBuildFile; productRef = 573316C1E95064017A538EDA /* PRSync */; };
 		C6F86D65A3886E97363EA345 /* reverb.wav in Resources */ = {isa = PBXBuildFile; fileRef = FFB3A938F0D09828F21530F7 /* reverb.wav */; };
 		CADC5A683E02B6D92267325D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7271C32CF7900ADB8FB63A6 /* Theme.swift */; };
+		CDF2B0D9266C26D9F8BD5D90 /* CrossPlatformVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271DDBEFD65E39F12B595510 /* CrossPlatformVisual.swift */; };
 		CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F889CCC53B4374754F327825 /* SubscriptionViewModel.swift */; };
 		D1C6142AD9D6E1E80A824A5A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8AC33D38566C966D8028B4F8 /* GoogleSignInSwift */; };
-		B3C4D5E6F7081920A1B2C3D4 /* OverlayWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C4D5E6F7081920A1B2C3D5 /* OverlayWindowManager.swift */; };
 		DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */; };
 		E089489398C333FADC01ACDB /* ReminderEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC3E7E5AA642234AB2FD20A /* ReminderEntity.swift */; };
 		E0FF58DDEE9CB746360D6DC6 /* PRKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 29BC7BEF6903889AAE4CFA22 /* PRKeychain */; };
@@ -131,13 +133,13 @@
 		1001073F48C5B6D683AB7C86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1058DCFF0D357278C1DC3BBE /* PRModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRModels; path = Packages/PRModels; sourceTree = SOURCE_ROOT; };
 		1095B94B1AC7FF9256D6EA12 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
-		B3C4D5E6F7081920A1B2C3D5 /* OverlayWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowManager.swift; sourceTree = "<group>"; };
 		12EC7CA5DE73E701DB25CCDE /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
 		138120992C6175B1602DD66B /* PRNotifications */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNotifications; path = Packages/PRNotifications; sourceTree = SOURCE_ROOT; };
 		1590130DB67217AA25A653F6 /* rock.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rock.wav; sourceTree = "<group>"; };
 		16FC6F4DE59E9442402A128E /* ListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailView.swift; sourceTree = "<group>"; };
 		2292F8C3B3D2CA449150E40B /* InlineReminderInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineReminderInput.swift; sourceTree = "<group>"; };
 		22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthService.swift; sourceTree = "<group>"; };
+		271DDBEFD65E39F12B595510 /* CrossPlatformVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossPlatformVisual.swift; sourceTree = "<group>"; };
 		297A55B42C31C7E03CFCDD6C /* SnoozeReminderIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeReminderIntent.swift; sourceTree = "<group>"; };
 		2B8C45B8934068CC2E246263 /* SmartFilterCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFilterCard.swift; sourceTree = "<group>"; };
 		3499537F45904F873FF633FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -160,7 +162,6 @@
 		5A9C2AD3BF70A4221F13AF9E /* AppleAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuthService.swift; sourceTree = "<group>"; };
 		5B230B8C2D10600296FFBC9C /* QuickCaptureBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureBar.swift; sourceTree = "<group>"; };
 		5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotificationBanner.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B5C /* NotificationBannerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBannerOverlay.swift; sourceTree = "<group>"; };
 		6532F69821AB59352C602FBD /* PowerReminders.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerReminders.entitlements; sourceTree = "<group>"; };
 		70CDB2794D660B9D3E44C771 /* CompleteReminderIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteReminderIntent.swift; sourceTree = "<group>"; };
 		716084534FDA220381B66564 /* PRNetworking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRNetworking; path = Packages/PRNetworking; sourceTree = SOURCE_ROOT; };
@@ -173,8 +174,8 @@
 		82B257AEEB305C713995D264 /* ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ambient.wav; sourceTree = "<group>"; };
 		862880FD9B2FF0694734F7F6 /* FilteredRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredRemindersView.swift; sourceTree = "<group>"; };
 		8B53F9E7984A441EB3F45A63 /* ListsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsSection.swift; sourceTree = "<group>"; };
-		94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
-		94AB4C482F3326CC00DE4CF4 /* UXEnhancements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UXEnhancements.swift; sourceTree = "<group>"; };
+		9410BD35E32F7AFBF6954660 /* UXEnhancements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UXEnhancements.swift; sourceTree = "<group>"; };
+		99C69A4A143F6F51CAAA91B5 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
 		9A7AB6DB19CA095194DCF145 /* NotificationSnoozePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSnoozePickerView.swift; sourceTree = "<group>"; };
 		9D6BB42FCD23D4C8FC035973 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		9EB11CA1A56F01F967C47687 /* PowerRemindersWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PowerRemindersWidget.entitlements; sourceTree = "<group>"; };
@@ -187,12 +188,14 @@
 		A91AF486732A1131B753BFD7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		AEAF3C08A447CCC1797C8E83 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		B5DCAFBCC8694CA31E711197 /* PRKeychain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRKeychain; path = Packages/PRKeychain; sourceTree = SOURCE_ROOT; };
+		B8225634E6381F0873960961 /* NotificationBannerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBannerOverlay.swift; sourceTree = "<group>"; };
 		C0CC8FC38EF1129DBB164ABC /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		C0E9281F6CFD5162E6E895EE /* DismissReminderIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissReminderIntent.swift; sourceTree = "<group>"; };
 		C32EECC0FC4F85D948B3DC84 /* PowerRemindersWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PowerRemindersWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAFCCBF597C6BC9379C6F92A /* PRCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRCore; path = Packages/PRCore; sourceTree = SOURCE_ROOT; };
 		CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalLanguageParser.swift; sourceTree = "<group>"; };
 		CEC3E7E5AA642234AB2FD20A /* ReminderEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderEntity.swift; sourceTree = "<group>"; };
+		CEDF90B8EFE372C37B2228AD /* OverlayWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowManager.swift; sourceTree = "<group>"; };
 		CFA5EC6B0521645D6F4C6F25 /* NotificationSoundSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSoundSettings.swift; sourceTree = "<group>"; };
 		D47B959A5C5BCCFA51EBD0E8 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		D83871FB6B35D52F7EED5BEE /* CreateReminderIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateReminderIntent.swift; sourceTree = "<group>"; };
@@ -205,6 +208,7 @@
 		E6AB7478FF01015189F21CCE /* PRDesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PRDesignSystem; path = Packages/PRDesignSystem; sourceTree = SOURCE_ROOT; };
 		E7271C32CF7900ADB8FB63A6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		E89CBD390CB4EC8B9CE384CE /* ambient2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ambient2.wav; sourceTree = "<group>"; };
+		EB7F2F75BA483B076D0E4108 /* PremiumValueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumValueView.swift; sourceTree = "<group>"; };
 		F40040A29924D279DDFB2C95 /* DeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceService.swift; sourceTree = "<group>"; };
 		F6301962F1A266B16BF273D9 /* PRApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRApp.swift; sourceTree = "<group>"; };
 		F889CCC53B4374754F327825 /* SubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionViewModel.swift; sourceTree = "<group>"; };
@@ -302,7 +306,9 @@
 		1450E9AF724E5ABABC806FB4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				271DDBEFD65E39F12B595510 /* CrossPlatformVisual.swift */,
 				48CFF14A7552EAEE0020DC55 /* PaywallView.swift */,
+				EB7F2F75BA483B076D0E4108 /* PremiumValueView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -560,7 +566,7 @@
 			isa = PBXGroup;
 			children = (
 				5D4BDA6FA2FF57A640672E35 /* InAppNotificationBanner.swift */,
-				A1B2C3D4E5F60718293A4B5C /* NotificationBannerOverlay.swift */,
+				B8225634E6381F0873960961 /* NotificationBannerOverlay.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -616,14 +622,14 @@
 				F40040A29924D279DDFB2C95 /* DeviceService.swift */,
 				22B127328E35EF6DDB1FE5F6 /* GoogleAuthService.swift */,
 				4A554546CC40FADF132372E7 /* InAppNotificationManager.swift */,
+				99C69A4A143F6F51CAAA91B5 /* KeyboardUtils.swift */,
 				593AD4696112B88B1D44510E /* LiveActivityManager.swift */,
 				CB704B9D834B776C6285985F /* NaturalLanguageParser.swift */,
 				FF3C02E69BB0B658D8F04731 /* NotificationService.swift */,
-				B3C4D5E6F7081920A1B2C3D5 /* OverlayWindowManager.swift */,
+				CEDF90B8EFE372C37B2228AD /* OverlayWindowManager.swift */,
 				0A232085EA2D7C1223BD725E /* ReminderActivityAttributes.swift */,
 				523B8EE173FA3EA5315ABF3D /* RevenueCatService.swift */,
-				94AB4C462F3325EC00DE4CF4 /* KeyboardUtils.swift */,
-				94AB4C482F3326CC00DE4CF4 /* UXEnhancements.swift */,
+				9410BD35E32F7AFBF6954660 /* UXEnhancements.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -798,6 +804,7 @@
 				29527FC4EEA46122949EDF6E /* XCLocalSwiftPackageReference "Packages/PRSubscriptions" */,
 				C4ABA8A0BFE479757A3B0477 /* XCLocalSwiftPackageReference "Packages/PRSync" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -834,7 +841,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD037F9C9040756022EF9BA7 /* AlarmManager.swift in Sources */,
-				B3C4D5E6F7081920A1B2C3D4 /* OverlayWindowManager.swift in Sources */,
 				540AD41D196F4AED38FC35CB /* AppDelegate.swift in Sources */,
 				F878B3F7AFBF00065832B615 /* AppShortcuts.swift in Sources */,
 				9D154D88E269CBED4AB3F031 /* AppleAuthService.swift in Sources */,
@@ -843,23 +849,24 @@
 				34E656F61F8F20E7BBF3740F /* CreateListView.swift in Sources */,
 				95529D006BB5F1A31DDF5ECB /* CreateReminderIntent.swift in Sources */,
 				28A491F3F078E519C34900F7 /* CreateReminderView.swift in Sources */,
+				CDF2B0D9266C26D9F8BD5D90 /* CrossPlatformVisual.swift in Sources */,
 				BACBBF947A7DA1121ED27428 /* DeviceService.swift in Sources */,
 				B7FA309D02BB6311CD91A9C9 /* DevicesListView.swift in Sources */,
 				E3303256969D4785F44901EF /* FilteredRemindersView.swift in Sources */,
 				1912ABEC033BFE0B8ED20E7A /* GoogleAuthService.swift in Sources */,
 				A05B901FDEBAD214C1A7E6AB /* HomeViewModel.swift in Sources */,
 				25FF71D49FB4E32EFAFB2360 /* InAppNotificationBanner.swift in Sources */,
-				A1B2C3D4E5F60718293A4B5D /* NotificationBannerOverlay.swift in Sources */,
 				3775D94B26951272BAAD38EB /* InAppNotificationManager.swift in Sources */,
 				E39B2DB8E1F1712CC2C0743A /* InlineReminderInput.swift in Sources */,
+				33A4C63E2B49418D38D457DC /* KeyboardUtils.swift in Sources */,
 				61D02A73A246AFE853FA0543 /* ListDetailView.swift in Sources */,
 				13B8F7E43D075236AA4F1722 /* ListPickerComponents.swift in Sources */,
 				1D8D09100A7582BF9D3A1F6B /* ListRemindersIntent.swift in Sources */,
-				94AB4C492F3326CC00DE4CF4 /* UXEnhancements.swift in Sources */,
 				83F9CE609A27BD114217C8B4 /* ListsSection.swift in Sources */,
 				E7693E4CA74A84280684B99A /* LiveActivityManager.swift in Sources */,
 				10756B57C8D339D3C55278DA /* NaturalLanguageParser.swift in Sources */,
 				64FAC1E9CBA28001727D83EA /* NewHomeView.swift in Sources */,
+				BA716A1C549C26153FA80D2F /* NotificationBannerOverlay.swift in Sources */,
 				1168AF46FAAED3D9736888BC /* NotificationService.swift in Sources */,
 				AA425BB3EF09F4F07EB96ED3 /* NotificationSnoozePickerView.swift in Sources */,
 				F0F8AC39C25900598206EB28 /* NotificationSoundSettings.swift in Sources */,
@@ -871,8 +878,10 @@
 				3321A8A713FA41D1B37D273A /* OnboardingState.swift in Sources */,
 				83A9A42560926101AF51579A /* OnboardingViewModel.swift in Sources */,
 				019716ECABF9FA10AEDB4431 /* OnboardingWelcomeView.swift in Sources */,
+				98498B48D5F0902E9C415FDA /* OverlayWindowManager.swift in Sources */,
 				57C0D0AA065D3AB88B2436B7 /* PRApp.swift in Sources */,
 				6450B4040E99F4DE83448729 /* PaywallView.swift in Sources */,
+				53956AFF7C754792BC94F4E9 /* PremiumValueView.swift in Sources */,
 				24A512E9476BC5BF7876E039 /* QuickCaptureBar.swift in Sources */,
 				779B6446D694F58C96663843 /* ReminderActivityAttributes.swift in Sources */,
 				E089489398C333FADC01ACDB /* ReminderEntity.swift in Sources */,
@@ -884,9 +893,9 @@
 				56CA364C9B8ACEC3291D0F70 /* SmartFilterCard.swift in Sources */,
 				A5355D00AEAEE84AB0B94A98 /* SmartFiltersGrid.swift in Sources */,
 				CE3C2B16C7FC5B372714A0D4 /* SubscriptionViewModel.swift in Sources */,
-				94AB4C472F3325EC00DE4CF4 /* KeyboardUtils.swift in Sources */,
 				A230E0F7962B0111547E1F68 /* SyncStatusView.swift in Sources */,
 				CADC5A683E02B6D92267325D /* Theme.swift in Sources */,
+				35085EA0967F2A359EF4EF03 /* UXEnhancements.swift in Sources */,
 				331084A8CFFAB86CC7F661F4 /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1041,11 +1050,7 @@
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Zalt Widget";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1129,11 +1134,7 @@
 				INFOPLIST_FILE = PowerReminders/Widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Zalt Widget";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vm.power.reminders.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

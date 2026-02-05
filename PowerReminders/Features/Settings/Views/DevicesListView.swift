@@ -107,7 +107,7 @@ struct DevicesListView: View {
             await viewModel.fetchDevices()
         }
         .sheet(isPresented: $viewModel.showUpgradePrompt) {
-            PaywallView()
+            PremiumValueView()
         }
         .overlay {
             if viewModel.isDeleting {

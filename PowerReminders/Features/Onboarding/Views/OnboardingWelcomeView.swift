@@ -60,8 +60,8 @@ struct OnboardingWelcomeView: View {
 
                     FeatureRow(
                         icon: "icloud.fill",
-                        title: "Cross-Device Sync",
-                        description: "Dismiss once, gone everywhere"
+                        title: "True Cross-Platform",
+                        description: "iPhone + Android. Create on one, see it on all."
                     )
                     .opacity(isAnimating ? 1.0 : 0.0)
                     .offset(y: isAnimating ? 0 : 20)
