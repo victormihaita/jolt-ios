@@ -194,10 +194,13 @@ if [ -n "$APPLE_ID" ] && [ -n "$APP_SPECIFIC_PWD" ]; then
 fi
 
 # Run the export/upload
-eval "$EXPORT_CMD" 2>&1 | grep -E "(Uploading|Upload|error:|warning:|exported)" || true
+set +e  # Temporarily disable exit-on-error so we can capture the result
+eval "$EXPORT_CMD" 2>&1 | tee /tmp/xcodebuild-export.log | grep -E "(Uploading|Upload|error:|warning:|exported)" || true
+EXPORT_EXIT=${PIPESTATUS[0]}
+set -e
 
 # Check if upload was successful
-if [ $? -eq 0 ]; then
+if [ $EXPORT_EXIT -eq 0 ] && ! grep -q "error:" /tmp/xcodebuild-export.log; then
     print_success "Upload to App Store Connect completed!"
 else
     print_error "Upload may have failed. Check the output above."
