@@ -7,6 +7,8 @@ import PRModels
 import PRKeychain
 import ApolloAPI
 
+private let pendingReminderKey = "onboarding_pending_reminder"
+
 @MainActor
 class AuthViewModel: ObservableObject {
     enum AuthProvider {
@@ -130,6 +132,9 @@ class AuthViewModel: ObservableObject {
             // Then register device (the token will arrive via AppDelegate callback)
             await DeviceService.shared.onUserAuthenticated()
 
+            // Sync any pending reminder from onboarding
+            await syncPendingOnboardingReminder()
+
             Haptics.success()
         } catch {
             print("❌ Auth error: \(error)")
@@ -208,6 +213,9 @@ class AuthViewModel: ObservableObject {
             // Request push token and register device for push notifications
             await NotificationService.shared.registerForRemoteNotificationsIfAuthorized()
             await DeviceService.shared.onUserAuthenticated()
+
+            // Sync any pending reminder from onboarding
+            await syncPendingOnboardingReminder()
 
             Haptics.success()
         } catch let error as AppleAuthError where error == .cancelled {
@@ -388,6 +396,78 @@ class AuthViewModel: ObservableObject {
             signOut()
             return false
         }
+    }
+
+    // MARK: - Pending Onboarding Reminder Sync
+
+    /// Syncs any pending reminder created during onboarding to the backend after sign-in.
+    private func syncPendingOnboardingReminder() async {
+        guard let data = UserDefaults.standard.data(forKey: pendingReminderKey),
+              let pending = try? JSONDecoder().decode(PendingOnboardingReminder.self, from: data) else {
+            return
+        }
+
+        do {
+            var recurrenceInput: GraphQLNullable<PRAPI.RecurrenceRuleInput> = .null
+            if let freqStr = pending.recurrenceFrequency,
+               let frequency = Frequency(rawValue: freqStr) {
+                let gqlFreq: GraphQLEnum<PRAPI.Frequency>
+                switch frequency {
+                case .hourly: gqlFreq = .init(.hourly)
+                case .daily: gqlFreq = .init(.daily)
+                case .weekly: gqlFreq = .init(.weekly)
+                case .monthly: gqlFreq = .init(.monthly)
+                case .yearly: gqlFreq = .init(.yearly)
+                }
+                recurrenceInput = .some(PRAPI.RecurrenceRuleInput(
+                    frequency: gqlFreq,
+                    interval: pending.recurrenceInterval ?? 1,
+                    daysOfWeek: pending.recurrenceDaysOfWeek.map { .some($0) } ?? .null,
+                    dayOfMonth: .null,
+                    monthOfYear: .null,
+                    endAfterOccurrences: .null,
+                    endDate: .null
+                ))
+            }
+
+            let gqlPriority: GraphQLEnum<PRAPI.Priority>
+            switch pending.priority {
+            case 3: gqlPriority = .init(.high)
+            case 2: gqlPriority = .init(.normal)
+            case 1: gqlPriority = .init(.low)
+            default: gqlPriority = .init(.low)
+            }
+
+            let title = pending.parsedTitle.isEmpty ? pending.rawInput : pending.parsedTitle
+
+            let dueAtStr: GraphQLNullable<String>
+            if let date = pending.dueDate {
+                dueAtStr = .some(ISO8601DateFormatter().string(from: date))
+            } else {
+                dueAtStr = .null
+            }
+
+            let input = PRAPI.CreateReminderInput(
+                listId: .null,
+                title: title,
+                notes: .null,
+                priority: .some(gqlPriority),
+                dueAt: dueAtStr,
+                allDay: pending.dueDate != nil ? .some(!pending.hasSpecificTime) : .null,
+                recurrenceRule: recurrenceInput,
+                isAlarm: .null,
+                soundId: .null
+            )
+
+            let mutation = PRAPI.CreateReminderMutation(input: input)
+            _ = try await graphQL.perform(mutation: mutation)
+            SyncEngine.shared.refetch()
+        } catch {
+            print("Failed to sync onboarding reminder: \(error)")
+        }
+
+        // Clear pending reminder regardless of success
+        UserDefaults.standard.removeObject(forKey: pendingReminderKey)
     }
 }
 

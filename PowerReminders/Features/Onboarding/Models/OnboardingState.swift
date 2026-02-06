@@ -6,10 +6,9 @@ enum OnboardingStep: Int, Codable, CaseIterable {
     case personalization = 1
     case createReminder = 2
     case notifications = 3
-    case signIn = 4
-    case premiumValue = 5
-    case paywall = 6
-    case completed = 7
+    case premiumValue = 4
+    case paywall = 5
+    case completed = 6
 }
 
 struct PendingOnboardingReminder: Codable {

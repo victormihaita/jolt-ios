@@ -41,7 +41,7 @@ struct OnboardingNotificationView: View {
                     Haptics.medium()
                     Task {
                         await viewModel.requestNotificationPermission()
-                        viewModel.advanceToStep(.signIn)
+                        viewModel.advanceToStep(.premiumValue)
                     }
                 } label: {
                     HStack(spacing: Theme.Spacing.sm) {
@@ -58,7 +58,7 @@ struct OnboardingNotificationView: View {
 
                 Button {
                     viewModel.userDeclinedNotifications = true
-                    viewModel.advanceToStep(.signIn)
+                    viewModel.advanceToStep(.premiumValue)
                 } label: {
                     Text("Not Now")
                         .font(Theme.Typography.subheadline)

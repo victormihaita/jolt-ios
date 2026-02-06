@@ -4,7 +4,6 @@ import SwiftUI
 
 struct OnboardingContainerView: View {
     @StateObject private var viewModel = OnboardingViewModel()
-    @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var subscriptionViewModel: SubscriptionViewModel
 
     var body: some View {
@@ -19,8 +18,6 @@ struct OnboardingContainerView: View {
                     OnboardingCreateReminderView(viewModel: viewModel)
                 case .notifications:
                     OnboardingNotificationView(viewModel: viewModel)
-                case .signIn:
-                    OnboardingSignInView(viewModel: viewModel)
                 case .premiumValue:
                     OnboardingPremiumValueWrapperView(viewModel: viewModel)
                 case .paywall:
@@ -40,8 +37,8 @@ struct OnboardingContainerView: View {
             // Page indicator overlayed at bottom
             if viewModel.currentStep != .premiumValue && viewModel.currentStep != .paywall && viewModel.currentStep != .completed {
                 OnboardingPageIndicator(
-                    totalPages: 5,
-                    currentPage: min(viewModel.currentStep.rawValue, 4)
+                    totalPages: 4,
+                    currentPage: min(viewModel.currentStep.rawValue, 3)
                 )
                 .padding(.bottom, 12)
             }
@@ -49,14 +46,6 @@ struct OnboardingContainerView: View {
         .ignoresSafeArea(.keyboard)
         .dismissKeyboardOnTap() // Allow dismissing keyboard by tapping
         .environmentObject(viewModel)
-        .onChange(of: authViewModel.isAuthenticated) { _, isAuthenticated in
-            if isAuthenticated && viewModel.currentStep == .signIn {
-                Task {
-                    await viewModel.syncPendingReminderToBackend()
-                    viewModel.advanceToStep(.premiumValue)
-                }
-            }
-        }
     }
 }
 
