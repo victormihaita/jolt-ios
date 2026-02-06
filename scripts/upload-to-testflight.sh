@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# TestFlight Upload Script for PowerReminders
+# TestFlight Upload Script for Zalt
 # =============================================================================
 # This script builds, archives, and uploads the iOS app to TestFlight.
 #
