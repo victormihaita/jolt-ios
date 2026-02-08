@@ -24,13 +24,12 @@ struct PremiumValueView: View {
                 .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: Theme.Spacing.xl) {
+                    VStack(spacing: Theme.Spacing.lg) {
                         Spacer()
-                            .frame(height: Theme.Spacing.lg)
+                            .frame(height: Theme.Spacing.sm)
 
                         // Cross-platform visual
                         CrossPlatformVisual()
-                            .padding(.top, Theme.Spacing.md)
 
                         // Headline
                         VStack(spacing: Theme.Spacing.sm) {
@@ -86,7 +85,7 @@ struct PremiumValueView: View {
                         .offset(y: isAnimating ? 0 : 20)
 
                         Spacer()
-                            .frame(height: Theme.Spacing.xl)
+                            .frame(height: 150)
                     }
                 }
 

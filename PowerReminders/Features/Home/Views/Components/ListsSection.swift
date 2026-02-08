@@ -18,9 +18,6 @@ struct ListsSection: View {
     @State private var newListIconName = ReminderList.presetIcons[0]
     @FocusState private var isNameFieldFocused: Bool
 
-    // Delete confirmation state
-    @State private var listToDelete: ReminderList?
-
     // Edit list state
     @State private var listBeingEdited: ReminderList?
     @State private var editName = ""
@@ -84,11 +81,11 @@ struct ListsSection: View {
                         .listRowInsets(EdgeInsets(top: Theme.Spacing.xs, leading: 0, bottom: Theme.Spacing.xs, trailing: 0))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             if !list.isDefault {
                                 Button(role: .destructive) {
                                     Haptics.medium()
-                                    listToDelete = list
+                                    onDeleteList(list)
                                 } label: {
                                     Image(systemName: "trash")
                                 }
@@ -145,26 +142,6 @@ struct ListsSection: View {
                 if !isFocused && listBeingEdited != nil && !isSubmittingEdit {
                     cancelEditing()
                 }
-            }
-            .confirmationDialog(
-                "Delete \"\(listToDelete?.name ?? "")\"?",
-                isPresented: Binding(
-                    get: { listToDelete != nil },
-                    set: { if !$0 { listToDelete = nil } }
-                ),
-                titleVisibility: .visible
-            ) {
-                Button("Delete List", role: .destructive) {
-                    if let list = listToDelete {
-                        onDeleteList(list)
-                        listToDelete = nil
-                    }
-                }
-                Button("Cancel", role: .cancel) {
-                    listToDelete = nil
-                }
-            } message: {
-                Text("All reminders in this list will also be deleted. This action cannot be undone.")
             }
         }
     }
