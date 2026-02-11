@@ -8,7 +8,7 @@ public extension PRAPI {
     public static let operationName: String = "Me"
     public static let operationDocument: ApolloAPI.OperationDocument = .init(
       definition: .init(
-        #"query Me { me { __typename id email displayName avatarUrl timezone isPremium premiumUntil createdAt } }"#
+        #"query Me { me { __typename id email displayName avatarUrl timezone isPremium premiumUntil createdAt updatedAt } }"#
       ))
 
     public init() {}
@@ -45,6 +45,7 @@ public extension PRAPI {
           .field("isPremium", Bool.self),
           .field("premiumUntil", PRAPI.DateTime?.self),
           .field("createdAt", PRAPI.DateTime.self),
+          .field("updatedAt", PRAPI.DateTime.self),
         ] }
         public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
           MeQuery.Data.Me.self
@@ -58,6 +59,7 @@ public extension PRAPI {
         public var isPremium: Bool { __data["isPremium"] }
         public var premiumUntil: PRAPI.DateTime? { __data["premiumUntil"] }
         public var createdAt: PRAPI.DateTime { __data["createdAt"] }
+        public var updatedAt: PRAPI.DateTime { __data["updatedAt"] }
       }
     }
   }

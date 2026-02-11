@@ -506,7 +506,7 @@ public final class GraphQLClient {
     // MARK: - Helpers
 
     private static func shouldTriggerRefetch(for operationName: String) -> Bool {
-        let triggerPrefixes = ["Create", "Delete", "Update", "Complete", "Snooze", "Dismiss", "Register", "Unregister"]
+        let triggerPrefixes = ["Create", "Delete", "Update", "Complete", "Snooze", "Dismiss", "Register", "Unregister", "Move", "Reorder", "Restore"]
         return triggerPrefixes.contains { operationName.hasPrefix($0) }
     }
 }

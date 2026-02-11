@@ -11,6 +11,7 @@ subscription OnUserChanged {
       isPremium
       premiumUntil
       createdAt
+      updatedAt
     }
     timestamp
   }
